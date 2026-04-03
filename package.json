@@ -1,7 +1,7 @@
 {
-	"name": "vscode-pull-request-github",
-	"displayName": "%displayName%",
-	"description": "%description%",
+	"name": "easy-review",
+	"displayName": "Easy Review",
+	"description": "AI-powered code review for GitHub PRs in all states (open, closed, merged)",
 	"icon": "resources/icons/github_logo.png",
 	"repository": {
 		"type": "git",
@@ -11,7 +11,7 @@
 		"url": "https://github.com/Microsoft/vscode-pull-request-github/issues"
 	},
 	"engines": {
-		"node": ">=20"
+		"vscode": "^1.110.0"
 	},
 	"enabledApiProposals": [
 		"activeComment",
@@ -46,9 +46,6 @@
 	],
 	"version": "0.134.0",
 	"publisher": "GitHub",
-	"engines": {
-		"vscode": "^1.110.0"
-	},
 	"categories": [
 		"Other",
 		"AI",
@@ -95,6 +92,11 @@
 			"type": "object",
 			"title": "GitHub Pull Requests",
 			"properties": {
+				"easyReview.claudePath": {
+					"type": "string",
+					"default": "",
+					"description": "Absolute path to the claude CLI executable. Leave empty for auto-detection."
+				},
 				"githubPullRequests.pullRequestTitle": {
 					"deprecationMessage": "The pull request title now uses the same defaults as GitHub, and can be edited before create.",
 					"type": "string",
@@ -4159,7 +4161,12 @@
 		"hygiene": "node ./build/hygiene.js",
 		"check:commands": "node scripts/check-commands.js",
 		"prepare": "husky install",
-		"update:codicons": "npx ts-node --project tsconfig.scripts.json build/update-codicons.ts"
+		"update:codicons": "npx ts-node --project tsconfig.scripts.json build/update-codicons.ts",
+		"test:unit": "vitest run --passWithNoTests",
+		"test:unit:coverage": "vitest run --coverage",
+		"rebuild:sqlite": "./node_modules/.bin/electron-rebuild -v 39.8.5 -w better-sqlite3",
+		"build:extension": "node esbuild.extension.js",
+		"build:webview": "vite build --config vite.webview.config.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.36.0",
@@ -4179,6 +4186,7 @@
 		"@types/webpack-env": "^1.16.0",
 		"@typescript-eslint/eslint-plugin": "^8.44.0",
 		"@typescript-eslint/parser": "^8.44.0",
+		"@vitest/coverage-v8": "^4.1.2",
 		"@vscode/dts": "^0.4.1",
 		"@vscode/test-cli": "^0.0.11",
 		"@vscode/test-electron": "^2.5.2",
@@ -4230,6 +4238,7 @@
 		"typescript-eslint": "^8.44.0",
 		"typescript-formatter": "^7.2.2",
 		"vinyl-fs": "^3.0.3",
+		"vitest": "^4.1.2",
 		"webpack": "5.104.1",
 		"webpack-cli": "4.2.0"
 	},
