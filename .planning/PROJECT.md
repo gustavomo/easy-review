@@ -12,7 +12,10 @@ Generate deep, context-aware AI reviews of any GitHub PR (open, closed, or merge
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Browse GitHub PRs by all states: open, closed, and merged — Validated in Phase 1: Foundation (EasyReviewPRsProvider + AllStatesPRFetcher)
+- [x] All generated content persisted in local SQLite database — Validated in Phase 1: Foundation (SQLiteStore with WAL mode, STRICT schema, upsert CRUD)
+- [x] CLI subprocess runner for AI tools — Validated in Phase 1: Foundation (SubprocessRunner with streaming, cancellation, 5-min timeout)
+- [x] PATH detection and first-run setup notification — Validated in Phase 1: Foundation (PathResolver + activation health checks)
 
 ### Active
 
@@ -53,9 +56,9 @@ Generate deep, context-aware AI reviews of any GitHub PR (open, closed, or merge
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Fork microsoft/vscode-pull-request-github | Reuse battle-tested GitHub auth, PR tree, diff views — avoids rebuilding infrastructure | — Pending |
-| CLI subprocess for AI (not API) | No API key management in extension; user already has `claude`/`codex` installed | — Pending |
-| SQLite for all persistence | Single source of truth for PR data, reviews, comments, analyses — queryable history | — Pending |
+| Fork microsoft/vscode-pull-request-github | Reuse battle-tested GitHub auth, PR tree, diff views — avoids rebuilding infrastructure | Confirmed — fork merged at aa7eb418, build pipeline working |
+| CLI subprocess for AI (not API) | No API key management in extension; user already has `claude`/`codex` installed | Confirmed — SubprocessRunner + PathResolver shipped in Phase 1 |
+| SQLite for all persistence | Single source of truth for PR data, reviews, comments, analyses — queryable history | Confirmed — SQLiteStore with WAL mode, ABI validated against Electron 39.8.5 |
 | Privanote MCP for context input | Pull relevant notes/context before generating reviews for deeper insights | — Pending |
 | Privanote API for output | Push full review to Privanote as a note for searchable history outside VS Code | — Pending |
 | Local-first, post-on-demand | User controls when comments go to GitHub — no accidental posts | — Pending |
@@ -78,4 +81,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-03 after initialization*
+*Last updated: 2026-04-03 after Phase 1: Foundation complete (8/8 plans, 5/5 verified)*
