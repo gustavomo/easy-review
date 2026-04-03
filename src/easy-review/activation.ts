@@ -54,8 +54,13 @@ export async function activateEasyReview(context: vscode.ExtensionContext): Prom
 			vscode.window.showInformationMessage('Easy Review: Refresh not yet implemented.');
 		}),
 		vscode.commands.registerCommand('easy-review.openPRDiff', (pr) => {
-			// PRW-02: open diff for selected PR — delegates to upstream diff view
-			vscode.window.showInformationMessage(`Opening diff for PR #${pr?.prNumber ?? '?'}`);
+			// PRW-02 (Phase 1 approximation): open PR on GitHub in browser.
+			// Full in-editor diff via PullRequestModel is deferred to a future phase.
+			if (!pr?.url) {
+				vscode.window.showErrorMessage('Easy Review: PR has no URL. Cannot open diff.');
+				return;
+			}
+			vscode.env.openExternal(vscode.Uri.parse(pr.url));
 		}),
 
 		// Add PR by URL (D-05)
