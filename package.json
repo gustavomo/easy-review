@@ -1932,6 +1932,18 @@
 				"command": "easy-review.openPRDiff",
 				"title": "Open PR Diff",
 				"category": "Easy Review"
+			},
+			{
+				"command": "easy-review.addPRByUrl",
+				"title": "Add PR by URL",
+				"category": "Easy Review",
+				"icon": "$(add)"
+			},
+			{
+				"command": "easy-review.removePR",
+				"title": "Remove PR",
+				"category": "Easy Review",
+				"icon": "$(trash)"
 			}
 		],
 		"viewsWelcome": [
@@ -2887,6 +2899,16 @@
 					"command": "notifications.refresh",
 					"when": "gitHubOpenRepositoryCount != 0 && github:initialized && view == notifications:github",
 					"group": "navigation@1"
+				},
+				{
+					"command": "easy-review.refreshPRList",
+					"when": "view == easy-review.prList",
+					"group": "navigation"
+				},
+				{
+					"command": "easy-review.addPRByUrl",
+					"when": "view == easy-review.prList",
+					"group": "navigation"
 				}
 			],
 			"view/item/context": [
@@ -3152,6 +3174,11 @@
 				{
 					"command": "issue.editQuery",
 					"when": "view == issues:github && viewItem == query"
+				},
+				{
+					"command": "easy-review.removePR",
+					"when": "viewItem =~ /^pr-/",
+					"group": "inline"
 				}
 			],
 			"commentsView/commentThread/context": [
