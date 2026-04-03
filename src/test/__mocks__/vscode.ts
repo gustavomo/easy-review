@@ -32,8 +32,40 @@ export const ThemeColor = class {
   constructor(public id: string) {}
 };
 export const Uri = {
-  parse: (s: string) => ({ toString: () => s }),
-  file: (s: string) => ({ fsPath: s, toString: () => s }),
+  parse: (s: string) => {
+    // Minimal parse: extract scheme, authority, path, query from URI string
+    const match = s.match(/^([^:]+):\/\/([^/?]*)([^?]*)(?:\?(.*))?$/);
+    if (match) {
+      return {
+        scheme: match[1] ?? '',
+        authority: match[2] ?? '',
+        path: match[3] ?? '',
+        query: match[4] ?? '',
+        toString: () => s,
+      };
+    }
+    return { scheme: '', authority: '', path: s, query: '', toString: () => s };
+  },
+  file: (s: string) => ({ fsPath: s, scheme: 'file', authority: '', path: s, query: '', toString: () => `file://${s}` }),
+  from: (components: { scheme: string; authority?: string; path?: string; query?: string; fragment?: string }) => {
+    const authority = components.authority ?? '';
+    const path = components.path ?? '';
+    const query = components.query ?? '';
+    const fragment = components.fragment ?? '';
+    let str = `${components.scheme}://`;
+    if (authority) str += authority;
+    str += path;
+    if (query) str += `?${query}`;
+    if (fragment) str += `#${fragment}`;
+    return {
+      scheme: components.scheme,
+      authority,
+      path,
+      query,
+      fragment,
+      toString: () => str,
+    };
+  },
 };
 export const CancellationTokenSource = class {
   token = { isCancellationRequested: false, onCancellationRequested: () => ({ dispose: () => {} }) };
