@@ -20,7 +20,8 @@ export type WebviewMessage =
   | { type: 'cancelReview' }
   | { type: 'retryReview' }
   | { type: 'loadReview'; reviewId: number }
-  | { type: 'requestState' };
+  | { type: 'requestState' }
+  | { type: 'analyzeProject' };
 
 // --- Review Data ---
 

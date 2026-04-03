@@ -1964,17 +1964,20 @@
 			{
 				"command": "easyReview.generateReview",
 				"title": "Generate Review",
-				"category": "Easy Review"
+				"category": "Easy Review",
+				"icon": "$(sparkle)"
 			},
 			{
 				"command": "easyReview.analyzeProject",
 				"title": "Analyze Project",
-				"category": "Easy Review"
+				"category": "Easy Review",
+				"icon": "$(graph)"
 			},
 			{
 				"command": "easyReview.analyzePRHistory",
 				"title": "Analyze PR History",
-				"category": "Easy Review"
+				"category": "Easy Review",
+				"icon": "$(history)"
 			}
 		],
 		"viewsWelcome": [

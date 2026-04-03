@@ -77,7 +77,9 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
         onLoadHistory={(id) => vscode.postMessage({ type: 'loadReview', reviewId: id })}
       />
       <div style={{ flex: 1, overflow: 'auto', padding: '16px 32px' }}>
-        {state.status === 'idle' && <IdleView />}
+        {state.status === 'idle' && (
+          <IdleView onAnalyzeProject={() => vscode.postMessage({ type: 'analyzeProject' })} />
+        )}
         {state.status === 'generating' && (
           <StreamingView text={streamingText} />
         )}

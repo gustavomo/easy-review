@@ -1,4 +1,5 @@
 import React from 'react';
+import { marked } from 'marked';
 import type { ParsedReview } from '@shared/types';
 import { CollapsibleSection } from './CollapsibleSection';
 import { FindingsSection } from './FindingsSection';
@@ -42,13 +43,10 @@ export function ReviewDocument({ review }: ReviewDocumentProps) {
                 </p>
               </div>
             ) : (
-              <div style={{
-                fontSize: '13px', lineHeight: '18px', fontWeight: 400,
-                color: 'var(--vscode-editor-foreground)',
-                whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-              }}>
-                {section.content}
-              </div>
+              <div
+                className="easy-review-md"
+                dangerouslySetInnerHTML={{ __html: marked(section.content ?? '') as string }}
+              />
             )}
           </CollapsibleSection>
         );

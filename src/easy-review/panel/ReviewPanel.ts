@@ -286,6 +286,10 @@ export class ReviewPanel {
         // Secondary state request (in addition to ready handshake)
         this.postMessage({ type: 'stateSync', state: this.currentState });
         break;
+
+      case 'analyzeProject':
+        vscode.commands.executeCommand('easyReview.analyzeProject');
+        break;
     }
   }
 
