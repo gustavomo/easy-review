@@ -11,7 +11,7 @@ export type ExtensionMessage =
   | { type: 'streamChunk'; text: string }
   | { type: 'reviewComplete'; review: ParsedReview }
   | { type: 'reviewError'; message: string }
-  | { type: 'stateSync'; state: WebviewState }
+  | { type: 'stateSync'; state: WebviewState; hasAnalysis: boolean; analysisDate?: number }
   | { type: 'loadReviewResult'; review: ParsedReview };
 
 /** Messages sent from webview → extension host */
@@ -21,7 +21,8 @@ export type WebviewMessage =
   | { type: 'retryReview' }
   | { type: 'loadReview'; reviewId: number }
   | { type: 'requestState' }
-  | { type: 'analyzeProject' };
+  | { type: 'analyzeProject' }
+  | { type: 'viewAnalysis' };
 
 // --- Review Data ---
 
