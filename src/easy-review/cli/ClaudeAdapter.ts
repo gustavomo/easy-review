@@ -25,7 +25,7 @@ export class ClaudeAdapter implements CLIAdapter {
       '--verbose',
       '--output-format', 'stream-json',
       '--include-partial-messages',
-      '--message', prompt,
+      prompt,
     ];
   }
 
