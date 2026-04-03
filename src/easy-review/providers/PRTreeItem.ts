@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import type { StoredPR } from '../storage/types';
+import type { EasyReviewTreeNode } from './EasyReviewTreeNodes';
 
 export type PRState = 'open' | 'closed' | 'merged';
 
@@ -11,10 +12,13 @@ const STATE_ICON: Record<PRState, { id: string; color: vscode.ThemeColor }> = {
 };
 
 export class PRTreeItem extends vscode.TreeItem {
+	/** Tracks async file-loading state for this PR's children (D-05, D-07, D-13) */
+	public children: EasyReviewTreeNode[] | 'loading' | 'error' | undefined = undefined;
+
 	constructor(public readonly pr: StoredPR) {
 		super(
 			`#${pr.prNumber} ${pr.title}`,
-			vscode.TreeItemCollapsibleState.None,
+			vscode.TreeItemCollapsibleState.Collapsed,
 		);
 
 		const icon = STATE_ICON[pr.state];
@@ -23,10 +27,10 @@ export class PRTreeItem extends vscode.TreeItem {
 		this.tooltip = `${pr.state.toUpperCase()} — ${pr.url}`;
 		this.contextValue = `pr-${pr.state}`;
 
-		// Opening the PR triggers the upstream diff view (PRW-02)
+		// Clicking the PR label opens the PR Overview panel (D-13)
 		this.command = {
-			command: 'easy-review.openPRDiff',
-			title: 'Open PR Diff',
+			command: 'easy-review.openPROverview',
+			title: 'Open PR Overview',
 			arguments: [this.pr],
 		};
 	}
