@@ -1,6 +1,23 @@
-import { describe, it } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
-describe('SubprocessRunner', () => {
+import { runClaudeStreaming } from '../../easy-review/cli/SubprocessRunner';
+import type { RunOptions } from '../../easy-review/cli/SubprocessRunner';
+
+describe('SubprocessRunner exports', () => {
+  it('exports runClaudeStreaming function', () => {
+    expect(typeof runClaudeStreaming).toBe('function');
+  });
+
+  it('RunOptions type requires prompt, token, and outputChannel', () => {
+    // Type-level test: verify RunOptions shape compiles
+    const opts: RunOptions = {
+      prompt: 'test prompt',
+      token: { isCancellationRequested: false, onCancellationRequested: () => ({ dispose: () => {} }) } as any,
+      outputChannel: { append: () => {}, appendLine: () => {}, show: () => {}, dispose: () => {} } as any,
+    };
+    expect(opts.prompt).toBe('test prompt');
+  });
+
   it.todo('runClaudeStreaming spawns process with --print --output-format stream-json --include-partial-messages');
   it.todo('runClaudeStreaming writes prompt to stdin');
   it.todo('runClaudeStreaming appends text events to OutputChannel');
