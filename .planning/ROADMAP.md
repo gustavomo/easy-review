@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can trigger a basic `claude` CLI call from the extension and see output returned (no structured format yet)
   4. Extension shows a clear, actionable error if SQLite fails to initialize (e.g., ABI mismatch)
   5. Extension shows a setup notification on first activation if the `claude` CLI is not found in PATH, with instructions to configure the path in settings
-**Plans**: 6 plans
+**Plans**: 8 plans
 Plans:
 - [x] 01-01-PLAN.md — Fork setup + two-target build pipeline (esbuild + Vite) + easy-review-diff.md
 - [x] 01-02-PLAN.md — Test infrastructure (vitest + stubs) + electron-rebuild spike (better-sqlite3 ABI validation)
@@ -37,6 +37,8 @@ Plans:
 - [x] 01-04-PLAN.md — EasyReviewPRsProvider flat list + PRTreeItem state badges + AllStatesPRFetcher
 - [x] 01-05-PLAN.md — PRUrlParser + PRPersistenceService + AddByURL/RemovePR commands
 - [x] 01-06-PLAN.md — PathResolver (CJS-safe) + SubprocessRunner (streaming + cancel + timeout) + activation health checks
+- [ ] 01-07-PLAN.md — Gap closure: replace openPRDiff stub with vscode.env.openExternal (PRW-02)
+- [ ] 01-08-PLAN.md — Gap closure: wire CredentialStore into activateEasyReview so addPRByUrl calls fetchAndPersistPR
 **UI hint**: yes
 
 ### Phase 2: AI Review Generation
@@ -81,7 +83,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 6/6 | Complete   | 2026-04-03 |
+| 1. Foundation | 6/8 | Gap closure in progress | 2026-04-03 |
 | 2. AI Review Generation | 0/? | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
