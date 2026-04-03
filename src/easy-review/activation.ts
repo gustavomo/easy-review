@@ -4,7 +4,9 @@ import * as vscode from 'vscode';
 import { disposeOutputChannel, getOutputChannel } from './cli/OutputChannelReporter';
 import { resolveClaudePath } from './cli/PathResolver';
 import { parsePRUrl } from './github/PRUrlParser';
+import { collectProjectContext, fetchPRHistory } from './github/ProjectAnalysisService';
 import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
+import { ReviewPanel } from './panel/ReviewPanel';
 import { SQLiteStore } from './storage/SQLiteStore';
 import type { StorageAdapter } from './storage/StorageAdapter';
 import { AuthProvider } from '../common/authentication';
@@ -142,6 +144,135 @@ export async function activateEasyReview(
 				currentStore.deletePR(item.pr.repoId, item.pr.prNumber);
 				currentProvider.removePR(item.pr.repoId, item.pr.prNumber);
 			}
+		}),
+
+		// Generate AI review (REV-01) — triggered by right-click context menu on PRTreeItem (D-01)
+		vscode.commands.registerCommand('easyReview.generateReview', async (item) => {
+			const currentStore = getStore();
+			if (!currentStore) {
+				vscode.window.showErrorMessage('Easy Review: Storage not available.');
+				return;
+			}
+			if (!item?.pr) {
+				vscode.window.showErrorMessage('Easy Review: No PR selected.');
+				return;
+			}
+			if (!credentialStore) {
+				vscode.window.showErrorMessage('Easy Review: Not signed in to GitHub.');
+				return;
+			}
+			const panel = ReviewPanel.getOrCreate(context, currentStore);
+			await panel.startReview(item.pr, credentialStore);
+		}),
+
+		// Analyze project — command palette (PROJ-01, D-31)
+		vscode.commands.registerCommand('easyReview.analyzeProject', async () => {
+			const currentStore = getStore();
+			if (!currentStore) {
+				vscode.window.showErrorMessage('Easy Review: Storage not available.');
+				return;
+			}
+
+			// Pitfall 5 prevention: check workspace root before running
+			const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+			if (!workspaceRoot) {
+				vscode.window.showErrorMessage(
+					'Easy Review: Open a workspace folder before running project analysis.'
+				);
+				return;
+			}
+
+			await vscode.window.withProgress(
+				{
+					location: vscode.ProgressLocation.Notification,
+					title: 'Easy Review: Analyzing project...',
+					cancellable: true,
+				},
+				async (progress, token) => {
+					try {
+						progress.report({ message: 'Reading project files...' });
+						const contextText = await collectProjectContext(workspaceRoot);
+
+						if (token.isCancellationRequested) { return; }
+
+						currentStore.saveProjectAnalysis({
+							collectedAt: Date.now(),
+							contextText,
+						});
+
+						// Count source files from src/ listing
+						const srcLines = contextText.match(/## src\/ structure\n([\s\S]*?)(\n---|\n##|$)/)?.[1]?.split('\n').filter(Boolean) ?? [];
+
+						// Count recent commits
+						const commitLines = contextText.match(/## Recent commits\n([\s\S]*?)(\n---|\n##|$)/)?.[1]?.split('\n').filter(Boolean) ?? [];
+
+						vscode.window.showInformationMessage(
+							`Project analysis complete. Collected: README.md, ${srcLines.length} source files, ${commitLines.length} recent commits.`
+						);
+					} catch (err: unknown) {
+						const msg = err instanceof Error ? err.message : String(err);
+						vscode.window.showErrorMessage(`Easy Review: Project analysis failed. ${msg}`);
+					}
+				}
+			);
+		}),
+
+		// Analyze PR history — command palette (PROJ-02, D-37)
+		vscode.commands.registerCommand('easyReview.analyzePRHistory', async () => {
+			const currentStore = getStore();
+			if (!currentStore) {
+				vscode.window.showErrorMessage('Easy Review: Storage not available.');
+				return;
+			}
+			if (!credentialStore) {
+				vscode.window.showErrorMessage('Easy Review: Not signed in to GitHub.');
+				return;
+			}
+
+			// Require a PR to be in the store to determine owner/repo
+			const existingPRs = currentStore.getPRs();
+			if (existingPRs.length === 0) {
+				vscode.window.showErrorMessage(
+					'Easy Review: Add at least one PR first so the extension knows which repo to analyze.'
+				);
+				return;
+			}
+			const [owner, repo] = existingPRs[0].repoId.split('/');
+
+			await vscode.window.withProgress(
+				{
+					location: vscode.ProgressLocation.Notification,
+					title: 'Easy Review: Fetching PR history...',
+					cancellable: false,
+				},
+				async () => {
+					try {
+						const hub = credentialStore!.getHub(AuthProvider.github);
+						if (!hub) { throw new Error('Not signed in to GitHub.'); }
+						const octokit = hub.octokit.api;
+
+						const historySection = await fetchPRHistory(octokit, owner, repo);
+
+						// Append to existing project analysis or create new
+						const existing = currentStore.getProjectAnalysis();
+						const newContext = existing
+							? existing.contextText + '\n\n---\n\n' + historySection
+							: historySection;
+
+						currentStore.saveProjectAnalysis({
+							collectedAt: Date.now(),
+							contextText: newContext,
+						});
+
+						vscode.window.showInformationMessage(
+							'Easy Review: PR history analysis complete. Context updated.'
+						);
+					} catch (err: unknown) {
+						const msg = err instanceof Error ? err.message : String(err);
+						vscode.window.showErrorMessage(`Easy Review: PR history analysis failed. ${msg}`);
+					}
+				}
+			);
 		}),
 
 		// Test CLI integration — proves the full subprocess streaming chain works (Phase 1 validation)

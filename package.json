@@ -97,6 +97,17 @@
 					"default": "",
 					"description": "Absolute path to the claude CLI executable. Leave empty for auto-detection."
 				},
+				"easyReview.codexPath": {
+					"type": "string",
+					"default": "",
+					"description": "Path to the codex CLI executable. Leave empty to use 'codex' from PATH."
+				},
+				"easyReview.activeModel": {
+					"type": "string",
+					"enum": ["claude", "codex"],
+					"default": "claude",
+					"description": "Which AI CLI to use for review generation: 'claude' (Anthropic Claude) or 'codex' (OpenAI Codex)."
+				},
 				"githubPullRequests.pullRequestTitle": {
 					"deprecationMessage": "The pull request title now uses the same defaults as GitHub, and can be edited before create.",
 					"type": "string",
@@ -1949,6 +1960,21 @@
 				"command": "easy-review.testCLI",
 				"title": "Test CLI Integration",
 				"category": "Easy Review"
+			},
+			{
+				"command": "easyReview.generateReview",
+				"title": "Generate Review",
+				"category": "Easy Review"
+			},
+			{
+				"command": "easyReview.analyzeProject",
+				"title": "Analyze Project",
+				"category": "Easy Review"
+			},
+			{
+				"command": "easyReview.analyzePRHistory",
+				"title": "Analyze PR History",
+				"category": "Easy Review"
 			}
 		],
 		"viewsWelcome": [
@@ -3184,6 +3210,11 @@
 					"command": "easy-review.removePR",
 					"when": "viewItem =~ /^pr-/",
 					"group": "inline"
+				},
+				{
+					"command": "easyReview.generateReview",
+					"when": "view == easy-review.prList && viewItem =~ /^pr-/",
+					"group": "inline"
 				}
 			],
 			"commentsView/commentThread/context": [
@@ -4244,6 +4275,7 @@
 		"@types/webpack-env": "^1.16.0",
 		"@typescript-eslint/eslint-plugin": "^8.44.0",
 		"@typescript-eslint/parser": "^8.44.0",
+		"@vitejs/plugin-react": "^6.0.1",
 		"@vitest/coverage-v8": "^4.1.2",
 		"@vscode/dts": "^0.4.1",
 		"@vscode/test-cli": "^0.0.11",
