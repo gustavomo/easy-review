@@ -1,8 +1,8 @@
 import Database from 'better-sqlite3';
 import * as vscode from 'vscode';
-import { PR_TABLE_DDL, REVIEWS_TABLE_DDL, PROJECT_ANALYSES_TABLE_DDL } from './schema';
+import { PR_TABLE_DDL, PROJECT_ANALYSES_TABLE_DDL, REVIEWS_TABLE_DDL } from './schema';
 import type { StorageAdapter } from './StorageAdapter';
-import type { StoredPR, StoredReview, StoredProjectAnalysis } from './types';
+import type { StoredPR, StoredProjectAnalysis, StoredReview } from './types';
 
 export class SQLiteStore implements StorageAdapter {
   private db!: Database.Database;

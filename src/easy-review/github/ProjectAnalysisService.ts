@@ -1,6 +1,6 @@
+import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as cp from 'child_process';
 import type { Octokit } from '@octokit/core';
 
 /**

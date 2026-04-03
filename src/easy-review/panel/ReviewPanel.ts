@@ -1,21 +1,21 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { AuthProvider } from '../../common/authentication';
+import type { CredentialStore } from '../../github/credentials';
+import type {
+  ExtensionMessage,
+  ParsedReview,
+  WebviewMessage,
+  WebviewState,
+} from '../../shared/types';
 import { ClaudeAdapter } from '../cli/ClaudeAdapter';
 import { CodexAdapter } from '../cli/CodexAdapter';
-import { runReview } from '../cli/ReviewRunner';
-import { parseReview } from '../cli/ReviewParser';
 import { buildPrompt } from '../cli/PromptBuilder';
+import { parseReview } from '../cli/ReviewParser';
+import { runReview } from '../cli/ReviewRunner';
 import { fetchPRDiff } from '../github/DiffFetcher';
 import type { StorageAdapter } from '../storage/StorageAdapter';
 import type { StoredPR } from '../storage/types';
-import type {
-  ExtensionMessage,
-  WebviewMessage,
-  WebviewState,
-  ParsedReview,
-} from '../../shared/types';
-import { AuthProvider } from '../../common/authentication';
-import type { CredentialStore } from '../../github/credentials';
 
 /**
  * Singleton VS Code WebviewPanel that orchestrates AI review generation.

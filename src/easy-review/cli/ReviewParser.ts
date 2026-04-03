@@ -1,4 +1,4 @@
-import type { ReviewSection, Finding } from '../../shared/types';
+import type { Finding, ReviewSection } from '../../shared/types';
 
 /**
  * Splits raw Claude/Codex CLI output into 6 ReviewSection objects.

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
 import type { ExtensionMessage, WebviewMessage, WebviewState } from '@shared/types';
-import { PanelHeader } from './PanelHeader';
-import { IdleView } from './IdleView';
-import { StreamingView } from './StreamingView';
+import React, { useEffect, useState } from 'react';
 import { ErrorView } from './ErrorView';
-
+import { IdleView } from './IdleView';
+import { PanelHeader } from './PanelHeader';
 import { ReviewDocument } from './ReviewDocument';
+import { StreamingView } from './StreamingView';
+
 
 interface ReviewPanelProps {
   vscode: { postMessage(msg: WebviewMessage): void };

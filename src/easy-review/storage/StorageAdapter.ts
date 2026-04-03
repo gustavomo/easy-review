@@ -1,4 +1,4 @@
-import type { StoredPR, StoredReview, StoredProjectAnalysis } from './types';
+import type { StoredPR, StoredProjectAnalysis, StoredReview } from './types';
 
 /**
  * Abstract storage interface. Implemented by SQLiteStore (primary) and

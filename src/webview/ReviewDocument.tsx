@@ -1,6 +1,6 @@
-import React from 'react';
-import { marked } from 'marked';
 import type { ParsedReview } from '@shared/types';
+import { marked } from 'marked';
+import React from 'react';
 import { CollapsibleSection } from './CollapsibleSection';
 import { FindingsSection } from './FindingsSection';
 

@@ -3,15 +3,15 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { disposeOutputChannel, getOutputChannel } from './cli/OutputChannelReporter';
 import { resolveClaudePath } from './cli/PathResolver';
-import { parsePRUrl } from './github/PRUrlParser';
 import { collectProjectContext, fetchPRHistory } from './github/ProjectAnalysisService';
-import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
+import { PRPersistenceService } from './github/PRPersistenceService';
+import { parsePRUrl } from './github/PRUrlParser';
 import { ReviewPanel } from './panel/ReviewPanel';
+import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
 import { SQLiteStore } from './storage/SQLiteStore';
 import type { StorageAdapter } from './storage/StorageAdapter';
 import { AuthProvider } from '../common/authentication';
 import { CredentialStore } from '../github/credentials';
-import { PRPersistenceService } from './github/PRPersistenceService';
 
 // Module-level references so other commands can access them
 let _provider: EasyReviewPRsProvider | undefined;
