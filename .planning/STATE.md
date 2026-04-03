@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02.1-01-PLAN.md
-last_updated: "2026-04-03T23:28:55.612Z"
+stopped_at: Completed 02.1-03-PLAN.md
+last_updated: "2026-04-03T23:33:53.214Z"
 last_activity: 2026-04-03
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 21
-  completed_plans: 18
+  completed_plans: 19
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 02.1 (in-editor-pr-navigation) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-04-03
 
@@ -67,6 +67,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 02-ai-review-generation P07 | 15 | 1 tasks | 1 files |
 | Phase 02 P08 | 18 | 2 tasks | 4 files |
 | Phase 02.1-in-editor-pr-navigation P01 | 3 | 2 tasks | 7 files |
+| Phase 02.1-in-editor-pr-navigation P03 | 4 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,9 @@ Recent decisions affecting current work:
 - [Phase 02]: analyzePRHistory appends history section to existing contextText rather than replacing — preserves workspace analysis
 - [Phase 02.1-01]: vitest config include expanded to src/easy-review/**/*.test.ts — test files co-located with source per plan spec
 - [Phase 02.1-01]: buildDirectoryTree compacts virtual root (label='') by returning root.children — avoids spurious top-level directory wrapper
+- [Phase 02.1-03]: Uri.from added to vscode mock — required for encodeDiffUri to construct URIs in test environment
+- [Phase 02.1-03]: EMPTY sentinel checked before any Octokit call in EasyReviewDiffProvider — prevents 404 for added/deleted files
+- [Phase 02.1-03]: In-memory URI cache in EasyReviewDiffProvider keyed by uri.toString() — VS Code calls provideTextDocumentContent twice per diff view
 
 ### Roadmap Evolution
 
@@ -136,6 +140,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T23:28:50.890Z
-Stopped at: Completed 02.1-01-PLAN.md
+Last session: 2026-04-03T23:33:53.210Z
+Stopped at: Completed 02.1-03-PLAN.md
 Resume file: None
