@@ -17,9 +17,15 @@ export const workspace = {
   }),
 };
 export const EventEmitter = class {
-  event = () => ({ dispose: () => {} });
-  fire(_data: unknown) {}
-  dispose() {}
+  private _listeners: ((...args: unknown[]) => void)[] = [];
+  event = (listener: (...args: unknown[]) => void) => {
+    this._listeners.push(listener);
+    return { dispose: () => { this._listeners = this._listeners.filter(l => l !== listener); } };
+  };
+  fire(data: unknown) {
+    for (const l of this._listeners) { l(data); }
+  }
+  dispose() { this._listeners = []; }
 };
 export const TreeItem = class {
   constructor(public label: string, public collapsibleState?: number) {}
