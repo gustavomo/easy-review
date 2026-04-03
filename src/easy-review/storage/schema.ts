@@ -17,3 +17,32 @@ export const PR_TABLE_DDL = `
     PRIMARY KEY (repo_id, pr_number)
   ) STRICT;
 `;
+
+/**
+ * DDL for the reviews table. Phase 2 — REV-04, REV-05, VIEW-03.
+ * Multiple reviews per PR are preserved (no unique constraint on repo_id + pr_number).
+ */
+export const REVIEWS_TABLE_DDL = `
+  CREATE TABLE IF NOT EXISTS reviews (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    repo_id     TEXT    NOT NULL,
+    pr_number   INTEGER NOT NULL,
+    model_used  TEXT    NOT NULL,
+    created_at  INTEGER NOT NULL,
+    review_text TEXT    NOT NULL,
+    parsed_json TEXT    NOT NULL DEFAULT '{}'
+  ) STRICT;
+`;
+
+/**
+ * DDL for the project_analyses table. Phase 2 — PROJ-03.
+ * Single-row policy (D-35): only one analysis row is retained at any time.
+ * Enforced via DELETE + INSERT in saveProjectAnalysis().
+ */
+export const PROJECT_ANALYSES_TABLE_DDL = `
+  CREATE TABLE IF NOT EXISTS project_analyses (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    collected_at INTEGER NOT NULL,
+    context_text TEXT    NOT NULL
+  ) STRICT;
+`;

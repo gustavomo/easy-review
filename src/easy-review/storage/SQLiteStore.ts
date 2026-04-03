@@ -1,8 +1,8 @@
 import Database from 'better-sqlite3';
 import * as vscode from 'vscode';
-import { PR_TABLE_DDL } from './schema';
+import { PR_TABLE_DDL, REVIEWS_TABLE_DDL, PROJECT_ANALYSES_TABLE_DDL } from './schema';
 import type { StorageAdapter } from './StorageAdapter';
-import type { StoredPR } from './types';
+import type { StoredPR, StoredReview, StoredProjectAnalysis } from './types';
 
 export class SQLiteStore implements StorageAdapter {
   private db!: Database.Database;
@@ -14,6 +14,8 @@ export class SQLiteStore implements StorageAdapter {
       this.db.pragma('journal_mode = WAL');   // D-11
       this.db.pragma('integrity_check');       // D-11
       this.db.exec(PR_TABLE_DDL);
+      this.db.exec(REVIEWS_TABLE_DDL);
+      this.db.exec(PROJECT_ANALYSES_TABLE_DDL);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       vscode.window.showErrorMessage(
@@ -58,6 +60,44 @@ export class SQLiteStore implements StorageAdapter {
 
   close(): void {
     this.db?.close();
+  }
+
+  saveReview(review: Omit<StoredReview, 'id'>): number {
+    const stmt = this.db.prepare(`
+      INSERT INTO reviews (repo_id, pr_number, model_used, created_at, review_text, parsed_json)
+      VALUES (@repoId, @prNumber, @modelUsed, @createdAt, @reviewText, @parsedJson)
+    `);
+    const result = stmt.run(review);
+    return result.lastInsertRowid as number;
+  }
+
+  getReviews(repoId: string, prNumber: number): StoredReview[] {
+    const rows = this.db.prepare(`
+      SELECT id, repo_id AS repoId, pr_number AS prNumber, model_used AS modelUsed,
+             created_at AS createdAt, review_text AS reviewText, parsed_json AS parsedJson
+      FROM reviews
+      WHERE repo_id = ? AND pr_number = ?
+      ORDER BY created_at DESC
+    `).all(repoId, prNumber) as StoredReview[];
+    return rows;
+  }
+
+  saveProjectAnalysis(analysis: Omit<StoredProjectAnalysis, 'id'>): void {
+    // Single-row policy (D-35): delete existing row, then insert fresh
+    this.db.exec('DELETE FROM project_analyses');
+    this.db.prepare(`
+      INSERT INTO project_analyses (collected_at, context_text)
+      VALUES (@collectedAt, @contextText)
+    `).run(analysis);
+  }
+
+  getProjectAnalysis(): StoredProjectAnalysis | null {
+    const row = this.db.prepare(`
+      SELECT id, collected_at AS collectedAt, context_text AS contextText
+      FROM project_analyses
+      LIMIT 1
+    `).get() as StoredProjectAnalysis | undefined;
+    return row ?? null;
   }
 
   private rowToStoredPR(row: Record<string, unknown>): StoredPR {
