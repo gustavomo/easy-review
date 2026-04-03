@@ -26,6 +26,9 @@ export const TreeItem = class {
 };
 export const TreeItemCollapsibleState = { None: 0, Collapsed: 1, Expanded: 2 };
 export const ThemeIcon = class {
+  constructor(public id: string, public color?: unknown) {}
+};
+export const ThemeColor = class {
   constructor(public id: string) {}
 };
 export const Uri = {
