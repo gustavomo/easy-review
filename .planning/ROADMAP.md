@@ -54,7 +54,7 @@ Plans:
 **Plans**: 9 plans
 Plans:
 - [x] 02-01-PLAN.md — Wave 0 test stubs: review-runner, review-parser, prompt-builder, project-analysis, sqlite (extended)
-- [ ] 02-02-PLAN.md — SQLite schema extension (reviews + project_analyses tables) + StorageAdapter methods + shared message types
+- [x] 02-02-PLAN.md — SQLite schema extension (reviews + project_analyses tables) + StorageAdapter methods + shared message types
 - [ ] 02-03-PLAN.md — DiffFetcher (Octokit diff fetch) + PromptBuilder (6-section prompt) + ReviewParser (section splitter)
 - [ ] 02-04-PLAN.md — ClaudeAdapter + CodexAdapter + ReviewRunner (200ms batch streaming + CancellationToken)
 - [ ] 02-05-PLAN.md — React webview Part 1: entry point + ReviewPanel state machine + PanelHeader + IdleView + ErrorView + StreamingView
@@ -94,6 +94,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 8/8 | Complete   | 2026-04-03 |
-| 2. AI Review Generation | 1/9 | In Progress|  |
+| 2. AI Review Generation | 2/9 | In Progress|  |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |

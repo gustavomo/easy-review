@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-04-03T21:16:56.201Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-04-03T21:22:42.785Z"
 last_activity: 2026-04-03
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 17
-  completed_plans: 9
+  completed_plans: 10
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 02 (ai-review-generation) — EXECUTING
-Plan: 2 of 9
+Plan: 3 of 9
 Status: Ready to execute
 Last activity: 2026-04-03
 
@@ -60,6 +60,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 01 P07 | 2 | 1 tasks | 1 files |
 | Phase 01 P08 | 5 | 2 tasks | 2 files |
 | Phase 02 P01 | 2 | 2 tasks | 5 files |
+| Phase 02 P02 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ Recent decisions affecting current work:
 - [Phase 01]: SubprocessRunner uses settle-once flag to prevent double-resolve when close event and cancellation fire simultaneously
 - [Phase 01]: PRW-02 Phase 1 satisfied via browser-open (vscode.env.openExternal) — full in-editor diff via PullRequestModel deferred to future phase
 - [Phase 01]: activateEasyReview moved into deferredActivate() so credentialStore is available; parameter made optional for test backward compatibility
+- [Phase 02]: Single-row policy (D-35) for project_analyses: DELETE + INSERT instead of UPSERT — ensures only one analysis row exists
+- [Phase 02]: src/shared/types.ts kept browser-compatible (no vscode/Node imports) so Vite webview build can import via @shared alias
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T21:16:56.196Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-04-03T21:22:42.782Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
