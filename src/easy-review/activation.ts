@@ -275,6 +275,32 @@ export async function activateEasyReview(
 			);
 		}),
 
+		// View last stored project analysis (VIEW-04)
+		vscode.commands.registerCommand('easyReview.viewAnalysis', async () => {
+			const currentStore = getStore();
+			if (!currentStore) {
+				vscode.window.showErrorMessage('Easy Review: Storage not available.');
+				return;
+			}
+			const analysis = currentStore.getProjectAnalysis();
+			if (!analysis) {
+				vscode.window.showErrorMessage(
+					'Easy Review: No project analysis found. Run "Easy Review: Analyze Project" first.'
+				);
+				return;
+			}
+			// Open contextText as an untitled .md document (read-only preview, no file written to disk)
+			const uri = vscode.Uri.parse(`untitled:easy-review-analysis-${analysis.collectedAt}.md`);
+			const doc = await vscode.workspace.openTextDocument(uri);
+			await vscode.window.showTextDocument(doc, { preview: true, viewColumn: vscode.ViewColumn.Beside });
+			const editor = vscode.window.activeTextEditor;
+			if (editor && editor.document.uri.toString() === doc.uri.toString()) {
+				await editor.edit(editBuilder => {
+					editBuilder.insert(new vscode.Position(0, 0), analysis.contextText);
+				});
+			}
+		}),
+
 		// Test CLI integration — proves the full subprocess streaming chain works (Phase 1 validation)
 		vscode.commands.registerCommand('easy-review.testCLI', async () => {
 			const path = resolveClaudePath() ??

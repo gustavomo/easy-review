@@ -241,11 +241,21 @@ export class ReviewPanel {
     }
   }
 
+  private postStateSync(): void {
+    const analysis = this.store.getProjectAnalysis();
+    this.postMessage({
+      type: 'stateSync',
+      state: this.currentState,
+      hasAnalysis: analysis !== null,
+      analysisDate: analysis?.collectedAt,
+    });
+  }
+
   private handleWebviewMessage(msg: WebviewMessage): void {
     switch (msg.type) {
       case 'ready':
         // State-sync handshake (RESEARCH.md Pattern 3 + Pitfall 3)
-        this.postMessage({ type: 'stateSync', state: this.currentState });
+        this.postStateSync();
         break;
 
       case 'cancelReview':
@@ -284,11 +294,15 @@ export class ReviewPanel {
 
       case 'requestState':
         // Secondary state request (in addition to ready handshake)
-        this.postMessage({ type: 'stateSync', state: this.currentState });
+        this.postStateSync();
         break;
 
       case 'analyzeProject':
         vscode.commands.executeCommand('easyReview.analyzeProject');
+        break;
+
+      case 'viewAnalysis':
+        vscode.commands.executeCommand('easyReview.viewAnalysis');
         break;
     }
   }
