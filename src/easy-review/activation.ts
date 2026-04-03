@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
@@ -29,7 +30,9 @@ export async function activateEasyReview(
 	// 1. Initialize SQLite store (DB-01, DB-02)
 	const store = new SQLiteStore();
 	try {
-		const dbPath = path.join(context.globalStorageUri.fsPath, 'easy-review.db');
+		const storageDir = context.globalStorageUri.fsPath;
+		fs.mkdirSync(storageDir, { recursive: true });
+		const dbPath = path.join(storageDir, 'easy-review.db');
 		store.initialize(dbPath);
 	} catch {
 		// showErrorMessage already called inside SQLiteStore.initialize()
