@@ -5,8 +5,7 @@ import { IdleView } from './IdleView';
 import { StreamingView } from './StreamingView';
 import { ErrorView } from './ErrorView';
 
-// ReviewDocument is imported in Plan 06 — use a placeholder until then
-// import { ReviewDocument } from './ReviewDocument';
+import { ReviewDocument } from './ReviewDocument';
 
 interface ReviewPanelProps {
   vscode: { postMessage(msg: WebviewMessage): void };
@@ -83,15 +82,7 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
           <StreamingView text={streamingText} />
         )}
         {state.status === 'complete' && (
-          // Plan 06 will replace this placeholder with <ReviewDocument review={state.review} />
-          <div style={{ fontFamily: 'var(--vscode-font-family)', fontSize: '13px', color: 'var(--vscode-editor-foreground)' }}>
-            {state.review.sections.map(s => (
-              <div key={s.title}>
-                <h2 style={{ fontSize: '16px', fontWeight: 600 }}>{s.title}</h2>
-                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{s.content}</pre>
-              </div>
-            ))}
-          </div>
+          <ReviewDocument review={state.review} />
         )}
         {state.status === 'error' && (
           <ErrorView message={state.message} onRetry={() => vscode.postMessage({ type: 'retryReview' })} />
