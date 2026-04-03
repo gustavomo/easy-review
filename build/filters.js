@@ -25,6 +25,9 @@ module.exports.unicodeFilter = [
 	'**',
 	// except specific files
 	'!documentation/**/*',
+	'!.planning/**',
+	'!.claude/**',
+	'!.codex/**',
 	'!**/ThirdPartyNotices.txt',
 	'!**/LICENSE.{txt,rtf}',
 	'!**/LICENSE',
@@ -39,6 +42,9 @@ module.exports.indentationFilter = [
 	// except specific files
 	'!CHANGELOG.md',
 	'!documentation/**/*',
+	'!.planning/**',
+	'!.claude/**',
+	'!.codex/**',
 	'!**/ThirdPartyNotices.txt',
 	'!**/LICENSE.{txt,rtf}',
 	'!**/LICENSE',
@@ -56,6 +62,9 @@ module.exports.indentationFilter = [
 module.exports.copyrightFilter = [
 	'**',
 	'!documentation/**/*',
+	'!.planning/**',
+	'!.claude/**',
+	'!.codex/**',
 	'!.readme/**/*',
 	'!.vscode/**/*',
 	'!.github/**/*',

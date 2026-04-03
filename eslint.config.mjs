@@ -22,7 +22,9 @@ export default defineConfig([
 			'src/api/api*.d.ts',
 			'src/test/**',
 			'**/*.{js,mjs,cjs}',
-			'.vscode-test/**/*'
+			'.vscode-test/**/*',
+			'vite.webview.config.ts',
+			'vitest.config.ts'
 		]
 	},
 
