@@ -32,7 +32,7 @@ export function runClaudeStreaming(
   return new Promise((resolve, reject) => {
     const proc = cp.spawn(
       claudePath,
-      ['--print', '--output-format', 'stream-json', '--include-partial-messages'],
+      ['--print', '--verbose', '--output-format', 'stream-json', '--include-partial-messages'],
       { stdio: ['pipe', 'pipe', 'pipe'] }
     );
 
@@ -48,7 +48,12 @@ export function runClaudeStreaming(
     rl.on('line', (line) => {
       try {
         const event = JSON.parse(line);
-        const text = event.text ?? event.result ?? '';
+        // stream-json with --verbose nests text in stream_event deltas
+        const text =
+          event.event?.delta?.text ??           // stream_event content_block_delta
+          event.text ??                          // legacy flat format
+          event.result ??                        // legacy result field
+          '';
         if (text) {
           opts.outputChannel.append(text);
           fullOutput += text;
