@@ -1,8 +1,8 @@
 import Database from 'better-sqlite3';
 import * as vscode from 'vscode';
+import { PR_TABLE_DDL } from './schema';
 import type { StorageAdapter } from './StorageAdapter';
 import type { StoredPR } from './types';
-import { PR_TABLE_DDL } from './schema';
 
 export class SQLiteStore implements StorageAdapter {
   private db!: Database.Database;

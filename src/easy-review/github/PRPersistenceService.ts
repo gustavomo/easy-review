@@ -1,7 +1,7 @@
 import type { Octokit } from '@octokit/rest';
 import { fetchPRByNumber } from './AllStatesPRFetcher';
-import type { StorageAdapter, StoredPR } from '../storage/StorageAdapter';
 import type { EasyReviewPRsProvider } from '../providers/EasyReviewPRsProvider';
+import type { StorageAdapter, StoredPR } from '../storage/StorageAdapter';
 
 /**
  * Orchestrates: fetch from GitHub → convert to StoredPR →

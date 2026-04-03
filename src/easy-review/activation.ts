@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { disposeOutputChannel, getOutputChannel } from './cli/OutputChannelReporter';
+import { resolveClaudePath } from './cli/PathResolver';
+import { parsePRUrl } from './github/PRUrlParser';
 import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
 import { SQLiteStore } from './storage/SQLiteStore';
 import type { StorageAdapter } from './storage/StorageAdapter';
-import { parsePRUrl } from './github/PRUrlParser';
-import { resolveClaudePath } from './cli/PathResolver';
-import { getOutputChannel, disposeOutputChannel } from './cli/OutputChannelReporter';
-import { CredentialStore } from '../github/credentials';
 import { AuthProvider } from '../common/authentication';
+import { CredentialStore } from '../github/credentials';
 import { PRPersistenceService } from './github/PRPersistenceService';
 
 // Module-level references so other commands can access them

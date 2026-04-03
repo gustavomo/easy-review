@@ -5,7 +5,6 @@
 
 import TelemetryReporter from '@vscode/extension-telemetry';
 import * as vscode from 'vscode';
-import { activateEasyReview, deactivateEasyReview } from './easy-review/activation';
 
 import { LiveShare } from 'vsls/vscode.js';
 import { PostCommitCommandsProvider, Repository } from './api/api';
@@ -22,6 +21,7 @@ import { TemporaryState } from './common/temporaryState';
 import { Schemes } from './common/uri';
 import { isDescendant } from './common/utils';
 import { EXTENSION_ID, FOCUS_REVIEW_MODE } from './constants';
+import { activateEasyReview, deactivateEasyReview } from './easy-review/activation';
 import { createExperimentationService, ExperimentationTelemetry } from './experimentationService';
 import { CopilotRemoteAgentManager } from './github/copilotRemoteAgent';
 import { CredentialStore } from './github/credentials';
