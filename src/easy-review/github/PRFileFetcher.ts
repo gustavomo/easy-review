@@ -1,3 +1,4 @@
+import type { Octokit } from '@octokit/rest';
 import type { PRFileChange } from '../providers/EasyReviewTreeNodes';
 
 /**
@@ -11,11 +12,12 @@ import type { PRFileChange } from '../providers/EasyReviewTreeNodes';
  * vast majority of PRs. Large PRs (>100 files) will only show first 100.
  */
 export async function fetchPRFiles(
-  octokit: any,
+  octokit: Octokit,
   owner: string,
   repo: string,
   prNumber: number,
 ): Promise<PRFileChange[]> {
+  // eslint-disable-next-line rulesdir/no-cast-to-any
   const response = await (octokit as any).rest.pulls.listFiles({
     owner,
     repo,

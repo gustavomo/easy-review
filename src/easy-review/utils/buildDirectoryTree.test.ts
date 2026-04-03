@@ -1,7 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { buildDirectoryTree } from './directoryTree';
-import { DirectoryNode, FileNode } from '../providers/EasyReviewTreeNodes';
-import type { PRFileChange } from '../providers/EasyReviewTreeNodes';
+import { DirectoryNode, FileNode, type PRFileChange } from '../providers/EasyReviewTreeNodes';
 import type { StoredPR } from '../storage/types';
 
 const makePR = (): StoredPR => ({

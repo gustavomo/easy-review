@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { EasyReviewPRsProvider } from './EasyReviewPRsProvider';
 import {
-  EasyReviewTreeNode,
   DirectoryNode,
+  EasyReviewTreeNode,
+  ErrorNode,
   FileNode,
   LoadingNode,
-  ErrorNode,
   PRFileChange,
 } from './EasyReviewTreeNodes';
 import { PRTreeItem } from './PRTreeItem';
-import { EasyReviewPRsProvider } from './EasyReviewPRsProvider';
 import type { StoredPR } from '../storage/types';
 
 // Helper: create a minimal StoredPR

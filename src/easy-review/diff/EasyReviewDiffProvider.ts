@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { decodeDiffUri } from './diffUri';
 import { AuthProvider } from '../../common/authentication';
 import type { CredentialStore } from '../../github/credentials';
-import { decodeDiffUri } from './diffUri';
 
 /**
  * TextDocumentContentProvider for the easy-review-diff:// URI scheme.
@@ -51,6 +51,7 @@ export class EasyReviewDiffProvider implements vscode.TextDocumentContentProvide
 
     const octokit = hub.octokit.api;
     try {
+      // eslint-disable-next-line rulesdir/no-cast-to-any
       const response = await (octokit as any).rest.repos.getContent({
         owner,
         repo,
