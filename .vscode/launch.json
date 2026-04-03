@@ -8,7 +8,8 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--disable-extension=GitHub.vscode-pull-request-github-insiders"
+				"--disable-extension=GitHub.vscode-pull-request-github-insiders",
+				"--disable-extension=GitHub.vscode-pull-request-github"
 			],
 			"skipFiles": [
 				"<node_internals>/**/*.js",
@@ -30,7 +31,8 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--disable-extension=GitHub.vscode-pull-request-github-insiders"
+				"--disable-extension=GitHub.vscode-pull-request-github-insiders",
+				"--disable-extension=GitHub.vscode-pull-request-github"
 			],
 			"skipFiles": [
 				"<node_internals>/**/*.js",
@@ -49,7 +51,8 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--disable-extension=GitHub.vscode-pull-request-github-insiders"
+				"--disable-extension=GitHub.vscode-pull-request-github-insiders",
+				"--disable-extension=GitHub.vscode-pull-request-github"
 			],
 			"skipFiles": [
 				"<node_internals>/**/*.js",
@@ -70,7 +73,8 @@
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--disable-extension=GitHub.vscode-pull-request-github-insiders"
+				"--disable-extension=GitHub.vscode-pull-request-github-insiders",
+				"--disable-extension=GitHub.vscode-pull-request-github"
 			],
 			"skipFiles": [
 				"<node_internals>/**/*.js",

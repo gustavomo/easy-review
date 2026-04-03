@@ -9,6 +9,7 @@ esbuild.build({
 	format: 'cjs',
 	platform: 'node',
 	target: 'node22',
+	mainFields: ['module', 'main'],
 	sourcemap: true,
 	minify: process.env.NODE_ENV === 'production',
 	loader: {
