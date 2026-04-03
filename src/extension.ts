@@ -351,7 +351,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<GitApi
 
 	const deferred = await deferredActivate(context, showPRController);
 	await commands.setContext(contexts.ACTIVATED, true);
-	activateEasyReview(context);
+	await activateEasyReview(context);
 	return deferred;
 }
 

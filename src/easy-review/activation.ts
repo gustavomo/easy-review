@@ -3,6 +3,8 @@ import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
 import { SQLiteStore } from './storage/SQLiteStore';
 import type { StorageAdapter } from './storage/StorageAdapter';
 import { parsePRUrl } from './github/PRUrlParser';
+import { resolveClaudePath } from './cli/PathResolver';
+import { getOutputChannel, disposeOutputChannel } from './cli/OutputChannelReporter';
 
 // Module-level references so other commands can access them
 let _provider: EasyReviewPRsProvider | undefined;
@@ -16,7 +18,7 @@ export function getStore(): StorageAdapter | undefined { return _store; }
  * All Easy Review feature registration happens here.
  * Phase 1: registers tree view, commands, and CLI subprocess infrastructure.
  */
-export function activateEasyReview(context: vscode.ExtensionContext): void {
+export async function activateEasyReview(context: vscode.ExtensionContext): Promise<void> {
 	// 1. Initialize SQLite store (DB-01, DB-02)
 	const store = new SQLiteStore();
 	try {
@@ -116,7 +118,65 @@ export function activateEasyReview(context: vscode.ExtensionContext): void {
 				currentProvider.removePR(item.pr.repoId, item.pr.prNumber);
 			}
 		}),
+
+		// Test CLI integration — proves the full subprocess streaming chain works (Phase 1 validation)
+		vscode.commands.registerCommand('easy-review.testCLI', async () => {
+			const path = resolveClaudePath() ??
+				context.globalState.get<string>('easyReview.claudePath.resolved');
+
+			if (!path) {
+				vscode.window.showErrorMessage(
+					'Easy Review: claude CLI not found. Configure easyReview.claudePath in settings.'
+				);
+				return;
+			}
+
+			const outputChannel = getOutputChannel();
+			outputChannel.show();
+
+			const { runClaudeStreaming } = await import('./cli/SubprocessRunner');
+			const tokenSource = new vscode.CancellationTokenSource();
+
+			try {
+				await runClaudeStreaming(path, {
+					prompt: 'Say "Easy Review Phase 1 integration test: OK" and nothing else.',
+					token: tokenSource.token,
+					outputChannel,
+				});
+				vscode.window.showInformationMessage('Easy Review: CLI test passed. See Output Channel for results.');
+			} catch (err: unknown) {
+				const msg = err instanceof Error ? err.message : String(err);
+				vscode.window.showErrorMessage(`Easy Review: CLI test failed. ${msg}`);
+			} finally {
+				tokenSource.dispose();
+			}
+		}),
 	);
+
+	// CFG-01 + CFG-02: Detect claude CLI path; show setup notification on first activation if not found
+	const claudePath = resolveClaudePath();
+	if (claudePath) {
+		// Store the resolved path so it persists across restarts (avoids re-running shell detection every activation)
+		await context.globalState.update('easyReview.claudePath.resolved', claudePath);
+	} else {
+		// Show setup notification — but only once per install to avoid notification fatigue (CFG-02)
+		const alreadyShown = context.globalState.get<boolean>('easyReview.claudeNotFoundShown');
+		if (!alreadyShown) {
+			await context.globalState.update('easyReview.claudeNotFoundShown', true);
+			const action = await vscode.window.showWarningMessage(
+				'Easy Review: The `claude` CLI was not found in PATH. ' +
+				'AI review generation will not work until the path is configured.',
+				'Configure Path',
+				'Dismiss'
+			);
+			if (action === 'Configure Path') {
+				await vscode.commands.executeCommand(
+					'workbench.action.openSettings',
+					'easyReview.claudePath'
+				);
+			}
+		}
+	}
 }
 
 /**
@@ -127,4 +187,5 @@ export function deactivateEasyReview(): void {
 	_store?.close();
 	_provider = undefined;
 	_store = undefined;
+	disposeOutputChannel();
 }

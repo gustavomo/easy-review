@@ -1944,6 +1944,11 @@
 				"title": "Remove PR",
 				"category": "Easy Review",
 				"icon": "$(trash)"
+			},
+			{
+				"command": "easy-review.testCLI",
+				"title": "Test CLI Integration",
+				"category": "Easy Review"
 			}
 		],
 		"viewsWelcome": [
