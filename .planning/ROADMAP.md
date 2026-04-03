@@ -58,8 +58,8 @@ Plans:
 - [x] 02-03-PLAN.md — DiffFetcher (Octokit diff fetch) + PromptBuilder (6-section prompt) + ReviewParser (section splitter)
 - [x] 02-04-PLAN.md — ClaudeAdapter + CodexAdapter + ReviewRunner (200ms batch streaming + CancellationToken)
 - [x] 02-05-PLAN.md — React webview Part 1: entry point + ReviewPanel state machine + PanelHeader + IdleView + ErrorView + StreamingView
-- [ ] 02-06-PLAN.md — React webview Part 2: ReviewDocument + CollapsibleSection + FindingsSection + FindingCard + DiffBlock
-- [ ] 02-07-PLAN.md — ReviewPanel extension host singleton (orchestration: diff → prompt → CLI → parse → persist → webview)
+- [x] 02-06-PLAN.md — React webview Part 2: ReviewDocument + CollapsibleSection + FindingsSection + FindingCard + DiffBlock
+- [x] 02-07-PLAN.md — ReviewPanel extension host singleton (orchestration: diff → prompt → CLI → parse → persist → webview)
 - [ ] 02-08-PLAN.md — Command wiring (activation.ts: generateReview + analyzeProject + analyzePRHistory) + ProjectAnalysisService + package.json settings
 - [ ] 02-09-PLAN.md — Human verification in Extension Development Host (all 11 requirements)
 **UI hint**: yes
