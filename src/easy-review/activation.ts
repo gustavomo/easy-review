@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
 import { SQLiteStore } from './storage/SQLiteStore';
@@ -28,7 +29,8 @@ export async function activateEasyReview(
 	// 1. Initialize SQLite store (DB-01, DB-02)
 	const store = new SQLiteStore();
 	try {
-		store.initialize(context.globalStorageUri.fsPath);
+		const dbPath = path.join(context.globalStorageUri.fsPath, 'easy-review.db');
+		store.initialize(dbPath);
 	} catch {
 		// showErrorMessage already called inside SQLiteStore.initialize()
 		// Continue without storage — provider will show empty list
