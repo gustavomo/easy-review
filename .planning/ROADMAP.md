@@ -31,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. Extension shows a setup notification on first activation if the `claude` CLI is not found in PATH, with instructions to configure the path in settings
 **Plans**: 6 plans
 Plans:
-- [ ] 01-01-PLAN.md — Fork setup + two-target build pipeline (esbuild + Vite) + easy-review-diff.md
-- [ ] 01-02-PLAN.md — Test infrastructure (vitest + stubs) + electron-rebuild spike (better-sqlite3 ABI validation)
+- [x] 01-01-PLAN.md — Fork setup + two-target build pipeline (esbuild + Vite) + easy-review-diff.md
+- [x] 01-02-PLAN.md — Test infrastructure (vitest + stubs) + electron-rebuild spike (better-sqlite3 ABI validation)
 - [ ] 01-03-PLAN.md — StorageAdapter interface + SQLiteStore with WAL mode and ABI error handling
 - [ ] 01-04-PLAN.md — EasyReviewPRsProvider flat list + PRTreeItem state badges + AllStatesPRFetcher
 - [ ] 01-05-PLAN.md — PRUrlParser + PRPersistenceService + AddByURL/RemovePR commands
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/6 | Not started | - |
+| 1. Foundation | 2/6 | In Progress|  |
 | 2. AI Review Generation | 0/? | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |

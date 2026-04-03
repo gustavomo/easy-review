@@ -32,13 +32,13 @@
 
 ### Storage
 
-- [ ] **DB-01**: All generated content — PR data, reviews, comments, project analyses, MCP context snapshots — is stored in a local SQLite database
-- [ ] **DB-02**: Extension shows a clear, actionable error if SQLite fails to initialize (e.g., native module ABI mismatch)
+- [x] **DB-01**: All generated content — PR data, reviews, comments, project analyses, MCP context snapshots — is stored in a local SQLite database
+- [x] **DB-02**: Extension shows a clear, actionable error if SQLite fails to initialize (e.g., native module ABI mismatch)
 
 ### Configuration
 
-- [ ] **CFG-01**: User can configure the path to the `claude` CLI executable in VS Code settings
-- [ ] **CFG-02**: Extension shows a clear setup notification on first activation if `claude` CLI is not found in PATH
+- [x] **CFG-01**: User can configure the path to the `claude` CLI executable in VS Code settings
+- [x] **CFG-02**: Extension shows a clear setup notification on first activation if `claude` CLI is not found in PATH
 
 ### Privanote Integration
 
@@ -87,10 +87,10 @@
 |-------------|-------|--------|
 | PRW-01 | Phase 1 | Pending |
 | PRW-02 | Phase 1 | Pending |
-| DB-01 | Phase 1 | Pending |
-| DB-02 | Phase 1 | Pending |
-| CFG-01 | Phase 1 | Pending |
-| CFG-02 | Phase 1 | Pending |
+| DB-01 | Phase 1 | Complete |
+| DB-02 | Phase 1 | Complete |
+| CFG-01 | Phase 1 | Complete |
+| CFG-02 | Phase 1 | Complete |
 | REV-01 | Phase 2 | Pending |
 | REV-02 | Phase 2 | Pending |
 | REV-03 | Phase 2 | Pending |
