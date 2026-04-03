@@ -1,5 +1,5 @@
 import type { Finding } from '@shared/types';
-import React from 'react';
+
 import { FindingCard } from './FindingCard';
 
 interface FindingsSectionProps {

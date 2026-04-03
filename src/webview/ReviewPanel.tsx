@@ -1,5 +1,5 @@
 import type { ExtensionMessage, WebviewMessage, WebviewState } from '@shared/types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ErrorView } from './ErrorView';
 import { IdleView } from './IdleView';
 import { PanelHeader } from './PanelHeader';
@@ -19,7 +19,7 @@ interface ReviewPanelProps {
 export function ReviewPanel({ vscode }: ReviewPanelProps) {
   const [state, setState] = useState<WebviewState>({ status: 'idle' });
   const [streamingText, setStreamingText] = useState('');
-  const [historyItems, setHistoryItems] = useState<Array<{ id: number; label: string }>>([]);
+  const [historyItems] = useState<Array<{ id: number; label: string }>>([]);
   const [hasAnalysis, setHasAnalysis] = useState(false);
 
   useEffect(() => {

@@ -66,6 +66,7 @@ export async function fetchPRHistory(
   owner: string,
   repo: string,
 ): Promise<string> {
+  // eslint-disable-next-line rulesdir/no-cast-to-any
   const response = await (octokit as any).rest.pulls.list({
     owner,
     repo,

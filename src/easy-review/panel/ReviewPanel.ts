@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { AuthProvider } from '../../common/authentication';
 import type { CredentialStore } from '../../github/credentials';

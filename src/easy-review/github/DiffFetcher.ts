@@ -14,6 +14,7 @@ export async function fetchPRDiff(
   repo: string,
   prNumber: number,
 ): Promise<string> {
+  // eslint-disable-next-line rulesdir/no-cast-to-any
   const response = await (octokit as any).rest.pulls.get({
     owner,
     repo,

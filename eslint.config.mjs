@@ -24,7 +24,8 @@ export default defineConfig([
 			'**/*.{js,mjs,cjs}',
 			'.vscode-test/**/*',
 			'vite.webview.config.ts',
-			'vitest.config.ts'
+			'vitest.config.ts',
+			'.claude/worktrees/**/*'
 		]
 	},
 

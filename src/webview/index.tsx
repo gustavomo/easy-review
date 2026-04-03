@@ -1,7 +1,6 @@
-import React from 'react';
+import type { WebviewMessage } from '@shared/types';
 import ReactDOM from 'react-dom';
 import './webview.css';
-import type { ExtensionMessage, WebviewMessage } from '@shared/types';
 import { ReviewPanel } from './ReviewPanel';
 
 // Acquire VS Code API — must be called exactly once in the webview lifetime

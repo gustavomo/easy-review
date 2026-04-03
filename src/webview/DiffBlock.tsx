@@ -11,7 +11,7 @@ interface DiffBlockProps {
  * Removed lines: var(--vscode-diffEditor-removedLineBackground)
  * Added lines:   var(--vscode-diffEditor-insertedLineBackground)
  */
-export function DiffBlock({ before, after, language = '' }: DiffBlockProps) {
+export function DiffBlock({ before, after, language: _language = '' }: DiffBlockProps) {
   const codeStyle: React.CSSProperties = {
     display: 'block',
     padding: '8px',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ElapsedCounterProps {
   startedAt: number;  // Date.now() when generation started
