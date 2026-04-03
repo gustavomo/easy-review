@@ -5,6 +5,9 @@ import type { StorageAdapter } from './storage/StorageAdapter';
 import { parsePRUrl } from './github/PRUrlParser';
 import { resolveClaudePath } from './cli/PathResolver';
 import { getOutputChannel, disposeOutputChannel } from './cli/OutputChannelReporter';
+import { CredentialStore } from '../github/credentials';
+import { AuthProvider } from '../common/authentication';
+import { PRPersistenceService } from './github/PRPersistenceService';
 
 // Module-level references so other commands can access them
 let _provider: EasyReviewPRsProvider | undefined;
@@ -18,7 +21,10 @@ export function getStore(): StorageAdapter | undefined { return _store; }
  * All Easy Review feature registration happens here.
  * Phase 1: registers tree view, commands, and CLI subprocess infrastructure.
  */
-export async function activateEasyReview(context: vscode.ExtensionContext): Promise<void> {
+export async function activateEasyReview(
+	context: vscode.ExtensionContext,
+	credentialStore?: CredentialStore,
+): Promise<void> {
 	// 1. Initialize SQLite store (DB-01, DB-02)
 	const store = new SQLiteStore();
 	try {
@@ -95,9 +101,18 @@ export async function activateEasyReview(context: vscode.ExtensionContext): Prom
 				},
 				async () => {
 					try {
-						// TODO: Get Octokit from the upstream fork's auth layer (Plan 01-06)
-						// For now, surface a clear not-implemented message.
-						throw new Error('Octokit integration pending — upstream auth wiring is in Plan 01-06');
+						const hub = credentialStore?.getHub(AuthProvider.github);
+						if (!hub) {
+							throw new Error(
+								'Not signed in to GitHub. Use "GitHub Pull Requests: Sign In" from the Command Palette first.'
+							);
+						}
+						const octokit = hub.octokit.api;
+						const service = new PRPersistenceService(currentStore, currentProvider);
+						await service.fetchAndPersistPR(octokit, parsed.owner, parsed.repo, parsed.prNumber);
+						vscode.window.showInformationMessage(
+							`Easy Review: PR #${parsed.prNumber} added successfully.`
+						);
 					} catch (err: unknown) {
 						const msg = err instanceof Error ? err.message : String(err);
 						vscode.window.showErrorMessage(`Easy Review: Failed to fetch PR. ${msg}`);
