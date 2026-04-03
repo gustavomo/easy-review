@@ -10,6 +10,11 @@ interface ReviewDocumentProps {
 
 const MERMAID_NOTE = 'Mermaid diagram (visual rendering coming in a future version)';
 
+/** Strip leading/trailing code fences (```mermaid ... ``` or ``` ... ```) from content. */
+function stripCodeFences(content: string): string {
+  return content.replace(/^```[a-z]*\r?\n?/i, '').replace(/\r?\n?```\s*$/i, '').trim();
+}
+
 /**
  * Complete review — one scrollable document with 6 CollapsibleSection children (D-23).
  * No tabs. All sections start expanded.
@@ -36,7 +41,7 @@ export function ReviewDocument({ review }: ReviewDocumentProps) {
                   whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                   color: 'var(--vscode-editor-foreground)',
                 }}>
-                  {section.content}
+                  {stripCodeFences(section.content ?? '')}
                 </pre>
                 <p style={{ fontSize: '11px', color: 'var(--vscode-descriptionForeground)', margin: '8px 0 0 0' }}>
                   {MERMAID_NOTE}
