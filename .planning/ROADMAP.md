@@ -12,7 +12,7 @@ Easy Review is built in four phases, each delivering a coherent capability. Phas
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Fork setup, PR browsing all states, SQLite store, CLI subprocess runner, PATH resolution
+- [x] **Phase 1: Foundation** - Fork setup, PR browsing all states, SQLite store, CLI subprocess runner, PATH resolution (completed 2026-04-03)
 - [ ] **Phase 2: AI Review Generation** - Full review pipeline, 6-section structured output, project analysis context, webview panel
 - [ ] **Phase 3: Privanote Integration** - MCP context injection before reviews, REST API push of completed reviews, SecretStorage token handling
 - [ ] **Phase 4: GitHub Comment Posting and Distribution** - Post reviews to GitHub with user confirmation, per-platform Marketplace packaging
@@ -36,7 +36,7 @@ Plans:
 - [x] 01-03-PLAN.md — StorageAdapter interface + SQLiteStore with WAL mode and ABI error handling
 - [x] 01-04-PLAN.md — EasyReviewPRsProvider flat list + PRTreeItem state badges + AllStatesPRFetcher
 - [x] 01-05-PLAN.md — PRUrlParser + PRPersistenceService + AddByURL/RemovePR commands
-- [ ] 01-06-PLAN.md — PathResolver (CJS-safe) + SubprocessRunner (streaming + cancel + timeout) + activation health checks
+- [x] 01-06-PLAN.md — PathResolver (CJS-safe) + SubprocessRunner (streaming + cancel + timeout) + activation health checks
 **UI hint**: yes
 
 ### Phase 2: AI Review Generation
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 5/6 | In Progress|  |
+| 1. Foundation | 6/6 | Complete   | 2026-04-03 |
 | 2. AI Review Generation | 0/? | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
