@@ -41,9 +41,15 @@ export class PROverviewPanel {
     // Load webview HTML pointing to prOverview.js
     this.panel.webview.html = this.getWebviewHtml();
 
-    // Handle messages from webview (e.g., openExternal)
+    // Pre-extract PR data so it's ready to send when the webview signals ready
+    const prData = extractPRData(pr);
+
+    // Handle messages from webview
     this.panel.webview.onDidReceiveMessage((msg: { type: string; url?: string }) => {
-      if (msg.type === 'openExternal' && msg.url) {
+      if (msg.type === 'ready') {
+        // Webview has registered its message listener — safe to send data now
+        this.panel.webview.postMessage({ type: 'loadPR', pr: prData });
+      } else if (msg.type === 'openExternal' && msg.url) {
         vscode.env.openExternal(vscode.Uri.parse(msg.url));
       }
     }, undefined, context.subscriptions);
@@ -52,13 +58,6 @@ export class PROverviewPanel {
     this.panel.onDidDispose(() => {
       // Nothing to clean up — not a singleton
     }, undefined, context.subscriptions);
-
-    // Send PR data to webview immediately after creation
-    const prData = extractPRData(pr);
-    // Small delay ensures the webview is ready before postMessage
-    setTimeout(() => {
-      this.panel.webview.postMessage({ type: 'loadPR', pr: prData });
-    }, 100);
   }
 
   private getWebviewHtml(): string {
