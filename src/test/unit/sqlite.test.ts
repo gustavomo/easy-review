@@ -93,3 +93,21 @@ describe('SQLiteStore CRUD', () => {
     expect(store.getPRs()).toHaveLength(0);
   });
 });
+
+// Phase 2 additions — REV-04, REV-05, VIEW-03
+describe('SQLiteStore — reviews table', () => {
+  it.todo('saveReview inserts a row into the reviews table');
+  it.todo('getReviews returns all reviews for a given repo_id + pr_number in descending created_at order');
+  it.todo('saveReview stores both review_text and parsed_json');
+  it.todo('getReviews returns empty array when no reviews exist for a PR');
+
+  // REV-05: multiple versions preserved
+  it.todo('saving two reviews for the same PR produces two rows, both queryable');
+});
+
+describe('SQLiteStore — project_analyses table', () => {
+  it.todo('saveProjectAnalysis inserts a row into the project_analyses table');
+  it.todo('getProjectAnalysis returns the most recently inserted row');
+  it.todo('saveProjectAnalysis replaces the previous row on re-run (single row policy)');
+  it.todo('getProjectAnalysis returns null when no analysis has been run');
+});
