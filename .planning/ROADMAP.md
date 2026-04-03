@@ -13,7 +13,9 @@ Easy Review is built in four phases, each delivering a coherent capability. Phas
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Fork setup, PR browsing all states, SQLite store, CLI subprocess runner, PATH resolution (completed 2026-04-03)
-- [ ] **Phase 2: AI Review Generation** - Full review pipeline, 6-section structured output, project analysis context, webview panel
+- [x] **Phase 2: AI Review Generation** - Full review pipeline, 6-section structured output, project analysis context, webview panel (completed 2026-04-03)
+- [ ] **Phase 2.1: In-Editor PR Navigation** (INSERTED) - Replace browser-open stub with VS Code diff view: expandable file tree per PR, diff editor per file
+- [ ] **Phase 2.2: Sidebar UI Enhancements** (INSERTED) - PR-level view review button, plugin-level buttons for project analysis, PR history analysis, and settings
 - [ ] **Phase 3: Privanote Integration** - MCP context injection before reviews, REST API push of completed reviews, SecretStorage token handling
 - [ ] **Phase 4: GitHub Comment Posting and Distribution** - Post reviews to GitHub with user confirmation, per-platform Marketplace packaging
 
@@ -64,6 +66,36 @@ Plans:
 - [ ] 02-09-PLAN.md — Human verification in Extension Development Host (all 11 requirements)
 **UI hint**: yes
 
+### Phase 02.1: In-Editor PR Navigation (INSERTED)
+
+**Goal**: Clicking a PR in the sidebar opens it in-editor like the GitHub Pull Requests plugin — the PR tree item expands to show the list of changed files, and clicking any file opens a diff editor with before/after content fetched from the GitHub API. Replaces the Phase 1 browser-open stub (`vscode.env.openExternal`).
+**Depends on**: Phase 2
+**Requirements**: PRW-02 (upgrade), NAV-01, NAV-02
+**Success Criteria** (what must be TRUE):
+  1. Clicking a PR in the Easy Review sidebar expands it to show its changed files (not opens a browser)
+  2. Each changed file shows its filename and change status (modified/added/deleted)
+  3. Clicking a file opens a VS Code diff editor with the before (base commit) and after (head commit) content
+  4. The diff editor title shows the PR number and filename
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 02.1 to break down)
+
+### Phase 02.2: Sidebar UI Enhancements (INSERTED)
+
+**Goal**: Add visible action buttons to the Easy Review sidebar — a PR-level inline button to view its stored AI review, and plugin-level title bar buttons for viewing project analysis, viewing PR history analysis, and opening the extension settings (including the claude/codex model selector).
+**Depends on**: Phase 2.1
+**Requirements**: UI-01, UI-02, UI-03, UI-04
+**Success Criteria** (what must be TRUE):
+  1. Each PR in the sidebar has an inline "View Review" button (visible on hover) that opens the ReviewPanel for that PR's stored review
+  2. The sidebar title bar shows a "View Project Analysis" button that opens the stored project analysis document
+  3. The sidebar title bar shows a "View PR History Analysis" button that opens the stored PR history analysis document
+  4. The sidebar title bar shows a "Settings" button that opens VS Code settings filtered to the `easyReview.*` namespace
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 02.2 to break down)
+
 ### Phase 3: Privanote Integration
 **Goal**: Reviews are enriched with relevant Privanote notes context before generation, completed reviews can be pushed to Privanote as searchable notes, and the Privanote API token is stored securely — all without ever blocking review generation if Privanote is unavailable
 **Depends on**: Phase 2
@@ -89,11 +121,13 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 8/8 | Complete   | 2026-04-03 |
-| 2. AI Review Generation | 8/9 | In Progress|  |
+| 1. Foundation | 8/8 | Complete | 2026-04-03 |
+| 2. AI Review Generation | 9/9 | Complete | 2026-04-03 |
+| 2.1. In-Editor PR Navigation | 0/? | Not started | - |
+| 2.2. Sidebar UI Enhancements | 0/? | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |

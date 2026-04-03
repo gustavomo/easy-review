@@ -109,6 +109,11 @@ Recent decisions affecting current work:
 - [Phase 02]: contextValue for PR tree items is pr-${state} — generateReview menu uses viewItem =~ /^pr-/ to match all states
 - [Phase 02]: analyzePRHistory appends history section to existing contextText rather than replacing — preserves workspace analysis
 
+### Roadmap Evolution
+
+- Phase 02.1 inserted after Phase 2: In-Editor PR Navigation (INSERTED) — replace browser-open stub with VS Code diff editor view (file tree + diff editor per file)
+- Phase 02.2 inserted after Phase 2: Sidebar UI Enhancements (INSERTED) — PR-level view review button, plugin-level project analysis / PR history analysis / settings buttons
+
 ### Pending Todos
 
 None yet.

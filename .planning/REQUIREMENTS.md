@@ -10,6 +10,18 @@
 - [x] **PRW-01**: User can view PRs in all states (open, closed, merged) in the VS Code sidebar
 - [x] **PRW-02**: User can select any PR and view its diff within VS Code
 
+### In-Editor PR Navigation (Phase 2.1)
+
+- [ ] **NAV-01**: Clicking a PR in the sidebar expands it to show its list of changed files (not opens a browser)
+- [ ] **NAV-02**: Clicking a changed file opens a VS Code diff editor with before/after content from the GitHub API
+
+### Sidebar UI (Phase 2.2)
+
+- [ ] **UI-01**: Each PR tree item has an inline "View Review" button that opens the ReviewPanel for that PR's stored review
+- [ ] **UI-02**: The sidebar title bar has a "View Project Analysis" button that opens the stored project analysis
+- [ ] **UI-03**: The sidebar title bar has a "View PR History Analysis" button that opens the stored PR history analysis
+- [ ] **UI-04**: The sidebar title bar has a "Settings" button that opens VS Code settings filtered to the `easyReview.*` namespace
+
 ### Project Analysis
 
 - [x] **PROJ-01**: User can run a one-time project analysis that collects README, key source files, and architecture map as persistent context for future reviews
@@ -86,7 +98,13 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | PRW-01 | Phase 1 | Complete |
-| PRW-02 | Phase 1 | Complete |
+| PRW-02 | Phase 1 | Complete (browser-open stub); Phase 2.1 upgrades to in-editor diff |
+| NAV-01 | Phase 2.1 | Pending |
+| NAV-02 | Phase 2.1 | Pending |
+| UI-01 | Phase 2.2 | Pending |
+| UI-02 | Phase 2.2 | Pending |
+| UI-03 | Phase 2.2 | Pending |
+| UI-04 | Phase 2.2 | Pending |
 | DB-01 | Phase 1 | Complete |
 | DB-02 | Phase 1 | Complete |
 | CFG-01 | Phase 1 | Complete |
