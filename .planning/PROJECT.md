@@ -16,14 +16,12 @@ Generate deep, context-aware AI reviews of any GitHub PR (open, closed, or merge
 - [x] All generated content persisted in local SQLite database — Validated in Phase 1: Foundation (SQLiteStore with WAL mode, STRICT schema, upsert CRUD)
 - [x] CLI subprocess runner for AI tools — Validated in Phase 1: Foundation (SubprocessRunner with streaming, cancellation, 5-min timeout)
 - [x] PATH detection and first-run setup notification — Validated in Phase 1: Foundation (PathResolver + activation health checks)
+- [x] AI review generation via `claude` and `codex` CLI subprocesses — Validated in Phase 2: AI Review Generation (ReviewRunner, ClaudeAdapter, CodexAdapter, streaming pipeline)
+- [x] One-time project analysis: README + key files + past PRs as persistent context — Validated in Phase 2: AI Review Generation (ProjectAnalysisService, collectProjectContext, fetchPRHistory)
+- [x] Webview panel displaying the full structured AI review and analysis — Validated in Phase 2: AI Review Generation (ReviewPanel, 6-section ReviewDocument, FindingsSection with severity colors)
 
 ### Active
 
-- [ ] Browse GitHub PRs by all states: open, closed, and merged
-- [ ] One-time project analysis: collect README, key files, architecture map, codebase summary, and past PRs as persistent context
-- [ ] AI review generation via `claude` and `codex` CLI subprocesses, informed by Privanote MCP context
-- [ ] All generated content (PR data, reviews, comments, project analyses) persisted in local SQLite database
-- [ ] Webview panel displaying the full structured AI review and analysis
 - [ ] Post review comments to GitHub from within the extension
 - [ ] Send full review + AI-generated content to Privanote via API
 - [ ] Privanote MCP integration to read existing notes/context before generating reviews
@@ -81,4 +79,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-03 after Phase 1: Foundation complete (8/8 plans, 5/5 verified)*
+*Last updated: 2026-04-03 after Phase 2: AI Review Generation complete (9/9 plans, 11/11 requirements verified)*
