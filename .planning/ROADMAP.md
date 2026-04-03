@@ -60,7 +60,7 @@ Plans:
 - [x] 02-05-PLAN.md — React webview Part 1: entry point + ReviewPanel state machine + PanelHeader + IdleView + ErrorView + StreamingView
 - [x] 02-06-PLAN.md — React webview Part 2: ReviewDocument + CollapsibleSection + FindingsSection + FindingCard + DiffBlock
 - [x] 02-07-PLAN.md — ReviewPanel extension host singleton (orchestration: diff → prompt → CLI → parse → persist → webview)
-- [ ] 02-08-PLAN.md — Command wiring (activation.ts: generateReview + analyzeProject + analyzePRHistory) + ProjectAnalysisService + package.json settings
+- [x] 02-08-PLAN.md — Command wiring (activation.ts: generateReview + analyzeProject + analyzePRHistory) + ProjectAnalysisService + package.json settings
 - [ ] 02-09-PLAN.md — Human verification in Extension Development Host (all 11 requirements)
 **UI hint**: yes
 
@@ -94,6 +94,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 8/8 | Complete   | 2026-04-03 |
-| 2. AI Review Generation | 5/9 | In Progress|  |
+| 2. AI Review Generation | 8/9 | In Progress|  |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
