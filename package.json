@@ -1978,6 +1978,12 @@
 				"title": "Analyze PR History",
 				"category": "Easy Review",
 				"icon": "$(history)"
+			},
+			{
+				"command": "easyReview.viewAnalysis",
+				"title": "View Last Analysis",
+				"category": "Easy Review",
+				"icon": "$(book)"
 			}
 		],
 		"viewsWelcome": [

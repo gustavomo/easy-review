@@ -20,6 +20,7 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
   const [state, setState] = useState<WebviewState>({ status: 'idle' });
   const [streamingText, setStreamingText] = useState('');
   const [historyItems, setHistoryItems] = useState<Array<{ id: number; label: string }>>([]);
+  const [hasAnalysis, setHasAnalysis] = useState(false);
 
   useEffect(() => {
     const handler = (event: MessageEvent<ExtensionMessage>) => {
@@ -27,6 +28,7 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
       switch (msg.type) {
         case 'stateSync':
           setState(msg.state);
+          setHasAnalysis(msg.hasAnalysis ?? false);
           if (msg.state.status === 'complete') {
             setStreamingText('');
           }
@@ -78,7 +80,11 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
       />
       <div style={{ flex: 1, overflow: 'auto', padding: '16px 32px' }}>
         {state.status === 'idle' && (
-          <IdleView onAnalyzeProject={() => vscode.postMessage({ type: 'analyzeProject' })} />
+          <IdleView
+            onAnalyzeProject={() => vscode.postMessage({ type: 'analyzeProject' })}
+            hasAnalysis={hasAnalysis}
+            onViewAnalysis={() => vscode.postMessage({ type: 'viewAnalysis' })}
+          />
         )}
         {state.status === 'generating' && (
           <StreamingView text={streamingText} />
