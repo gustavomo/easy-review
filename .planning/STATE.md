@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 Phase: 02 (ai-review-generation) — EXECUTING
 Plan: 8 of 9
 Status: Ready to execute
-Last activity: 2026-04-03
+Last activity: 2026-04-03 - Completed quick task 260403-no8: Add easyReview.viewAnalysis command to view last stored project analysis
 
 Progress: [█░░░░░░░░░] 17%
 
@@ -112,6 +112,12 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260403-no8 | Add easyReview.viewAnalysis command to view last stored project analysis | 2026-04-03 | a879c874 | [260403-no8-add-easyreview-viewanalysis-command-to-v](./quick/260403-no8-add-easyreview-viewanalysis-command-to-v/) |
 
 ### Blockers/Concerns
 
