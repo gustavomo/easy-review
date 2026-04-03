@@ -43,10 +43,10 @@ Declared values (must be multiples of 4). Derived from existing webview CSS (`we
 
 Exceptions:
 - Button border-radius: 4px (established in common.css — use consistently)
-- Icon button padding: 2px (established in common.css .icon-button)
 - Avatar size: 20×20px (established in common.css)
 - Focus outline offset: 1–2px (established in common.css)
-- Elapsed time counter badge: 6px horizontal padding to match label pattern
+
+Note: `icon-button` padding (2px) and elapsed-time badge horizontal padding (6px) are upstream-inherited values — not re-declared in this spec. Do not introduce new non-multiples-of-4 spacing values.
 
 ---
 
@@ -77,10 +77,10 @@ This webview uses NO hardcoded hex values. All colors are VS Code CSS custom pro
 |------|-------|-------|
 | Dominant (60%) | var(--vscode-editor-background) | Panel body background, all surface areas, collapsible section backgrounds |
 | Secondary (30%) | var(--vscode-panel-background) | Panel header bar, sticky header, code block backgrounds (before/after diff blocks), idle state placeholder area |
-| Accent (10%) | var(--vscode-button-background) | Primary Generate Review button only, Retry button only |
+| Accent (10%) | var(--vscode-button-background) | Primary Generate Review button only, Retry Review button only |
 | Destructive | var(--vscode-list-errorForeground) | Critical severity badge label color, Cancel button label during active generation |
 
-Accent reserved for: **Generate Review button** and **Retry button** (error state) only. No other elements use accent. The Cancel button uses `button.secondary` (var(--vscode-button-secondaryBackground)) per the established common.css pattern, not the accent color.
+Accent reserved for: **Generate Review button** and **Retry Review button** (error state) only. No other elements use accent. The Cancel button uses `button.secondary` (var(--vscode-button-secondaryBackground)) per the established common.css pattern, not the accent color.
 
 Severity color mapping (from D-24, must match VS Code diagnostic conventions):
 - Critical: `var(--vscode-list-errorForeground)` — border + label color on finding cards
@@ -113,9 +113,11 @@ The following new React components are required for Phase 2. Build each as a sta
 | FindingCard | `FindingCard.tsx` | Single finding. Left border color by severity. Severity badge (label typography). Body text (body typography). |
 | DiffBlock | `DiffBlock.tsx` | Before/after side-by-side. Two code blocks with diff background colors. Used inside Key Code Changes section. |
 | HistoryDropdown | `HistoryDropdown.tsx` | `<select>` element styled per common.css select rules. Options: "Review N (Mon D)" format. |
-| ErrorView | `ErrorView.tsx` | Error state. Error message in body typography. Retry button (accent). |
+| ErrorView | `ErrorView.tsx` | Error state. Error message in body typography. Retry Review button (accent). |
 | IdleView | `IdleView.tsx` | Idle state. Placeholder copy. No CTA — generation is triggered from the PR tree context menu, not from within the webview. |
 | ElapsedCounter | `ElapsedCounter.tsx` | Inline timer. Updates every second. Format: "Generating... 45s". Label typography. |
+
+**Cancel button clarification:** The Cancel action shown as `[×]` in the layout diagram is an icon+label button ("Cancel"), not icon-only. Render it as a secondary button with the `codicon-x` icon to the left of the "Cancel" label text. If an icon-only variant is ever used (e.g. in a space-constrained context), it must include `aria-label="Cancel review generation"` on the button element.
 
 ---
 
@@ -134,9 +136,9 @@ idle → [right-click Generate Review on PR tree item]
 Transitions:
 - `idle → generating`: Extension host sends `startReview` message with PR metadata. Panel renders StreamingView. Cancel button appears.
 - `generating → complete`: Extension host sends `reviewComplete` message with parsed 6-section JSON. Panel renders ReviewDocument. Cancel button disappears.
-- `generating → error`: Extension host sends `reviewError` message with error string. Panel renders ErrorView with message and Retry button.
+- `generating → error`: Extension host sends `reviewError` message with error string. Panel renders ErrorView with message and Retry Review button.
 - `generating → idle` (cancel): User clicks Cancel. Extension host kills CLI process. Partial output discarded. Panel returns to IdleView.
-- `error → generating` (retry): User clicks Retry. Same PR re-triggers generation. Transitions as above.
+- `error → generating` (retry): User clicks Retry Review. Same PR re-triggers generation. Transitions as above.
 - `complete → generating` (re-generate): Triggered by new right-click on the same PR. Confirmation dialog shown first (see Copywriting below). On confirm, transitions to generating.
 
 ### Review History (from D-25)
@@ -172,7 +174,7 @@ When re-generating a review for a PR that already has reviews, the extension hos
 | Cancel button | "Cancel" |
 | Error state heading | "Review generation failed" |
 | Error state body | "{error message from CLI or timeout description}. Check the Output channel for details." |
-| Retry button | "Retry" |
+| Retry button | "Retry Review" |
 | Re-generate confirmation (VS Code modal) | "This PR already has {N} review{s}. Generate a new one? Both versions will be saved." — buttons: "Generate New Review" (primary), "Cancel" (secondary) |
 | Cancel in-progress confirmation | No confirmation — Cancel is immediate. Partial output is discarded. (from D-04, D-18) |
 | Project analysis complete notification | "Project analysis complete. Collected: README.md, {N} source files, {M} recent commits." |
@@ -202,6 +204,8 @@ Panel opens in `vscode.ViewColumn.Two` (beside the code editor). Layout is a sin
 │                                              │
 └──────────────────────────────────────────────┘
 ```
+
+Note: `[×]` in the diagram represents the Cancel button (icon+label). See Component Inventory for the full specification.
 
 PanelHeader height: fixed, approximately 48px (8px top/bottom padding + 16px line-height × 2 rows if needed). Uses `position: sticky; top: 0; z-index: 200` to match existing sticky-header pattern.
 
@@ -242,6 +246,9 @@ No shadcn and no third-party component registries are used in this phase. The we
 | @vscode/codicons icon library | package.json dependency |
 | 13px body, 11px label, font-weight 400/600 | common.css (button: 13px, .label: 11px/600) |
 | 4/8/16/32px spacing scale | editorWebview/index.css (#main gap: 16px, column-gap: 32px, header padding: 8px 32px) |
+| Upstream-inherited non-multiple-of-4 values excluded from spec | gsd-ui-checker revision 2026-04-03 |
+| Cancel button: icon+label, aria-label if icon-only | gsd-ui-checker revision 2026-04-03 |
+| Retry button copy changed to "Retry Review" | gsd-ui-checker revision 2026-04-03 |
 | Singleton panel, ViewColumn.Two | 02-CONTEXT.md D-19, D-20 |
 | State machine: idle/generating/complete/error | 02-CONTEXT.md D-16 |
 | Streaming with 200ms batching, auto-scroll | 02-CONTEXT.md D-12, D-13 |
