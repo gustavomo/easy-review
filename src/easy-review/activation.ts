@@ -3,13 +3,18 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { disposeOutputChannel, getOutputChannel } from './cli/OutputChannelReporter';
 import { resolveClaudePath } from './cli/PathResolver';
+import { EasyReviewDiffProvider } from './diff/EasyReviewDiffProvider';
+import { encodeDiffUri } from './diff/diffUri';
 import { collectProjectContext, fetchPRHistory } from './github/ProjectAnalysisService';
 import { PRPersistenceService } from './github/PRPersistenceService';
 import { parsePRUrl } from './github/PRUrlParser';
+import { PROverviewPanel } from './panel/PROverviewPanel';
 import { ReviewPanel } from './panel/ReviewPanel';
 import { EasyReviewPRsProvider } from './providers/EasyReviewPRsProvider';
+import type { PRFileChange } from './providers/EasyReviewTreeNodes';
 import { SQLiteStore } from './storage/SQLiteStore';
 import type { StorageAdapter } from './storage/StorageAdapter';
+import type { StoredPR } from './storage/types';
 import { AuthProvider } from '../common/authentication';
 import { CredentialStore } from '../github/credentials';
 
@@ -46,6 +51,17 @@ export async function activateEasyReview(
 	const provider = new EasyReviewPRsProvider();
 	_provider = provider;
 
+	// Inject credentialStore so the provider can fetch PR files from GitHub API
+	if (credentialStore) {
+		provider.setCredentialStore(credentialStore);
+	}
+
+	// Register the easy-review-diff:// TextDocumentContentProvider (NAV-02)
+	const diffProvider = new EasyReviewDiffProvider(credentialStore!);
+	context.subscriptions.push(
+		vscode.workspace.registerTextDocumentContentProvider('easy-review-diff', diffProvider),
+	);
+
 	const treeView = vscode.window.createTreeView('easy-review.prList', {
 		treeDataProvider: provider,
 		showCollapseAll: false,
@@ -66,14 +82,38 @@ export async function activateEasyReview(
 			// Full refresh from GitHub — implemented in Plan 01-05
 			vscode.window.showInformationMessage('Easy Review: Refresh not yet implemented.');
 		}),
-		vscode.commands.registerCommand('easy-review.openPRDiff', (pr) => {
-			// PRW-02 (Phase 1 approximation): open PR on GitHub in browser.
-			// Full in-editor diff via PullRequestModel is deferred to a future phase.
-			if (!pr?.url) {
-				vscode.window.showErrorMessage('Easy Review: PR has no URL. Cannot open diff.');
-				return;
-			}
-			vscode.env.openExternal(vscode.Uri.parse(pr.url));
+		// Open PR Overview panel (D-11, D-13, D-14)
+		vscode.commands.registerCommand('easy-review.openPROverview', (pr: StoredPR) => {
+			PROverviewPanel.open(context, pr);
+		}),
+
+		// Open diff editor for a changed file (NAV-02)
+		vscode.commands.registerCommand('easy-review.openFileDiff', async (pr: StoredPR, file: PRFileChange) => {
+			const rawPR = JSON.parse(pr.raw) as Record<string, unknown>;
+			const baseSha: string = (rawPR.base as { sha?: string } | undefined)?.sha ?? '';
+			const headSha: string = (rawPR.head as { sha?: string } | undefined)?.sha ?? '';
+			const [owner, repo] = pr.repoId.split('/');
+			const filename = file.filename.split('/').pop() ?? file.filename;
+			const title = `#${pr.prNumber} ${filename}`;
+
+			// Handle added/removed/renamed files (Pitfall 3)
+			const baseRef = file.status === 'added' ? 'EMPTY' : baseSha;
+			const headRef = file.status === 'removed' ? 'EMPTY' : headSha;
+			// For renamed files: use previous_filename for base fetch
+			const basePath = (file.status === 'renamed' && file.previous_filename)
+				? file.previous_filename
+				: file.filename;
+
+			const baseUri = encodeDiffUri(owner, repo, baseRef, basePath, `${filename} (base)`);
+			const headUri = encodeDiffUri(owner, repo, headRef, file.filename, `${filename} (head)`);
+
+			await vscode.commands.executeCommand('vscode.diff', baseUri, headUri, title);
+		}),
+
+		// Retry loading files for a PR after an error (D-07)
+		vscode.commands.registerCommand('easy-review.retryLoadFiles', (pr: StoredPR) => {
+			const currentProvider = getProvider();
+			currentProvider?.retryLoadFiles(pr);
 		}),
 
 		// Add PR by URL (D-05)

@@ -1,4 +1,4 @@
-import { DirectoryNode, FileNode, EasyReviewTreeNode, PRFileChange } from '../providers/EasyReviewTreeNodes';
+import { DirectoryNode, EasyReviewTreeNode, FileNode, PRFileChange } from '../providers/EasyReviewTreeNodes';
 import type { StoredPR } from '../storage/types';
 
 /**

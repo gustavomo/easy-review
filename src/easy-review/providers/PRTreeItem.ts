@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import type { StoredPR } from '../storage/types';
 import type { EasyReviewTreeNode } from './EasyReviewTreeNodes';
+import type { StoredPR } from '../storage/types';
 
 export type PRState = 'open' | 'closed' | 'merged';
 

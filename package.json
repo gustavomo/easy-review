@@ -104,7 +104,10 @@
 				},
 				"easyReview.activeModel": {
 					"type": "string",
-					"enum": ["claude", "codex"],
+					"enum": [
+						"claude",
+						"codex"
+					],
 					"default": "claude",
 					"description": "Which AI CLI to use for review generation: 'claude' (Anthropic Claude) or 'codex' (OpenAI Codex)."
 				},
@@ -1940,8 +1943,18 @@
 				"icon": "$(refresh)"
 			},
 			{
-				"command": "easy-review.openPRDiff",
-				"title": "Open PR Diff",
+				"command": "easy-review.openPROverview",
+				"title": "Open PR Overview",
+				"category": "Easy Review"
+			},
+			{
+				"command": "easy-review.openFileDiff",
+				"title": "Open File Diff",
+				"category": "Easy Review"
+			},
+			{
+				"command": "easy-review.retryLoadFiles",
+				"title": "Retry Loading Files",
 				"category": "Easy Review"
 			},
 			{

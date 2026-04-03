@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
-import { PRTreeItem } from './PRTreeItem';
 import {
-  EasyReviewTreeNode,
   DirectoryNode,
-  LoadingNode,
+  EasyReviewTreeNode,
   ErrorNode,
+  LoadingNode,
 } from './EasyReviewTreeNodes';
-import { fetchPRFiles } from '../github/PRFileFetcher';
-import { buildDirectoryTree } from '../utils/directoryTree';
-import type { StoredPR } from '../storage/types';
-import { CredentialStore } from '../../github/credentials';
+import { PRTreeItem } from './PRTreeItem';
 import { AuthProvider } from '../../common/authentication';
+import { CredentialStore } from '../../github/credentials';
+import { fetchPRFiles } from '../github/PRFileFetcher';
+import type { StoredPR } from '../storage/types';
+import { buildDirectoryTree } from '../utils/directoryTree';
 
 /**
  * 3-level TreeDataProvider for Easy Review's PR list (NAV-01).

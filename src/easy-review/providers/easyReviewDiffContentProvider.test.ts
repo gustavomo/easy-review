@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { encodeDiffUri, decodeDiffUri } from '../diff/diffUri';
+import { describe, expect, it } from 'vitest';
+import { decodeDiffUri, encodeDiffUri } from '../diff/diffUri';
 
 describe('encodeDiffUri / decodeDiffUri round-trip', () => {
   it('round-trips a normal file path', () => {

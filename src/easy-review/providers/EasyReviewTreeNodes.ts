@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import type { StoredPR } from '../storage/types';
 import { PRTreeItem } from './PRTreeItem';
+import type { StoredPR } from '../storage/types';
 
 /** Represents a single changed file in a PR — mirrors GitHub API file object */
 export interface PRFileChange {
