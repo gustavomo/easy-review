@@ -12,23 +12,23 @@
 
 ### Project Analysis
 
-- [ ] **PROJ-01**: User can run a one-time project analysis that collects README, key source files, and architecture map as persistent context for future reviews
-- [ ] **PROJ-02**: User can trigger a bulk analysis of past PRs (last 100) to build historical codebase context
-- [ ] **PROJ-03**: Project analysis results are stored in SQLite and reused across all subsequent review sessions without re-running
+- [x] **PROJ-01**: User can run a one-time project analysis that collects README, key source files, and architecture map as persistent context for future reviews
+- [x] **PROJ-02**: User can trigger a bulk analysis of past PRs (last 100) to build historical codebase context
+- [x] **PROJ-03**: Project analysis results are stored in SQLite and reused across all subsequent review sessions without re-running
 
 ### AI Review Generation
 
-- [ ] **REV-01**: User can trigger AI review generation for any PR (open, closed, or merged) with a single command
-- [ ] **REV-02**: Generated review follows the 6-section structured format: Executive Summary, Categorized Changes, Key Code Changes with before/after snippets, Findings by severity, Impact Analysis, Mermaid diagram
-- [ ] **REV-03**: Review generation streams real-time progress output to the webview panel during the 30–120 second CLI run
-- [ ] **REV-04**: Generated review is automatically persisted to SQLite on completion
-- [ ] **REV-05**: User can re-generate a review for the same PR; new review is appended with timestamp alongside prior versions
+- [x] **REV-01**: User can trigger AI review generation for any PR (open, closed, or merged) with a single command
+- [x] **REV-02**: Generated review follows the 6-section structured format: Executive Summary, Categorized Changes, Key Code Changes with before/after snippets, Findings by severity, Impact Analysis, Mermaid diagram
+- [x] **REV-03**: Review generation streams real-time progress output to the webview panel during the 30–120 second CLI run
+- [x] **REV-04**: Generated review is automatically persisted to SQLite on completion
+- [x] **REV-05**: User can re-generate a review for the same PR; new review is appended with timestamp alongside prior versions
 
 ### Review Display
 
 - [ ] **VIEW-01**: Completed review is displayed in a dedicated VS Code webview panel with the full 6-section structured format
-- [ ] **VIEW-02**: Webview displays findings classified by severity (critical / warning / suggestion)
-- [ ] **VIEW-03**: User can view review history for any PR (all previously generated reviews)
+- [x] **VIEW-02**: Webview displays findings classified by severity (critical / warning / suggestion)
+- [x] **VIEW-03**: User can view review history for any PR (all previously generated reviews)
 
 ### Storage
 
@@ -91,17 +91,17 @@
 | DB-02 | Phase 1 | Complete |
 | CFG-01 | Phase 1 | Complete |
 | CFG-02 | Phase 1 | Complete |
-| REV-01 | Phase 2 | Pending |
-| REV-02 | Phase 2 | Pending |
-| REV-03 | Phase 2 | Pending |
-| REV-04 | Phase 2 | Pending |
-| REV-05 | Phase 2 | Pending |
+| REV-01 | Phase 2 | Complete |
+| REV-02 | Phase 2 | Complete |
+| REV-03 | Phase 2 | Complete |
+| REV-04 | Phase 2 | Complete |
+| REV-05 | Phase 2 | Complete |
 | VIEW-01 | Phase 2 | Pending |
-| VIEW-02 | Phase 2 | Pending |
-| VIEW-03 | Phase 2 | Pending |
-| PROJ-01 | Phase 2 | Pending |
-| PROJ-02 | Phase 2 | Pending |
-| PROJ-03 | Phase 2 | Pending |
+| VIEW-02 | Phase 2 | Complete |
+| VIEW-03 | Phase 2 | Complete |
+| PROJ-01 | Phase 2 | Complete |
+| PROJ-02 | Phase 2 | Complete |
+| PROJ-03 | Phase 2 | Complete |
 | PRIV-01 | Phase 3 | Pending |
 | PRIV-02 | Phase 3 | Pending |
 | PRIV-03 | Phase 3 | Pending |

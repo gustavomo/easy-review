@@ -53,7 +53,7 @@ Plans:
   5. User can re-generate a review for the same PR and both versions are preserved side-by-side with timestamps
 **Plans**: 9 plans
 Plans:
-- [ ] 02-01-PLAN.md — Wave 0 test stubs: review-runner, review-parser, prompt-builder, project-analysis, sqlite (extended)
+- [x] 02-01-PLAN.md — Wave 0 test stubs: review-runner, review-parser, prompt-builder, project-analysis, sqlite (extended)
 - [ ] 02-02-PLAN.md — SQLite schema extension (reviews + project_analyses tables) + StorageAdapter methods + shared message types
 - [ ] 02-03-PLAN.md — DiffFetcher (Octokit diff fetch) + PromptBuilder (6-section prompt) + ReviewParser (section splitter)
 - [ ] 02-04-PLAN.md — ClaudeAdapter + CodexAdapter + ReviewRunner (200ms batch streaming + CancellationToken)
@@ -94,6 +94,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 8/8 | Complete   | 2026-04-03 |
-| 2. AI Review Generation | 0/9 | Not started | - |
+| 2. AI Review Generation | 1/9 | In Progress|  |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
