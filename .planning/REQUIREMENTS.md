@@ -12,7 +12,7 @@
 
 ### In-Editor PR Navigation (Phase 2.1)
 
-- [ ] **NAV-01**: Clicking a PR in the sidebar expands it to show its list of changed files (not opens a browser)
+- [x] **NAV-01**: Clicking a PR in the sidebar expands it to show its list of changed files (not opens a browser)
 - [ ] **NAV-02**: Clicking a changed file opens a VS Code diff editor with before/after content from the GitHub API
 
 ### Sidebar UI (Phase 2.2)
@@ -99,7 +99,7 @@
 |-------------|-------|--------|
 | PRW-01 | Phase 1 | Complete |
 | PRW-02 | Phase 1 | Complete (browser-open stub); Phase 2.1 upgrades to in-editor diff |
-| NAV-01 | Phase 2.1 | Pending |
+| NAV-01 | Phase 2.1 | Complete |
 | NAV-02 | Phase 2.1 | Pending |
 | UI-01 | Phase 2.2 | Pending |
 | UI-02 | Phase 2.2 | Pending |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-08-PLAN.md
-last_updated: "2026-04-03T22:28:21.484Z"
+stopped_at: Completed 02.1-01-PLAN.md
+last_updated: "2026-04-03T23:28:55.612Z"
 last_activity: 2026-04-03
 progress:
-  total_phases: 4
+  total_phases: 6
   completed_phases: 2
-  total_plans: 17
-  completed_plans: 17
+  total_plans: 21
+  completed_plans: 18
   percent: 17
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-03)
 
 **Core value:** Generate deep, context-aware AI reviews of any GitHub PR (open, closed, or merged) directly inside VS Code, with everything persisted locally and shareable to Privanote.
-**Current focus:** Phase 02 — ai-review-generation
+**Current focus:** Phase 02.1 — in-editor-pr-navigation
 
 ## Current Position
 
-Phase: 3
-Plan: Not started
-Status: Executing Phase 02
+Phase: 02.1 (in-editor-pr-navigation) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
 Last activity: 2026-04-03
 
 Progress: [█░░░░░░░░░] 17%
@@ -66,6 +66,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 02 P05 | 2 | 2 tasks | 10 files |
 | Phase 02-ai-review-generation P07 | 15 | 1 tasks | 1 files |
 | Phase 02 P08 | 18 | 2 tasks | 4 files |
+| Phase 02.1-in-editor-pr-navigation P01 | 3 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,8 @@ Recent decisions affecting current work:
 - [Phase 02-ai-review-generation]: Codicons localResourceRoots + CSP font-src wired in ReviewPanel constructor for webview icon rendering
 - [Phase 02]: contextValue for PR tree items is pr-${state} — generateReview menu uses viewItem =~ /^pr-/ to match all states
 - [Phase 02]: analyzePRHistory appends history section to existing contextText rather than replacing — preserves workspace analysis
+- [Phase 02.1-01]: vitest config include expanded to src/easy-review/**/*.test.ts — test files co-located with source per plan spec
+- [Phase 02.1-01]: buildDirectoryTree compacts virtual root (label='') by returning root.children — avoids spurious top-level directory wrapper
 
 ### Roadmap Evolution
 
@@ -133,6 +136,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T21:38:20.423Z
-Stopped at: Completed 02-08-PLAN.md
+Last session: 2026-04-03T23:28:50.890Z
+Stopped at: Completed 02.1-01-PLAN.md
 Resume file: None
