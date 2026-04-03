@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-04-03T18:21:27.617Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-04-03T18:26:40.467Z"
 last_activity: 2026-04-03
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 3
+  completed_plans: 4
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-04-03
 
@@ -54,6 +54,7 @@ Progress: [█░░░░░░░░░] 17%
 *Updated after each plan completion*
 | Phase 01 P02 | 6 | 3 tasks | 10 files |
 | Phase 01 P03 | 8 | 2 tasks | 6 files |
+| Phase 01 P04 | 5 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Raw SQL chosen over Drizzle ORM — one table in Phase 1 does not justify ORM overhead
 - [Phase 01]: STRICT SQLite table mode used — enforces type affinity at DB level, catches column mapping bugs early
 - [Phase 01]: StorageAdapter interface retained for D-10 fallback path — enables future no-op fallback if native module fails
+- [Phase 01]: Flat list (not grouped by state) per D-04 — simplest rendering, state conveyed by badge color
+- [Phase 01]: Module-level getProvider()/getStore() exports in activation.ts for cross-command access without argument threading
 
 ### Pending Todos
 
@@ -89,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T18:21:27.612Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-04-03T18:26:40.463Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None

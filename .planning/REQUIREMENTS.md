@@ -7,8 +7,8 @@
 
 ### PR Browsing
 
-- [ ] **PRW-01**: User can view PRs in all states (open, closed, merged) in the VS Code sidebar
-- [ ] **PRW-02**: User can select any PR and view its diff within VS Code
+- [x] **PRW-01**: User can view PRs in all states (open, closed, merged) in the VS Code sidebar
+- [x] **PRW-02**: User can select any PR and view its diff within VS Code
 
 ### Project Analysis
 
@@ -85,8 +85,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRW-01 | Phase 1 | Pending |
-| PRW-02 | Phase 1 | Pending |
+| PRW-01 | Phase 1 | Complete |
+| PRW-02 | Phase 1 | Complete |
 | DB-01 | Phase 1 | Complete |
 | DB-02 | Phase 1 | Complete |
 | CFG-01 | Phase 1 | Complete |
