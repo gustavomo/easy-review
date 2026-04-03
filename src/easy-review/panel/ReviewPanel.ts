@@ -181,9 +181,7 @@ export class ReviewPanel {
           prTitle: pr.title,
           author: pr.author,
           description: rawPR.body ?? '',
-          commitMessages: (rawPR.commits ?? [])
-            .map((c: any) => c.commit?.message ?? '')
-            .filter(Boolean),
+          commitMessages: [],
         },
         diff,
         projectAnalysis,
