@@ -26,7 +26,7 @@
 
 ### Review Display
 
-- [ ] **VIEW-01**: Completed review is displayed in a dedicated VS Code webview panel with the full 6-section structured format
+- [x] **VIEW-01**: Completed review is displayed in a dedicated VS Code webview panel with the full 6-section structured format
 - [x] **VIEW-02**: Webview displays findings classified by severity (critical / warning / suggestion)
 - [x] **VIEW-03**: User can view review history for any PR (all previously generated reviews)
 
@@ -96,7 +96,7 @@
 | REV-03 | Phase 2 | Complete |
 | REV-04 | Phase 2 | Complete |
 | REV-05 | Phase 2 | Complete |
-| VIEW-01 | Phase 2 | Pending |
+| VIEW-01 | Phase 2 | Complete |
 | VIEW-02 | Phase 2 | Complete |
 | VIEW-03 | Phase 2 | Complete |
 | PROJ-01 | Phase 2 | Complete |
