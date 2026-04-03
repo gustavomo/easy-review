@@ -141,3 +141,20 @@ None - no external service configuration required.
 ---
 *Phase: 01-foundation*
 *Completed: 2026-04-03*
+
+## Self-Check: PASSED
+
+- FOUND: vitest.config.ts
+- FOUND: src/test/__mocks__/vscode.ts
+- FOUND: src/test/unit/storage.test.ts
+- FOUND: src/test/unit/sqlite.test.ts
+- FOUND: src/test/unit/url-parser.test.ts
+- FOUND: src/test/unit/path-resolver.test.ts
+- FOUND: src/test/unit/subprocess.test.ts
+- FOUND: src/test/integration/pr-provider.test.ts
+- FOUND: scripts/sqlite-spike.js
+- FOUND: .planning/phases/01-foundation/01-02-SUMMARY.md
+- FOUND commit 72e5cd11 (Task 1: vitest infrastructure)
+- FOUND commit 01585920 (Task 2: test stubs)
+- FOUND commit 387b5ab4 (Task 3: electron-rebuild spike)
+- FOUND commit 62c68011 (Plan metadata)
