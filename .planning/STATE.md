@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02.1-03-PLAN.md
-last_updated: "2026-04-03T23:33:53.214Z"
+stopped_at: Completed 02.1-02-PLAN.md
+last_updated: "2026-04-03T23:39:14.474Z"
 last_activity: 2026-04-03
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 21
-  completed_plans: 19
+  completed_plans: 20
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 02.1 (in-editor-pr-navigation) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-04-03
 
@@ -68,6 +68,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 02 P08 | 18 | 2 tasks | 4 files |
 | Phase 02.1-in-editor-pr-navigation P01 | 3 | 2 tasks | 7 files |
 | Phase 02.1-in-editor-pr-navigation P03 | 4 | 2 tasks | 4 files |
+| Phase 02.1-in-editor-pr-navigation P02 | 4 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,9 @@ Recent decisions affecting current work:
 - [Phase 02.1-03]: Uri.from added to vscode mock — required for encodeDiffUri to construct URIs in test environment
 - [Phase 02.1-03]: EMPTY sentinel checked before any Octokit call in EasyReviewDiffProvider — prevents 404 for added/deleted files
 - [Phase 02.1-03]: In-memory URI cache in EasyReviewDiffProvider keyed by uri.toString() — VS Code calls provideTextDocumentContent twice per diff view
+- [Phase 02.1-in-editor-pr-navigation]: await Promise.resolve() in loadFilesForPR ensures getChildren returns [LoadingNode] before children state changes — synchronous async path (no octokit) would set children='error' before return
+- [Phase 02.1-in-editor-pr-navigation]: EventEmitter mock updated to propagate events — original mock had fire() as no-op, breaking retryLoadFiles event tests
+- [Phase 02.1-in-editor-pr-navigation]: setCredentialStore() injection method added to EasyReviewPRsProvider — allows activation.ts to inject after construction without changing existing no-arg constructor call
 
 ### Roadmap Evolution
 
@@ -140,6 +144,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T23:33:53.210Z
-Stopped at: Completed 02.1-03-PLAN.md
+Last session: 2026-04-03T23:39:14.471Z
+Stopped at: Completed 02.1-02-PLAN.md
 Resume file: None

@@ -80,7 +80,7 @@ Plans:
 
 Plans:
 - [x] 02.1-01-PLAN.md — Wave 0 test stubs + EasyReviewTreeNodes union type + buildDirectoryTree() pure function
-- [ ] 02.1-02-PLAN.md — EasyReviewPRsProvider 3-level tree (async getChildren, loading/error states) + PRTreeItem upgrade + PRFileFetcher
+- [x] 02.1-02-PLAN.md — EasyReviewPRsProvider 3-level tree (async getChildren, loading/error states) + PRTreeItem upgrade + PRFileFetcher
 - [x] 02.1-03-PLAN.md — EasyReviewDiffProvider (TextDocumentContentProvider for easy-review-diff://) + diffUri encode/decode helpers
 - [ ] 02.1-04-PLAN.md — PROverviewPanel (React webview + extension host class) + activation.ts wiring + package.json + vite config
 
@@ -130,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 8/8 | Complete | 2026-04-03 |
 | 2. AI Review Generation | 9/9 | Complete | 2026-04-03 |
-| 2.1. In-Editor PR Navigation | 0/4 | Not started | - |
+| 2.1. In-Editor PR Navigation | 3/4 | In Progress|  |
 | 2.2. Sidebar UI Enhancements | 0/? | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
