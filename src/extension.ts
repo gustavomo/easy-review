@@ -5,6 +5,7 @@
 
 import TelemetryReporter from '@vscode/extension-telemetry';
 import * as vscode from 'vscode';
+import { activateEasyReview, deactivateEasyReview } from './easy-review/activation';
 
 import { LiveShare } from 'vsls/vscode.js';
 import { PostCommitCommandsProvider, Repository } from './api/api';
@@ -350,6 +351,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<GitApi
 
 	const deferred = await deferredActivate(context, showPRController);
 	await commands.setContext(contexts.ACTIVATED, true);
+	activateEasyReview(context);
 	return deferred;
 }
 
@@ -508,4 +510,5 @@ export async function deactivate() {
 	if (telemetry) {
 		telemetry.dispose();
 	}
+	deactivateEasyReview();
 }
