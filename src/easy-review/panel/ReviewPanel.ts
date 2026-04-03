@@ -136,9 +136,9 @@ export class ReviewPanel {
     const adapter = activeModel === 'codex' ? new CodexAdapter() : new ClaudeAdapter();
     const cliPath =
       activeModel === 'codex'
-        ? (config.get<string>('codexPath') ?? 'codex')
-        : (config.get<string>('claudePath') ??
-           this.context.globalState.get<string>('easyReview.claudePath.resolved') ??
+        ? (config.get<string>('codexPath') || 'codex')
+        : (config.get<string>('claudePath') ||
+           this.context.globalState.get<string>('easyReview.claudePath.resolved') ||
            'claude');
 
     // Transition webview to generating state
