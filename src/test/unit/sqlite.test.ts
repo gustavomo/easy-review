@@ -9,6 +9,27 @@ vi.mock('vscode', () => ({
 
 import { SQLiteStore } from '../../easy-review/storage/SQLiteStore';
 import type { StoredPR } from '../../easy-review/storage/StorageAdapter';
+import type { StoredReview, StoredProjectAnalysis } from '../../easy-review/storage/types';
+
+function makeReview(overrides: Partial<Omit<StoredReview, 'id'>> = {}): Omit<StoredReview, 'id'> {
+  return {
+    repoId: 'owner/repo',
+    prNumber: 1,
+    modelUsed: 'claude-3-5-sonnet',
+    createdAt: 1000,
+    reviewText: '# Review\n\nLooks good.',
+    parsedJson: '{}',
+    ...overrides,
+  };
+}
+
+function makeAnalysis(overrides: Partial<Omit<StoredProjectAnalysis, 'id'>> = {}): Omit<StoredProjectAnalysis, 'id'> {
+  return {
+    collectedAt: 2000,
+    contextText: 'README content here',
+    ...overrides,
+  };
+}
 
 function makePR(overrides: Partial<StoredPR> = {}): StoredPR {
   return {
@@ -96,18 +117,88 @@ describe('SQLiteStore CRUD', () => {
 
 // Phase 2 additions — REV-04, REV-05, VIEW-03
 describe('SQLiteStore — reviews table', () => {
-  it.todo('saveReview inserts a row into the reviews table');
-  it.todo('getReviews returns all reviews for a given repo_id + pr_number in descending created_at order');
-  it.todo('saveReview stores both review_text and parsed_json');
-  it.todo('getReviews returns empty array when no reviews exist for a PR');
+  let store: SQLiteStore;
+
+  beforeEach(() => {
+    store = new SQLiteStore();
+    store.initialize(':memory:');
+  });
+
+  afterEach(() => store.close());
+
+  it('saveReview inserts a row into the reviews table', () => {
+    const id = store.saveReview(makeReview());
+    expect(typeof id).toBe('number');
+    expect(id).toBeGreaterThan(0);
+  });
+
+  it('getReviews returns all reviews for a given repo_id + pr_number in descending created_at order', () => {
+    store.saveReview(makeReview({ createdAt: 1000 }));
+    store.saveReview(makeReview({ createdAt: 3000 }));
+    store.saveReview(makeReview({ createdAt: 2000 }));
+    const reviews = store.getReviews('owner/repo', 1);
+    expect(reviews).toHaveLength(3);
+    expect(reviews[0].createdAt).toBe(3000);
+    expect(reviews[1].createdAt).toBe(2000);
+    expect(reviews[2].createdAt).toBe(1000);
+  });
+
+  it('saveReview stores both review_text and parsed_json', () => {
+    store.saveReview(makeReview({ reviewText: '# My Review', parsedJson: '{"sections":[]}' }));
+    const [review] = store.getReviews('owner/repo', 1);
+    expect(review.reviewText).toBe('# My Review');
+    expect(review.parsedJson).toBe('{"sections":[]}');
+  });
+
+  it('getReviews returns empty array when no reviews exist for a PR', () => {
+    const reviews = store.getReviews('owner/repo', 999);
+    expect(reviews).toEqual([]);
+  });
 
   // REV-05: multiple versions preserved
-  it.todo('saving two reviews for the same PR produces two rows, both queryable');
+  it('saving two reviews for the same PR produces two rows, both queryable', () => {
+    const id1 = store.saveReview(makeReview({ createdAt: 1000 }));
+    const id2 = store.saveReview(makeReview({ createdAt: 2000 }));
+    expect(id1).not.toBe(id2);
+    const reviews = store.getReviews('owner/repo', 1);
+    expect(reviews).toHaveLength(2);
+  });
 });
 
 describe('SQLiteStore — project_analyses table', () => {
-  it.todo('saveProjectAnalysis inserts a row into the project_analyses table');
-  it.todo('getProjectAnalysis returns the most recently inserted row');
-  it.todo('saveProjectAnalysis replaces the previous row on re-run (single row policy)');
-  it.todo('getProjectAnalysis returns null when no analysis has been run');
+  let store: SQLiteStore;
+
+  beforeEach(() => {
+    store = new SQLiteStore();
+    store.initialize(':memory:');
+  });
+
+  afterEach(() => store.close());
+
+  it('saveProjectAnalysis inserts a row into the project_analyses table', () => {
+    expect(() => store.saveProjectAnalysis(makeAnalysis())).not.toThrow();
+  });
+
+  it('getProjectAnalysis returns the most recently inserted row', () => {
+    store.saveProjectAnalysis(makeAnalysis({ collectedAt: 2000, contextText: 'first' }));
+    const result = store.getProjectAnalysis();
+    expect(result).not.toBeNull();
+    expect(result!.contextText).toBe('first');
+    expect(result!.collectedAt).toBe(2000);
+  });
+
+  it('saveProjectAnalysis replaces the previous row on re-run (single row policy)', () => {
+    store.saveProjectAnalysis(makeAnalysis({ contextText: 'old' }));
+    store.saveProjectAnalysis(makeAnalysis({ contextText: 'new' }));
+    const result = store.getProjectAnalysis();
+    expect(result!.contextText).toBe('new');
+    // Only one row should exist
+    const result2 = store.getProjectAnalysis();
+    expect(result2!.contextText).toBe('new');
+  });
+
+  it('getProjectAnalysis returns null when no analysis has been run', () => {
+    const result = store.getProjectAnalysis();
+    expect(result).toBeNull();
+  });
 });
