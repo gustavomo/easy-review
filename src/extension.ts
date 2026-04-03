@@ -351,7 +351,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<GitApi
 
 	const deferred = await deferredActivate(context, showPRController);
 	await commands.setContext(contexts.ACTIVATED, true);
-	await activateEasyReview(context);
 	return deferred;
 }
 
@@ -448,6 +447,7 @@ async function deferredActivate(context: vscode.ExtensionContext, showPRControll
 	await experimentationService.initializePromise;
 	await experimentationService.isCachedFlightEnabled('githubaa');
 	await credentialStore.create();
+	await activateEasyReview(context, credentialStore);  // Gap 2 fix: wires Octokit into addPRByUrl
 
 	const reposManager = new RepositoriesManager(credentialStore, telemetry);
 	context.subscriptions.push(reposManager);
