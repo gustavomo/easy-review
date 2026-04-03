@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-07-PLAN.md
-last_updated: "2026-04-03T18:58:24.734Z"
+status: verifying
+stopped_at: Completed 01-08-PLAN.md
+last_updated: "2026-04-03T19:02:26.984Z"
 last_activity: 2026-04-03
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 17
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 Phase: 01 (foundation) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-03
 
 Progress: [█░░░░░░░░░] 17%
@@ -58,6 +58,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 01-foundation P05 | 12 | 2 tasks | 5 files |
 | Phase 01 P06 | 15 | 2 tasks | 8 files |
 | Phase 01 P07 | 2 | 1 tasks | 1 files |
+| Phase 01 P08 | 5 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,7 @@ Recent decisions affecting current work:
 - [Phase 01]: activateEasyReview made async (Promise<void>) so health check awaits work; extension.ts awaits it
 - [Phase 01]: SubprocessRunner uses settle-once flag to prevent double-resolve when close event and cancellation fire simultaneously
 - [Phase 01]: PRW-02 Phase 1 satisfied via browser-open (vscode.env.openExternal) — full in-editor diff via PullRequestModel deferred to future phase
+- [Phase 01]: activateEasyReview moved into deferredActivate() so credentialStore is available; parameter made optional for test backward compatibility
 
 ### Pending Todos
 
@@ -100,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T18:58:24.730Z
-Stopped at: Completed 01-07-PLAN.md
+Last session: 2026-04-03T19:02:26.980Z
+Stopped at: Completed 01-08-PLAN.md
 Resume file: None

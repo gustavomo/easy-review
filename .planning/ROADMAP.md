@@ -38,7 +38,7 @@ Plans:
 - [x] 01-05-PLAN.md — PRUrlParser + PRPersistenceService + AddByURL/RemovePR commands
 - [x] 01-06-PLAN.md — PathResolver (CJS-safe) + SubprocessRunner (streaming + cancel + timeout) + activation health checks
 - [x] 01-07-PLAN.md — Gap closure: replace openPRDiff stub with vscode.env.openExternal (PRW-02)
-- [ ] 01-08-PLAN.md — Gap closure: wire CredentialStore into activateEasyReview so addPRByUrl calls fetchAndPersistPR
+- [x] 01-08-PLAN.md — Gap closure: wire CredentialStore into activateEasyReview so addPRByUrl calls fetchAndPersistPR
 **UI hint**: yes
 
 ### Phase 2: AI Review Generation
@@ -83,7 +83,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 7/8 | In Progress|  |
+| 1. Foundation | 8/8 | Complete   | 2026-04-03 |
 | 2. AI Review Generation | 0/? | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
