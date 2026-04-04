@@ -222,13 +222,18 @@ body.vscode-light .easy-review-md .hljs-property { color: #2b91af; }
    padding: 8px 12px per UI-SPEC (8px vertical on spacing scale, 12px horizontal).
    overflow-x auto on table wrapper handles wide tables. */
 
+/* Wrapper div for horizontal scroll on wide tables —
+   marked() outputs bare <table>, so we wrap via .easy-review-md overflow */
+.easy-review-md {
+  overflow-x: auto;
+}
+
 .easy-review-md table {
   border-collapse: collapse;
   width: 100%;
   margin: 8px 0;
   font-size: 13px;
-  overflow-x: auto;
-  display: block;
+  table-layout: auto;
 }
 
 .easy-review-md th,
@@ -236,6 +241,18 @@ body.vscode-light .easy-review-md .hljs-property { color: #2b91af; }
   padding: 8px 12px;
   border: 1px solid var(--vscode-panel-border);
   text-align: left;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* Short-value columns (Severity, Impact Level, Risk, Category) stay compact */
+.easy-review-md td:first-child {
+  white-space: nowrap;
+}
+
+/* Long-text columns (Description, Purpose, Issue) get the remaining space */
+.easy-review-md td:last-child {
+  min-width: 200px;
 }
 
 .easy-review-md th {

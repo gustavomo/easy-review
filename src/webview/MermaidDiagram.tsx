@@ -46,7 +46,13 @@ export function MermaidDiagram({ source }: MermaidDiagramProps) {
     mermaid
       .render(idRef.current, source)
       .then(({ svg: renderedSvg }) => {
-        if (active) setSvg(renderedSvg);
+        // Strip fixed width/height from SVG so it scales to fill its container.
+        // Keep viewBox so the SVG aspect ratio is preserved.
+        const scalable = renderedSvg
+          .replace(/\s+width="[^"]*"/, '')
+          .replace(/\s+height="[^"]*"/, '')
+          .replace(/style="[^"]*"/, 'style="width:100%;height:auto"');
+        if (active) setSvg(scalable);
       })
       .catch((err: Error) => {
         if (active) setError(err.message ?? 'Unknown render error');
@@ -143,6 +149,44 @@ function DiagramPreviewModal({ svg, onClose }: { svg: string; onClose: () => voi
   const [translate, setTranslate] = React.useState({ x: 0, y: 0 });
   const [dragging, setDragging] = React.useState(false);
   const dragStart = React.useRef({ x: 0, y: 0 });
+  const viewportRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  // On mount: fit the SVG to the viewport
+  React.useEffect(() => {
+    fitToViewport();
+  }, [svg]);
+
+  function fitToViewport() {
+    const viewport = viewportRef.current;
+    const content = contentRef.current;
+    if (!viewport || !content) return;
+
+    // Measure the SVG's natural size
+    const svgEl = content.querySelector('svg');
+    if (!svgEl) return;
+
+    // Get viewBox dimensions or fallback to bounding box
+    const viewBox = svgEl.getAttribute('viewBox');
+    let svgW: number;
+    let svgH: number;
+    if (viewBox) {
+      const parts = viewBox.split(/[\s,]+/).map(Number);
+      svgW = parts[2];
+      svgH = parts[3];
+    } else {
+      const bbox = svgEl.getBBox();
+      svgW = bbox.width || 800;
+      svgH = bbox.height || 600;
+    }
+
+    const vw = viewport.clientWidth - 32; // 16px padding each side
+    const vh = viewport.clientHeight - 32;
+    const fitScale = Math.min(vw / svgW, vh / svgH, 2); // cap at 2x
+
+    setScale(fitScale);
+    setTranslate({ x: 0, y: 0 });
+  }
 
   // Close on Escape
   React.useEffect(() => {
@@ -174,11 +218,6 @@ function DiagramPreviewModal({ svg, onClose }: { svg: string; onClose: () => voi
   }, [dragging]);
 
   const handleMouseUp = React.useCallback(() => setDragging(false), []);
-
-  const resetView = React.useCallback(() => {
-    setScale(1);
-    setTranslate({ x: 0, y: 0 });
-  }, []);
 
   const scalePercent = Math.round(scale * 100);
 
@@ -222,7 +261,7 @@ function DiagramPreviewModal({ svg, onClose }: { svg: string; onClose: () => voi
         <button onClick={() => setScale(prev => Math.min(prev + 0.25, 5))} style={toolbarBtn} title="Zoom in">
           +
         </button>
-        <button onClick={resetView} style={{ ...toolbarBtn, width: 'auto', padding: '4px 10px' }} title="Reset view">
+        <button onClick={fitToViewport} style={{ ...toolbarBtn, width: 'auto', padding: '4px 10px' }} title="Fit to viewport">
           Fit
         </button>
         <div style={{ width: '1px', height: '20px', background: 'var(--vscode-panel-border)', margin: '0 4px' }} />
@@ -233,6 +272,7 @@ function DiagramPreviewModal({ svg, onClose }: { svg: string; onClose: () => voi
 
       {/* Diagram viewport */}
       <div
+        ref={viewportRef}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -248,6 +288,7 @@ function DiagramPreviewModal({ svg, onClose }: { svg: string; onClose: () => voi
         }}
       >
         <div
+          ref={contentRef}
           style={{
             transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
             transformOrigin: 'center center',
