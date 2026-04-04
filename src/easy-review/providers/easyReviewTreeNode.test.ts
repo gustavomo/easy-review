@@ -9,8 +9,8 @@ import {
   PRFileChange,
 } from './EasyReviewTreeNodes';
 import { PRTreeItem } from './PRTreeItem';
-import type { StoredPR, StoredReview } from '../storage/types';
 import type { StorageAdapter } from '../storage/StorageAdapter';
+import type { StoredPR, StoredReview } from '../storage/types';
 
 // Helper: create a minimal StoredPR
 function makePR(overrides?: Partial<StoredPR>): StoredPR {

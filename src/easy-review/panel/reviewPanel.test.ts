@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { StorageAdapter } from '../storage/StorageAdapter';
 import type * as vscodeTypes from 'vscode';
+import type { StorageAdapter } from '../storage/StorageAdapter';
 
 // ReviewPanel is a singleton with a VS Code WebviewPanel — we test via its public surface
 // using mocked vscode module. The test verifies the correct sequence of calls
