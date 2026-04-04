@@ -181,7 +181,7 @@ Plans:
 - [x] 06-04-PLAN.md — Wave 1: ReviewParser 7-section update (bug keyword) + modelSettings.ts + package.json settings
 - [x] 06-05-PLAN.md — Wave 2: AgentOrchestrator.ts (Promise.allSettled 7 agents, ADK + Codex + Ollama paths, Mermaid retry) + esbuild ADK bundle
 - [x] 06-06-PLAN.md — Wave 3: ReviewPanel.ts (extension host) refactor — executeReview delegates to runAllAgents
-- [ ] 06-07-PLAN.md — Wave 4: AgentStatusBar + AgentSlot + SectionPendingPlaceholder + DiagramErrorBanner + CollapsibleSection/PanelHeader updates
+- [x] 06-07-PLAN.md — Wave 4: AgentStatusBar + AgentSlot + SectionPendingPlaceholder + DiagramErrorBanner + CollapsibleSection/PanelHeader updates
 - [ ] 06-08-PLAN.md — Wave 5: ReviewDocument 7-slot progressive layout + webview ReviewPanel sectionUpdate handling + human verification
 
 ### Phase 7: Changes Tree Enhancements — File Icons and PR Author
