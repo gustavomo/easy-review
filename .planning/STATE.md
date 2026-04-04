@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-04-PLAN.md
-last_updated: "2026-04-04T17:37:37.570Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-04-04T17:39:41.891Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 10
   completed_phases: 7
   total_plans: 41
-  completed_plans: 35
+  completed_plans: 37
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 06 (multi-agent-pr-review-pipeline-with-model-selection) — EXECUTING
-Plan: 4 of 8
+Plan: 6 of 8
 Status: Ready to execute
 Last activity: 2026-04-04
 
@@ -83,6 +83,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 07-changes-tree-file-icons-and-pr-author P02 | 5 | 2 tasks | 2 files |
 | Phase 06 P02 | 5 | 2 tasks | 3 files |
 | Phase 06 P04 | 150 | 2 tasks | 5 files |
+| Phase 06-multi-agent-pr-review-pipeline-with-model-selection P03 | 4 | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -162,6 +163,7 @@ Recent decisions affecting current work:
 - [Phase 06-02]: ModelAdapter interface: uniform run(opts) for all model types (claude/codex/ollama) — OllamaAdapter uses Node built-in fetch per CLAUDE.md constraint
 - [Phase 06]: resolveAgentModel pure function with per-agent override taking precedence over defaultModel
 - [Phase 06]: migrateActiveModel implements D-21: defaultModel wins if set, activeModel as fallback, 'claude' as hardcoded default
+- [Phase 06]: Regex-based Mermaid validation in extension host — mermaid npm package is browser-only; lightweight type keyword check sufficient for D-16 self-correction loop
 
 ### Roadmap Evolution
 
@@ -192,6 +194,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T17:37:37.566Z
-Stopped at: Completed 06-04-PLAN.md
+Last session: 2026-04-04T17:39:37.318Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None
