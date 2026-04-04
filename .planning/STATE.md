@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02.1-02-PLAN.md
-last_updated: "2026-04-03T23:39:14.474Z"
-last_activity: 2026-04-03
+status: verifying
+stopped_at: Completed 02.1-04-PLAN.md
+last_updated: "2026-04-04T00:03:36.078Z"
+last_activity: 2026-04-04
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 21
-  completed_plans: 20
+  completed_plans: 21
   percent: 17
 ---
 
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 Phase: 02.1 (in-editor-pr-navigation) — EXECUTING
 Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-04-03
+Status: Phase complete — ready for verification
+Last activity: 2026-04-04
 
 Progress: [█░░░░░░░░░] 17%
 
@@ -69,6 +69,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 02.1-in-editor-pr-navigation P01 | 3 | 2 tasks | 7 files |
 | Phase 02.1-in-editor-pr-navigation P03 | 4 | 2 tasks | 4 files |
 | Phase 02.1-in-editor-pr-navigation P02 | 4 | 2 tasks | 5 files |
+| Phase 02.1-in-editor-pr-navigation P04 | 14 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -119,6 +120,9 @@ Recent decisions affecting current work:
 - [Phase 02.1-in-editor-pr-navigation]: await Promise.resolve() in loadFilesForPR ensures getChildren returns [LoadingNode] before children state changes — synchronous async path (no octokit) would set children='error' before return
 - [Phase 02.1-in-editor-pr-navigation]: EventEmitter mock updated to propagate events — original mock had fire() as no-op, breaking retryLoadFiles event tests
 - [Phase 02.1-in-editor-pr-navigation]: setCredentialStore() injection method added to EasyReviewPRsProvider — allows activation.ts to inject after construction without changing existing no-arg constructor call
+- [Phase 02.1-in-editor-pr-navigation]: ready/loadPR handshake used instead of setTimeout — webview posts 'ready' message on mount, extension host replies with 'loadPR', eliminating race condition
+- [Phase 02.1-in-editor-pr-navigation]: type=module attribute required on script tag and cspSource added to script-src CSP for ES module webviews (Vite output) to load correctly in VS Code webview
+- [Phase 02.1-in-editor-pr-navigation]: PROverviewPanel is NOT a singleton — each openPROverview call creates a fresh panel in ViewColumn.Two
 
 ### Roadmap Evolution
 
@@ -144,6 +148,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T23:39:14.471Z
-Stopped at: Completed 02.1-02-PLAN.md
+Last session: 2026-04-04T00:03:36.075Z
+Stopped at: Completed 02.1-04-PLAN.md
 Resume file: None
