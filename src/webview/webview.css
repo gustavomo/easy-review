@@ -63,59 +63,122 @@
   color: var(--vscode-descriptionForeground);
 }
 
-/* ── highlight.js token color overrides ──────────────────────────────────
-   D-04: VS Code CSS vars only — no imported hljs theme, no hardcoded hex.
-   .easy-review-md .hljs targets the <code> element inside <pre> after
-   marked-highlight adds the hljs class. More specific than pre code reset. */
+/* ── highlight.js: GitHub themes scoped to VS Code body class ─────────────
+   Dark theme rules applied under body.vscode-dark / body.vscode-high-contrast.
+   Light theme rules applied under body.vscode-light.
+   Background uses VS Code's textCodeBlock var so it integrates with the editor
+   theme; all token colors are GitHub's exact prettylights palette. */
 
-.easy-review-md .hljs {
-  background: var(--vscode-textCodeBlock-background);
-  color: var(--vscode-editor-foreground);
+/* ── Dark theme (GitHub Dark) ──────────────────────────────── */
+body.vscode-dark .easy-review-md .hljs,
+body.vscode-high-contrast .easy-review-md .hljs {
+  color: #c9d1d9;
+  background: var(--vscode-textCodeBlock-background, #161b22);
 }
+body.vscode-dark .easy-review-md .hljs-doctag,
+body.vscode-dark .easy-review-md .hljs-keyword,
+body.vscode-dark .easy-review-md .hljs-meta .hljs-keyword,
+body.vscode-dark .easy-review-md .hljs-template-tag,
+body.vscode-dark .easy-review-md .hljs-template-variable,
+body.vscode-dark .easy-review-md .hljs-type,
+body.vscode-dark .easy-review-md .hljs-variable.language_,
+body.vscode-high-contrast .easy-review-md .hljs-doctag,
+body.vscode-high-contrast .easy-review-md .hljs-keyword,
+body.vscode-high-contrast .easy-review-md .hljs-type,
+body.vscode-high-contrast .easy-review-md .hljs-variable.language_ { color: #ff7b72; }
 
-.easy-review-md .hljs-keyword,
-.easy-review-md .hljs-selector-tag {
-  color: var(--vscode-symbolIcon-keywordForeground, #569cd6);
-}
+body.vscode-dark .easy-review-md .hljs-title,
+body.vscode-dark .easy-review-md .hljs-title.class_,
+body.vscode-dark .easy-review-md .hljs-title.class_.inherited__,
+body.vscode-dark .easy-review-md .hljs-title.function_,
+body.vscode-high-contrast .easy-review-md .hljs-title,
+body.vscode-high-contrast .easy-review-md .hljs-title.class_,
+body.vscode-high-contrast .easy-review-md .hljs-title.function_ { color: #d2a8ff; }
 
-.easy-review-md .hljs-string,
-.easy-review-md .hljs-attr {
-  color: var(--vscode-symbolIcon-stringForeground, #ce9178);
-}
+body.vscode-dark .easy-review-md .hljs-attr,
+body.vscode-dark .easy-review-md .hljs-attribute,
+body.vscode-dark .easy-review-md .hljs-literal,
+body.vscode-dark .easy-review-md .hljs-meta,
+body.vscode-dark .easy-review-md .hljs-number,
+body.vscode-dark .easy-review-md .hljs-operator,
+body.vscode-dark .easy-review-md .hljs-variable,
+body.vscode-dark .easy-review-md .hljs-selector-attr,
+body.vscode-dark .easy-review-md .hljs-selector-class,
+body.vscode-dark .easy-review-md .hljs-selector-id,
+body.vscode-high-contrast .easy-review-md .hljs-attr,
+body.vscode-high-contrast .easy-review-md .hljs-number,
+body.vscode-high-contrast .easy-review-md .hljs-variable { color: #79c0ff; }
 
-.easy-review-md .hljs-comment {
-  color: var(--vscode-descriptionForeground);
-  font-style: italic;
-}
+body.vscode-dark .easy-review-md .hljs-regexp,
+body.vscode-dark .easy-review-md .hljs-string,
+body.vscode-dark .easy-review-md .hljs-meta .hljs-string,
+body.vscode-high-contrast .easy-review-md .hljs-string { color: #a5d6ff; }
 
-.easy-review-md .hljs-number,
-.easy-review-md .hljs-literal {
-  color: var(--vscode-symbolIcon-numberForeground, #b5cea8);
-}
+body.vscode-dark .easy-review-md .hljs-built_in,
+body.vscode-dark .easy-review-md .hljs-symbol,
+body.vscode-high-contrast .easy-review-md .hljs-built_in { color: #ffa657; }
 
-.easy-review-md .hljs-title,
-.easy-review-md .hljs-name,
-.easy-review-md .hljs-class,
-.easy-review-md .hljs-type {
-  color: var(--vscode-charts-purple, var(--vscode-symbolIcon-classForeground, #4ec9b0));
-}
+body.vscode-dark .easy-review-md .hljs-comment,
+body.vscode-dark .easy-review-md .hljs-code,
+body.vscode-dark .easy-review-md .hljs-formula,
+body.vscode-high-contrast .easy-review-md .hljs-comment { color: #8b949e; font-style: italic; }
 
-.easy-review-md .hljs-variable,
-.easy-review-md .hljs-params {
-  color: var(--vscode-symbolIcon-variableForeground, #9cdcfe);
-}
+body.vscode-dark .easy-review-md .hljs-name,
+body.vscode-dark .easy-review-md .hljs-quote,
+body.vscode-dark .easy-review-md .hljs-selector-tag,
+body.vscode-high-contrast .easy-review-md .hljs-name { color: #7ee787; }
 
-.easy-review-md .hljs-property {
-  color: var(--vscode-symbolIcon-fieldForeground, #9cdcfe);
-}
+body.vscode-dark .easy-review-md .hljs-addition,
+body.vscode-high-contrast .easy-review-md .hljs-addition { color: #aff5b4; background-color: #033a16; }
+body.vscode-dark .easy-review-md .hljs-deletion,
+body.vscode-high-contrast .easy-review-md .hljs-deletion { color: #ffdcd7; background-color: #67060c; }
 
-.easy-review-md .hljs-built_in {
-  color: var(--vscode-charts-blue, #569cd6);
+/* ── Light theme (GitHub Light) ─────────────────────────────── */
+body.vscode-light .easy-review-md .hljs {
+  color: #24292e;
+  background: var(--vscode-textCodeBlock-background, #f6f8fa);
 }
+body.vscode-light .easy-review-md .hljs-doctag,
+body.vscode-light .easy-review-md .hljs-keyword,
+body.vscode-light .easy-review-md .hljs-meta .hljs-keyword,
+body.vscode-light .easy-review-md .hljs-template-tag,
+body.vscode-light .easy-review-md .hljs-template-variable,
+body.vscode-light .easy-review-md .hljs-type,
+body.vscode-light .easy-review-md .hljs-variable.language_ { color: #d73a49; }
 
-.easy-review-md .hljs-function {
-  color: var(--vscode-symbolIcon-functionForeground, var(--vscode-charts-blue, #dcdcaa));
-}
+body.vscode-light .easy-review-md .hljs-title,
+body.vscode-light .easy-review-md .hljs-title.class_,
+body.vscode-light .easy-review-md .hljs-title.class_.inherited__,
+body.vscode-light .easy-review-md .hljs-title.function_ { color: #6f42c1; }
+
+body.vscode-light .easy-review-md .hljs-attr,
+body.vscode-light .easy-review-md .hljs-attribute,
+body.vscode-light .easy-review-md .hljs-literal,
+body.vscode-light .easy-review-md .hljs-meta,
+body.vscode-light .easy-review-md .hljs-number,
+body.vscode-light .easy-review-md .hljs-operator,
+body.vscode-light .easy-review-md .hljs-variable,
+body.vscode-light .easy-review-md .hljs-selector-attr,
+body.vscode-light .easy-review-md .hljs-selector-class,
+body.vscode-light .easy-review-md .hljs-selector-id { color: #005cc5; }
+
+body.vscode-light .easy-review-md .hljs-regexp,
+body.vscode-light .easy-review-md .hljs-string,
+body.vscode-light .easy-review-md .hljs-meta .hljs-string { color: #032f62; }
+
+body.vscode-light .easy-review-md .hljs-built_in,
+body.vscode-light .easy-review-md .hljs-symbol { color: #e36209; }
+
+body.vscode-light .easy-review-md .hljs-comment,
+body.vscode-light .easy-review-md .hljs-code,
+body.vscode-light .easy-review-md .hljs-formula { color: #6a737d; font-style: italic; }
+
+body.vscode-light .easy-review-md .hljs-name,
+body.vscode-light .easy-review-md .hljs-quote,
+body.vscode-light .easy-review-md .hljs-selector-tag { color: #22863a; }
+
+body.vscode-light .easy-review-md .hljs-addition { color: #22863a; background-color: #f0fff4; }
+body.vscode-light .easy-review-md .hljs-deletion { color: #b31d28; background-color: #ffeef0; }
 
 /* ── Markdown table styles ────────────────────────────────────────────────
    D-19/D-20: striped rows + bordered cells using VS Code CSS vars.
