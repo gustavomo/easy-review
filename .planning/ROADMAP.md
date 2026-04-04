@@ -71,11 +71,11 @@ Plans:
 **Goal:** Upgrade the review webview panel to rich visual rendering — syntax highlighting for all code blocks, live Mermaid SVG diagram rendering, dedicated visual components for Categorized Changes (category chips + bullet lists) and Impact Analysis (dimension blocks + impact badges + breaking changes warning), and markdown table CSS styles.
 **Requirements**: POL-01, D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, D-16, D-17, D-18, D-19, D-20
 **Depends on:** Phase 02
-**Plans:** 4 plans
+**Plans:** 2/4 plans executed
 
 Plans:
-- [ ] 02.3-01-PLAN.md — Wave 0: vitest config + parseCategorizedChanges.ts + parseImpactAnalysis.ts + unit tests
-- [ ] 02.3-02-PLAN.md — highlight.js + marked-highlight install; global marked config; hljs CSS token overrides + markdown table styles
+- [x] 02.3-01-PLAN.md — Wave 0: vitest config + parseCategorizedChanges.ts + parseImpactAnalysis.ts + unit tests
+- [x] 02.3-02-PLAN.md — highlight.js + marked-highlight install; global marked config; hljs CSS token overrides + markdown table styles
 - [ ] 02.3-03-PLAN.md — MermaidDiagram.tsx component + ReviewPanel.ts CSP unsafe-eval + vite.webview.config.ts chunk consolidation
 - [ ] 02.3-04-PLAN.md — CategorizedChangesSection.tsx + ImpactAnalysisSection.tsx + ReviewDocument.tsx routing update
 
