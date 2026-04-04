@@ -32,6 +32,13 @@ interface ReviewDocumentProps {
 
 /** Strip leading/trailing code fences (```mermaid ... ``` or ``` ... ```) from content. */
 function stripCodeFences(content: string): string {
+  // Extract content from a ```mermaid ... ``` block anywhere in the string.
+  // The end-anchor approach breaks when the model appends commentary after the fence.
+  const mermaidMatch = content.match(/```mermaid\s*\r?\n([\s\S]*?)```/);
+  if (mermaidMatch) {
+    return mermaidMatch[1].trim();
+  }
+  // Fallback: strip opening fence only (legacy path)
   return content.replace(/^```[a-z]*\r?\n?/i, '').replace(/\r?\n?```\s*$/i, '').trim();
 }
 

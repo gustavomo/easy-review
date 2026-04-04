@@ -52,10 +52,11 @@ CRITICAL REQUIREMENTS:
    \`\`\`
 4. Label ALL nodes with real names from the code (function names, class names, module paths) — not generic placeholders like "Module A".
 5. Make the diagram ELABORATE and specific to this PR — not generic.
+6. OUTPUT ONLY the heading and the code block — no explanatory text, no "Key Changes" section, no commentary before or after the fences. The closing \`\`\` must be the very last character of your response.
 
 Skip diagram only for single-line typo fixes or pure config changes with no logic impact.
 In that case, write: "No diagram needed — this PR contains only trivial changes."
 
-Begin your response with "## Visual Overview"
+Begin your response with "## Visual Overview", then immediately the \`\`\`mermaid block, then the closing \`\`\` and nothing else.
 `;
 }
