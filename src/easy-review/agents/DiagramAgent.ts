@@ -35,20 +35,37 @@ ${opts.diff}
 You are a senior software engineer producing a visual diagram for this PR.
 Use a Mermaid diagram to make the changes visually understandable.
 
-Choose the most appropriate diagram type for this PR:
-- **sequenceDiagram**: show how execution flow changed (new steps, new branches, new interactions)
-- **graph TD / flowchart**: show which modules or components now interact differently
-- **stateDiagram-v2**: show new states or transitions introduced by this PR
-- **classDiagram**: show new classes, interfaces, or changed relationships
+The diagram MUST show the BEFORE and AFTER state so the reviewer can see what changed at a glance.
+
+Preferred approach — use a **flowchart** with two labeled subgraphs:
+\`\`\`mermaid
+flowchart TD
+    subgraph Before
+        A[OldModule] --> B[OldHandler]
+    end
+    subgraph After
+        C[NewModule] --> D[NewHandler]
+        C --> E[AddedService]
+    end
+\`\`\`
+
+Alternative approaches when before/after subgraphs don't fit:
+- **sequenceDiagram**: show old flow vs new flow with a note divider
+- **stateDiagram-v2**: show removed states (strikethrough label) and added states
+- **classDiagram**: show old vs new class relationships
 
 CRITICAL REQUIREMENTS:
 1. Produce a syntactically valid Mermaid diagram.
 2. Start the diagram with a recognized type keyword: graph, flowchart, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, journey, gantt, pie, gitGraph, mindmap, timeline, xychart-beta, block-beta, or quadrantChart.
 3. Wrap the diagram in triple-backtick mermaid fences exactly like this:
    \`\`\`mermaid
-   sequenceDiagram
-       participant A as ModuleName
-       A->>B: call()
+   flowchart TD
+       subgraph Before
+           A[Module] --> B[Handler]
+       end
+       subgraph After
+           C[Module] --> D[NewHandler]
+       end
    \`\`\`
 4. Label ALL nodes with real names from the code (function names, class names, module paths) — not generic placeholders like "Module A".
 5. Make the diagram ELABORATE and specific to this PR — not generic.

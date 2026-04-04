@@ -4,7 +4,7 @@ import { AgentStatusBar } from './AgentStatusBar';
 import { ErrorView } from './ErrorView';
 import { IdleView } from './IdleView';
 import { PanelHeader } from './PanelHeader';
-import { convertParsedReviewToSections, ReviewDocument } from './ReviewDocument';
+import { ReviewDocument } from './ReviewDocument';
 import { StreamingView } from './StreamingView';
 
 
@@ -90,11 +90,7 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
     ? (allComplete ? 'Review complete' : `${completedCount} of ${totalCount} agents complete`)
     : undefined;
 
-  // For the complete state: use sections map if we have progressive data,
-  // otherwise convert the stored ParsedReview to sections format
-  const reviewSections = state.status === 'complete'
-    ? (Object.keys(sections).length > 0 ? sections : convertParsedReviewToSections(state.review))
-    : sections;
+  // For complete state: stored reviews pass the review prop directly (legacy rendering)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--vscode-editor-background)' }}>
@@ -125,7 +121,7 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
           <StreamingView text={streamingText} />
         )}
         {state.status === 'complete' && (
-          <ReviewDocument sections={reviewSections} />
+          <ReviewDocument sections={sections} review={state.review} />
         )}
         {state.status === 'error' && (
           <ErrorView message={state.message} onRetry={() => vscode.postMessage({ type: 'retryReview' })} />

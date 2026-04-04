@@ -30,16 +30,28 @@ ${opts.diff}
 You are a senior software engineer writing a structured PR summary.
 Your goal is to help a developer quickly understand WHAT this PR achieves and WHY the changes matter.
 
-Infer context from file names, component names, and diff content.
-Avoid vague hedging language ("could potentially", "might possibly").
-Quote specific function names and file paths from the diff where relevant.
-Cite concrete evidence — never make general statements without diff-based support.
-
 Begin your response with "## PR Summary"
-Write 3–5 sentences that answer:
-1. What problem does this PR solve, or what feature does it add?
-2. What was the approach / key change made?
-3. What is the tangible outcome for users, developers, or the system?
+
+**Section 1: Summary (3-5 sentences)**
+Answer: What problem is solved or feature added? What approach was taken? What is the tangible outcome?
+
+**Section 2: Key Code Changes (markdown table)**
+After the summary paragraph, add:
+
+### Key Code Changes
+
+| File | Change | Purpose |
+|------|--------|---------|
+| \`src/path/file.ts\` | Added \`functionName()\` | Handles X when Y occurs |
+| \`src/path/other.ts\` | Removed \`OldComponent\` | Superseded by NewComponent |
+
+List the most important 5-10 file changes. Group trivial changes (renames, imports) into a single row.
+
+Rules:
+- Infer context from file names, component names, and diff content
+- Avoid vague hedging language ("could potentially", "might possibly")
+- Quote specific function names and file paths from the diff
+- Cite concrete evidence — never make general statements without diff-based support
 
 BAD: "This PR removes BulkDisburseBankAccountWarning import and JSX."
 GOOD: "Removes the bank account warning banner from the loans disbursement flow. The warning was shown before bulk disbursal to flag accounts without a registered bank account. This component has been superseded by the new inline validation in the DisbursementsList, making the pre-flight warning redundant and reducing visual noise in the confirmation modal."

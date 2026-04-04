@@ -3,14 +3,10 @@ import hljs from 'highlight.js';
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 
-import { CategorizedChangesSection } from './CategorizedChangesSection';
 import { CollapsibleSection } from './CollapsibleSection';
 import { DiagramErrorBanner } from './DiagramErrorBanner';
-import { FindingsSection } from './FindingsSection';
-import { ImpactAnalysisSection } from './ImpactAnalysisSection';
 import { MermaidDiagram } from './MermaidDiagram';
 import { SectionPendingPlaceholder } from './SectionPendingPlaceholder';
-import { parseFindingsSection } from '../easy-review/cli/ReviewParser';
 
 // D-01/D-02: Configure syntax highlighting globally for all marked() calls
 // D-03: Auto-detect language when no tag present (hljs.highlightAuto)
@@ -31,6 +27,8 @@ marked.use(
 
 export interface ReviewDocumentProps {
   sections: Partial<Record<AgentKey, SectionState>>;
+  /** When set, renders from stored ParsedReview sections directly (old reports). */
+  review?: ParsedReview;
 }
 
 /** Ordered list of all 7 agent keys — controls section display order (D-20). */
@@ -68,54 +66,41 @@ function stripCodeFences(content: string): string {
 }
 
 /**
- * Convert a stored ParsedReview (6-section legacy format) into the 7-slot sections map
- * used by the progressive rendering pipeline (D-04, D-05).
- *
- * Matches section titles to AgentKey via the same keyword rules as the section renderer.
- * Unmatched sections are mapped to the closest key or skipped.
- */
-export function convertParsedReviewToSections(
-  review: ParsedReview
-): Partial<Record<AgentKey, SectionState>> {
-  const result: Partial<Record<AgentKey, SectionState>> = {};
-
-  for (const section of review.sections) {
-    const titleLower = section.title.toLowerCase();
-    const content = section.content ?? '';
-
-    let key: AgentKey | null = null;
-
-    if (titleLower.includes('bug') || titleLower.includes('risk') || titleLower.includes('finding')) {
-      key = 'bugRisk';
-    } else if (titleLower.includes('architecture')) {
-      key = 'architectureChange';
-    } else if (titleLower.includes('visual') || titleLower.includes('mermaid') || content.trimStart().startsWith('```mermaid')) {
-      key = 'diagram';
-    } else if (titleLower.includes('business') || titleLower.includes('impact')) {
-      key = 'businessImpact';
-    } else if (titleLower.includes('test')) {
-      key = 'testCoverage';
-    } else if (titleLower.includes('doc')) {
-      key = 'documentation';
-    } else if (titleLower.includes('summary') || titleLower.includes('pr') || titleLower.includes('overview') || titleLower.includes('review')) {
-      key = 'prSummarizer';
-    }
-
-    if (key && !result[key]) {
-      result[key] = { status: 'complete', content };
-    }
-  }
-
-  return result;
-}
-
-/**
  * Progressive review document — renders 7 sections in AGENT_ORDER.
  * Sections not yet complete show SectionPendingPlaceholder.
  * Sections with status=complete render the appropriate section-specific component.
  * Users can read finished sections while others still show spinners (D-04).
  */
-export function ReviewDocument({ sections }: ReviewDocumentProps) {
+export function ReviewDocument({ sections, review }: ReviewDocumentProps) {
+  // Legacy path: render stored ParsedReview with its original section titles and content
+  if (review) {
+    return (
+      <div style={{ fontFamily: 'var(--vscode-font-family)' }}>
+        {review.sections.map((section) => {
+          const content = section.content ?? '';
+          const isMermaidSection =
+            section.title.toLowerCase().includes('mermaid') ||
+            section.title.toLowerCase().includes('visual') ||
+            content.trimStart().startsWith('```mermaid');
+
+          return (
+            <CollapsibleSection key={section.title} title={section.title} defaultExpanded={true}>
+              {isMermaidSection ? (
+                <MermaidDiagram source={stripCodeFences(content)} />
+              ) : (
+                <div
+                  className="easy-review-md"
+                  dangerouslySetInnerHTML={{ __html: marked(content) as string }}
+                />
+              )}
+            </CollapsibleSection>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Progressive path: 7-slot rendering during generation
   return (
     <div style={{ fontFamily: 'var(--vscode-font-family)' }}>
       {AGENT_ORDER.map((agentKey) => {
@@ -143,24 +128,13 @@ export function ReviewDocument({ sections }: ReviewDocumentProps) {
 
         // status === 'complete'
         const content = state.content ?? '';
-        const titleLower = title.toLowerCase();
-        const isBugRiskSection = titleLower.includes('bug') || titleLower.includes('risk');
-        const isArchSection = titleLower.includes('architecture');
-        // Specificity: check isMermaidSection before isBusinessSection
         const isMermaidSection =
-          titleLower.includes('visual') ||
-          titleLower.includes('mermaid') ||
+          agentKey === 'diagram' ||
           content.trimStart().startsWith('```mermaid');
-        const isBusinessSection = titleLower.includes('business') || titleLower.includes('impact');
 
         let sectionContent: JSX.Element;
 
-        if (isBugRiskSection) {
-          const findings = parseFindingsSection(content);
-          sectionContent = <FindingsSection findings={findings} />;
-        } else if (isArchSection) {
-          sectionContent = <CategorizedChangesSection content={content} />;
-        } else if (isMermaidSection) {
+        if (isMermaidSection) {
           const hasDiagramFailure = content.includes('\u26a0\ufe0f diagram failed');
           if (hasDiagramFailure) {
             sectionContent = (
@@ -172,9 +146,8 @@ export function ReviewDocument({ sections }: ReviewDocumentProps) {
           } else {
             sectionContent = <MermaidDiagram source={stripCodeFences(content)} />;
           }
-        } else if (isBusinessSection) {
-          sectionContent = <ImpactAnalysisSection content={content} />;
         } else {
+          // All non-diagram sections render via marked() — agents output markdown tables
           sectionContent = (
             <div
               className="easy-review-md"

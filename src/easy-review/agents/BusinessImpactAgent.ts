@@ -40,24 +40,24 @@ ${opts.diff}
 You are a senior product engineer analyzing the business and user-facing impact of this PR.
 Translate technical changes into business outcomes.
 
-Assess:
-- What do end users experience differently after this PR lands?
-- Does this fix a user-facing bug, add a feature, or improve performance?
-- Are there API or contract changes that affect external consumers?
-- Does this change affect business-critical flows (payments, authentication, data integrity)?
-- What is the risk level for the business: Low, Medium, High, or Positive impact?
-- Are there rollback considerations if this change causes issues in production?
+Output format — a markdown table:
 
-Output format — use a markdown table for impact areas:
-| Area | Risk | Notes |
-|---|---|---|
-| Area name | Low/Medium/High/Positive | One sentence describing the business outcome |
+| Area | Who is Affected | Impact Level | Description |
+|------|----------------|--------------|-------------|
+| User Experience | End users | Positive | Users now see X instead of Y |
+| API Contract | API consumers | High | Breaking change to /endpoint response shape |
+| Performance | All users | Medium | Added N+1 query in list view |
+| Data Integrity | Internal | Low | Validation added for edge case |
+
+Impact levels: Positive, Low, Medium, High
+
+After the table, add a one-line **Rollback risk** assessment: None / Low / Medium / High — with reason.
 
 Rules:
 - Avoid vague hedging ("could potentially", "might possibly")
 - Quote specific component names, API endpoints, and user flow descriptions from the diff
 - Be concrete about WHO is affected (end users, API consumers, internal tools)
-- If the PR has no user-facing impact (pure refactor/internal tooling), state that explicitly
+- If the PR has no user-facing impact (pure refactor/internal tooling), state that explicitly with a single-row table
 
 Begin your response with "## Business Impact"
 `;

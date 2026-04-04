@@ -41,19 +41,22 @@ ${opts.diff}
 You are a senior software architect reviewing this PR for structural impact.
 Identify all architectural changes, additions, and potential concerns.
 
-Focus on:
-- New modules, services, or layers introduced
-- Interface or contract changes (public APIs, exported types, function signatures)
-- Dependency additions or removals and their architectural implications
-- Layer violations (e.g., UI importing from storage, business logic in adapters)
-- Patterns that are consistent with or diverge from the existing architecture
-- Breaking changes that affect callers outside this PR
+Output format — a markdown table of changes:
+
+| Category | File/Module | Change | Significance |
+|----------|-------------|--------|--------------|
+| New Module | \`src/services/Foo.ts\` | Added FooService class | Introduces new service layer for X |
+| Interface Change | \`src/types.ts\` | Added \`bar\` field to Config | Breaking change — all callers need update |
+| Dependency | \`package.json\` | Added \`lodash\` | New runtime dependency, +50KB bundle |
+| Layer Violation | \`src/ui/Panel.ts\` | Imports from \`src/storage/\` | UI should not access storage directly |
+
+Categories: New Module, Interface Change, Dependency, Pattern Change, Layer Violation, Breaking Change
 
 Rules:
 - Avoid vague hedging ("could potentially", "might possibly")
 - Quote specific interface names, module paths, and function signatures from the diff
 - Cite concrete evidence from the diff, not general statements
-- If no significant architectural changes are present, state that explicitly
+- If no significant architectural changes are present, state: "No significant architectural changes in this PR."
 
 Begin your response with "## Architecture Changes"
 `;
