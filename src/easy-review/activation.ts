@@ -48,7 +48,7 @@ export async function activateEasyReview(
 	_store = store;
 
 	// 2. Create and register the flat PR list tree view (PRW-01)
-	const provider = new EasyReviewPRsProvider();
+	const provider = new EasyReviewPRsProvider(undefined, store);
 	_provider = provider;
 
 	// Inject credentialStore so the provider can fetch PR files from GitHub API
@@ -203,6 +203,24 @@ export async function activateEasyReview(
 			}
 			const panel = ReviewPanel.getOrCreate(context, currentStore);
 			await panel.startReview(item.pr, credentialStore);
+			// UI-01 Pitfall 2: update contextValue so "View Review" button appears without restart
+			getProvider()?.refreshPRContextValue(item.pr.repoId, item.pr.prNumber);
+		}),
+
+		// View stored review for a PR (UI-01, D-04)
+		vscode.commands.registerCommand('easy-review.viewReview', (item) => {
+			const currentStore = getStore();
+			if (!currentStore || !item?.pr) { return; }
+			const reviews = currentStore.getReviews(item.pr.repoId, item.pr.prNumber);
+			if (reviews.length === 0) { return; } // defensive: button hidden by when clause
+			const latest = reviews.sort((a, b) => b.createdAt - a.createdAt)[0];
+			const panel = ReviewPanel.getOrCreate(context, currentStore);
+			panel.loadReview(latest);
+		}),
+
+		// Open VS Code settings filtered to easyReview.* namespace (UI-04, D-06)
+		vscode.commands.registerCommand('easy-review.openSettings', () => {
+			vscode.commands.executeCommand('workbench.action.openSettings', 'easyReview');
 		}),
 
 		// Analyze project — command palette (PROJ-01, D-31)
