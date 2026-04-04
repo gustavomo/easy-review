@@ -192,5 +192,5 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — vscode mock ThemeIcon.File + FileNode iconPath change + file-type icon tests
+- [x] 07-01-PLAN.md — vscode mock ThemeIcon.File + FileNode iconPath change + file-type icon tests
 - [ ] 07-02-PLAN.md — PRTreeItem avatar iconPath + combined state+author description + tests
