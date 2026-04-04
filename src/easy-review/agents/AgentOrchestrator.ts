@@ -29,12 +29,12 @@ import * as DocumentationAgent from './DocumentationAgent';
 import { extractMermaidBlock, validateMermaidSyntax } from './mermaidValidation';
 import * as PRSummarizerAgent from './PRSummarizerAgent';
 import * as TestCoverageAgent from './TestCoverageAgent';
-import type { AgentKey, AIProvider, SectionState } from '../../shared/types';
+import type { AgentKey, SectionState } from '../../shared/types';
 import { CodexAdapter } from '../cli/CodexAdapter';
 import { OllamaAdapter } from '../cli/OllamaAdapter';
 import { getOutputChannel } from '../cli/OutputChannelReporter';
 import { runReview } from '../cli/ReviewRunner';
-import { type ModelConfig, resolveAgentProvider } from '../settings/modelSettings';
+import { type ModelConfig, parseModelSpec, resolveAgentSpec } from '../settings/modelSettings';
 
 // Per-agent template module imports
 
@@ -107,7 +107,7 @@ export interface OrchestratorResult {
 export async function runAllAgents(opts: OrchestratorOpts): Promise<OrchestratorResult> {
   const ch = getOutputChannel();
   ch.appendLine(`[AgentOrchestrator] Starting 7-agent concurrent dispatch`);
-  ch.appendLine(`[AgentOrchestrator] defaultProvider=${opts.modelConfig.defaultProvider} ollamaModel=${opts.modelConfig.ollamaModel}`);
+  ch.appendLine(`[AgentOrchestrator] defaultSpec=${opts.modelConfig.defaultSpec}`);
 
   // Shared AbortController — all ADK/Ollama agents share this signal
   const controller = new AbortController();
@@ -164,13 +164,14 @@ async function runSingleAgent(
   ch: vscode.OutputChannel,
 ): Promise<void> {
   const agentModule = AGENT_MAP[agentKey];
-  const provider = resolveAgentProvider({
+  const spec = resolveAgentSpec({
     agentKey,
-    agentModels: opts.modelConfig.agentModels,
-    defaultProvider: opts.modelConfig.defaultProvider,
+    agentSpecs: opts.modelConfig.agentSpecs,
+    defaultSpec: opts.modelConfig.defaultSpec,
   });
+  const { provider, modelId } = parseModelSpec(spec);
 
-  ch.appendLine(`[AgentOrchestrator] Dispatching agent=${agentKey} provider=${provider}`);
+  ch.appendLine(`[AgentOrchestrator] Dispatching agent=${agentKey} spec=${spec}`);
 
   // Signal generating state
   sections[agentKey] = { status: 'generating' };
@@ -210,7 +211,7 @@ async function runSingleAgent(
     } else if (provider === 'codex') {
       result = await runCodexAgent(agentKey, prompt, systemPrompt, opts.codexPath, opts.token, ch);
     } else {
-      result = await runOllamaAgent(agentKey, prompt, systemPrompt, opts.modelConfig.ollamaModel, abortSignal, opts.token, ch);
+      result = await runOllamaAgent(agentKey, prompt, systemPrompt, modelId, abortSignal, opts.token, ch);
     }
 
     // For diagram agent: validate Mermaid syntax with up to 2 correction retries
@@ -220,6 +221,7 @@ async function runSingleAgent(
         prompt,
         systemPrompt,
         provider,
+        modelId,
         opts,
         abortSignal,
         ch,
@@ -321,7 +323,8 @@ async function runDiagramWithRetry(
   initialResult: string,
   originalPrompt: string,
   systemPrompt: string,
-  provider: AIProvider,
+  provider: 'claude' | 'codex' | 'ollama',
+  modelId: string,
   opts: OrchestratorOpts,
   abortSignal: AbortSignal,
   ch: vscode.OutputChannel,
@@ -354,7 +357,7 @@ async function runDiagramWithRetry(
       } else if (provider === 'codex') {
         result = await runCodexAgent('diagram', correctionPrompt, systemPrompt, opts.codexPath, opts.token, ch);
       } else {
-        result = await runOllamaAgent('diagram', correctionPrompt, systemPrompt, opts.modelConfig.ollamaModel, abortSignal, opts.token, ch);
+        result = await runOllamaAgent('diagram', correctionPrompt, systemPrompt, modelId, abortSignal, opts.token, ch);
       }
     } catch (err) {
       ch.appendLine(`[AgentOrchestrator] Diagram correction attempt ${attempt + 1} failed: ${err}`);

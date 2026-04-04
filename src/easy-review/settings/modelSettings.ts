@@ -1,20 +1,96 @@
 import type { AgentKey, AIProvider } from '../../shared/types';
 
+/**
+ * A model spec combines provider and model ID: "{provider}:{modelId}"
+ * Examples: "claude:claude-sonnet-4-6", "ollama:gemma3:4b", "codex:o4-mini"
+ * Legacy values (just "claude", "codex", "ollama") are also accepted.
+ */
+export type ModelSpec = string;
+
 export interface ModelConfig {
-  /** Which AI provider to use by default ('claude' | 'codex' | 'ollama') */
-  defaultProvider: AIProvider;
-  /** Per-agent provider overrides */
-  agentModels?: Partial<Record<AgentKey, AIProvider>>;
-  /** Actual Ollama model name (e.g. 'gemma3:4b', 'llama3.2', 'mistral') */
-  ollamaModel: string;
-  /** @deprecated use defaultProvider instead (D-21 migration) */
-  activeModel?: string;
+  /** Combined spec for the default model, e.g. "claude:claude-sonnet-4-6" */
+  defaultSpec: ModelSpec;
+  /** Per-agent overrides, same "provider:modelId" format */
+  agentSpecs: Partial<Record<AgentKey, ModelSpec>>;
+}
+
+/** Parsed form of a ModelSpec */
+export interface ParsedModelSpec {
+  provider: AIProvider;
+  modelId: string;
+}
+
+const PROVIDER_DEFAULTS: Record<AIProvider, string> = {
+  claude: 'claude-sonnet-4-6',
+  codex: 'o4-mini',
+  ollama: 'gemma3:4b',
+};
+
+/**
+ * Parse a "provider:modelId" spec string.
+ * Handles legacy bare-provider values ("claude", "codex", "ollama").
+ */
+export function parseModelSpec(spec: string): ParsedModelSpec {
+  const providers: AIProvider[] = ['claude', 'codex', 'ollama'];
+
+  for (const p of providers) {
+    if (spec.startsWith(p + ':')) {
+      return { provider: p, modelId: spec.slice(p.length + 1) };
+    }
+  }
+
+  // Legacy: bare provider name
+  if (providers.includes(spec as AIProvider)) {
+    const provider = spec as AIProvider;
+    return { provider, modelId: PROVIDER_DEFAULTS[provider] };
+  }
+
+  // Fallback
+  return { provider: 'claude', modelId: PROVIDER_DEFAULTS.claude };
 }
 
 /**
- * Resolve the provider to use for a specific agent.
- * Per-agent override (agentModels[agentKey]) wins over defaultProvider.
+ * Resolve the model spec to use for a specific agent.
+ * Per-agent override wins over the default.
  */
+export function resolveAgentSpec(opts: {
+  agentKey: AgentKey;
+  agentSpecs: Partial<Record<AgentKey, ModelSpec>>;
+  defaultSpec: ModelSpec;
+}): ModelSpec {
+  return opts.agentSpecs[opts.agentKey] ?? opts.defaultSpec;
+}
+
+/**
+ * Read model config from VS Code workspace configuration.
+ * Handles legacy migration: bare "claude"/"codex"/"ollama" values are upgraded.
+ */
+export function readModelConfig(config: {
+  get<T>(key: string, defaultValue?: T): T;
+}): ModelConfig {
+  // Support legacy settings: activeModel / defaultModel (bare provider name)
+  const rawDefault =
+    config.get<string>('defaultModel') ||
+    config.get<string>('activeModel') ||
+    'claude:claude-sonnet-4-6';
+
+  const agentSpecs = config.get<Partial<Record<AgentKey, ModelSpec>>>('agentModels', {} as Partial<Record<AgentKey, ModelSpec>>);
+
+  return {
+    defaultSpec: rawDefault,
+    agentSpecs: agentSpecs ?? {},
+  };
+}
+
+/** @deprecated use parseModelSpec instead */
+export function migrateActiveModel(opts: {
+  activeModel?: string;
+  defaultModel?: string;
+}): string {
+  return opts.defaultModel || opts.activeModel || 'claude:claude-sonnet-4-6';
+}
+
+/** @deprecated use resolveAgentSpec + parseModelSpec */
 export function resolveAgentProvider(opts: {
   agentKey: AgentKey;
   agentModels?: Partial<Record<AgentKey, AIProvider>>;
@@ -23,46 +99,11 @@ export function resolveAgentProvider(opts: {
   return opts.agentModels?.[opts.agentKey] ?? opts.defaultProvider;
 }
 
-/** @deprecated Use resolveAgentProvider */
+/** @deprecated use resolveAgentSpec + parseModelSpec */
 export function resolveAgentModel(opts: {
   agentKey: AgentKey;
   agentModels?: Partial<Record<AgentKey, AIProvider>>;
   defaultModel: AIProvider;
 }): AIProvider {
   return resolveAgentProvider({ ...opts, defaultProvider: opts.defaultModel });
-}
-
-/**
- * D-21: Migration from easyReview.activeModel to easyReview.defaultModel.
- * If defaultModel is set, use it. Otherwise fall back to activeModel.
- * If neither is set, return 'claude' as the system default.
- */
-export function migrateActiveModel(opts: {
-  activeModel?: string;
-  defaultModel?: string;
-}): AIProvider {
-  const valid: AIProvider[] = ['claude', 'codex', 'ollama'];
-  if (opts.defaultModel && valid.includes(opts.defaultModel as AIProvider)) {
-    return opts.defaultModel as AIProvider;
-  }
-  if (opts.activeModel && valid.includes(opts.activeModel as AIProvider)) {
-    return opts.activeModel as AIProvider;
-  }
-  return 'claude';
-}
-
-/**
- * Read model config from VS Code workspace configuration.
- * Handles D-21 migration: reads activeModel as fallback if defaultModel unset.
- */
-export function readModelConfig(config: {
-  get<T>(key: string, defaultValue?: T): T;
-}): ModelConfig {
-  const defaultProvider = migrateActiveModel({
-    activeModel: config.get<string>('activeModel'),
-    defaultModel: config.get<string>('defaultModel'),
-  });
-  const agentModels = config.get<Partial<Record<AgentKey, AIProvider>>>('agentModels', {} as Partial<Record<AgentKey, AIProvider>>);
-  const ollamaModel = config.get<string>('ollamaModel', 'gemma3:4b');
-  return { defaultProvider, agentModels, ollamaModel };
 }
