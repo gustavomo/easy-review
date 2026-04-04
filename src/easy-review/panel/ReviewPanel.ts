@@ -14,7 +14,7 @@ import { parseReview } from '../cli/ReviewParser';
 import { runReview } from '../cli/ReviewRunner';
 import { fetchPRDiff } from '../github/DiffFetcher';
 import type { StorageAdapter } from '../storage/StorageAdapter';
-import type { StoredPR } from '../storage/types';
+import type { StoredPR, StoredReview } from '../storage/types';
 
 /**
  * Singleton VS Code WebviewPanel that orchestrates AI review generation.
@@ -112,6 +112,27 @@ export class ReviewPanel {
     } else {
       await this.runTask(task);
     }
+  }
+
+  /**
+   * UI-01 (D-04): Load an existing stored review into the panel without triggering AI generation.
+   * Called by the easy-review.viewReview command in activation.ts.
+   * Pitfall 3: reveal() before updateState/postMessage so webview is active when messages arrive.
+   */
+  loadReview(stored: StoredReview): void {
+    this.panel.reveal(vscode.ViewColumn.Two, false);
+
+    const sections = JSON.parse(stored.parsedJson) as import('../../shared/types').ReviewSection[];
+    const review: ParsedReview = {
+      id: stored.id,
+      prNumber: stored.prNumber,
+      repoId: stored.repoId,
+      model: stored.modelUsed,
+      createdAt: stored.createdAt,
+      sections,
+    };
+    this.updateState({ status: 'complete', review });
+    this.postMessage({ type: 'loadReviewResult', review });
   }
 
   private async runTask(task: () => Promise<void>): Promise<void> {
