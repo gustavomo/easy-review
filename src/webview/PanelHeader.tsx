@@ -9,6 +9,7 @@ interface PanelHeaderProps {
   historyItems: Array<{ id: number; label: string }>;
   onCancel: () => void;
   onLoadHistory: (id: number) => void;
+  agentSummary?: string;  // e.g. "3 of 7 complete" — shown beside elapsed counter during generation
 }
 
 /**
@@ -16,7 +17,7 @@ interface PanelHeaderProps {
  * Cancel Generation button (generating) + history dropdown.
  * Height ~48px. Uses position:sticky, top:0, z-index:200 (matches editorWebview pattern).
  */
-export function PanelHeader({ prTitle, model, isGenerating, historyItems, onCancel, onLoadHistory }: PanelHeaderProps) {
+export function PanelHeader({ prTitle, model, isGenerating, historyItems, onCancel, onLoadHistory, agentSummary }: PanelHeaderProps) {
   const [startedAt] = useState(() => Date.now());
 
   return (
@@ -58,6 +59,11 @@ export function PanelHeader({ prTitle, model, isGenerating, historyItems, onCanc
         {isGenerating ? (
           <>
             <ElapsedCounter startedAt={startedAt} />
+            {agentSummary && (
+              <span style={{ fontSize: '13px', color: 'var(--vscode-descriptionForeground)', marginLeft: '8px' }}>
+                {agentSummary}
+              </span>
+            )}
             {/* Cancel Generation button — secondary with codicon-x icon (UI-SPEC) */}
             <button
               onClick={onCancel}

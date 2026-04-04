@@ -4,6 +4,7 @@ interface CollapsibleSectionProps {
   title: string;
   children: React.ReactNode;
   defaultExpanded?: boolean;  // default: true (UI-SPEC)
+  statusSlot?: React.ReactNode;  // optional agent state badge rendered inline in title row
 }
 
 /**
@@ -11,7 +12,7 @@ interface CollapsibleSectionProps {
  * Default: expanded. No accordion — multiple can be open simultaneously.
  * Chevron: codicon-chevron-down (expanded) / codicon-chevron-right (collapsed).
  */
-export function CollapsibleSection({ title, children, defaultExpanded = true }: CollapsibleSectionProps) {
+export function CollapsibleSection({ title, children, defaultExpanded = true, statusSlot }: CollapsibleSectionProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   return (
@@ -33,6 +34,7 @@ export function CollapsibleSection({ title, children, defaultExpanded = true }: 
           style={{ fontSize: '16px', flexShrink: 0 }}
         />
         <span style={{ fontSize: '16px', fontWeight: 600, lineHeight: 1.2 }}>{title}</span>
+        {statusSlot ?? null}
       </button>
       {/* Body — hidden when collapsed */}
       {expanded && (
