@@ -54,13 +54,16 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
         case 'reviewComplete':
           setState({ status: 'complete', review: msg.review });
           setStreamingText('');
+          setSections({});
           break;
         case 'reviewError':
           setState({ status: 'error', message: msg.message });
           setStreamingText('');
+          setSections({});
           break;
         case 'loadReviewResult':
           setState({ status: 'complete', review: msg.review });
+          setSections({});
           break;
       }
     };
