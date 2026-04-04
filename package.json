@@ -111,94 +111,123 @@
 						"default": "claude",
 						"description": "Deprecated: use easyReview.defaultModel instead. Model to use for AI review generation (claude or codex)."
 					},
-					"easyReview.defaultModel": {
+					"easyReview.provider": {
+						"type": "string",
+						"enum": ["claude", "codex", "ollama"],
+						"enumDescriptions": [
+							"Anthropic Claude - requires claude CLI in PATH",
+							"OpenAI Codex - requires codex CLI in PATH",
+							"Ollama - local models, requires Ollama running on localhost:11434"
+						],
+						"default": "claude",
+						"description": "AI provider to use for all review agents. Choose the provider first, then set the model below."
+					},
+					"easyReview.claudeModel": {
 						"type": "string",
 						"enum": [
-							"claude:claude-sonnet-4-6",
-							"claude:claude-opus-4-6",
-							"claude:claude-haiku-4-5-20251001",
-							"codex:o4-mini",
-							"codex:o3",
-							"codex:gpt-4.1",
-							"codex:gpt-4.1-mini",
-							"ollama:gemma3:4b",
-							"ollama:gemma3:12b",
-							"ollama:gemma3:27b",
-							"ollama:qwen2.5-coder:7b",
-							"ollama:qwen2.5-coder:14b",
-							"ollama:deepseek-r1:8b",
-							"ollama:deepseek-r1:14b",
-							"ollama:llama3.1:8b",
-							"ollama:llama3.2:3b",
-							"ollama:mistral:7b",
-							"ollama:phi4:14b",
-							"ollama:codellama:13b",
-							"ollama:starcoder2:7b"
+							"claude-sonnet-4-6",
+							"claude-opus-4-6",
+							"claude-haiku-4-5-20251001"
 						],
 						"enumDescriptions": [
-							"Claude Sonnet 4.6 - balanced speed and quality (recommended)",
-							"Claude Opus 4.6 - highest quality, slower",
-							"Claude Haiku 4.5 - fastest Claude model",
-							"OpenAI o4-mini - fast reasoning model (recommended for Codex)",
-							"OpenAI o3 - best reasoning quality",
-							"GPT-4.1 - latest GPT, strong at code",
-							"GPT-4.1 mini - faster GPT-4.1",
-							"Gemma 3 4B - fast local model, good instruction following",
-							"Gemma 3 12B - balanced quality/speed, recommended for PR review",
-							"Gemma 3 27B - best Gemma quality, requires ~20GB RAM",
-							"Qwen 2.5 Coder 7B - code-specialized, strong at diffs",
-							"Qwen 2.5 Coder 14B - larger code model, better reasoning",
-							"DeepSeek R1 8B - reasoning model, good at analysis",
-							"DeepSeek R1 14B - stronger reasoning, requires ~10GB RAM",
-							"Llama 3.1 8B - general purpose, well-rounded",
-							"Llama 3.2 3B - very fast, lightweight",
-							"Mistral 7B - fast general model",
-							"Phi-4 14B - Microsoft model, strong at code tasks",
-							"Code Llama 13B - Meta code-specialized model",
-							"StarCoder2 7B - HuggingFace code model"
+							"Sonnet 4.6 - balanced speed and quality (recommended)",
+							"Opus 4.6 - highest quality, slower and more expensive",
+							"Haiku 4.5 - fastest, lowest cost"
 						],
-						"default": "claude:claude-sonnet-4-6",
-						"description": "Default model for all review agents. Format: 'provider:model'. Can be overridden per-agent with easyReview.agentModels."
+						"default": "claude-sonnet-4-6",
+						"description": "Claude model to use when easyReview.provider is 'claude'."
+					},
+					"easyReview.codexModel": {
+						"type": "string",
+						"enum": [
+							"o4-mini",
+							"o3",
+							"gpt-4.1",
+							"gpt-4.1-mini"
+						],
+						"enumDescriptions": [
+							"o4-mini - fast reasoning, recommended for most PRs",
+							"o3 - best reasoning quality, slower",
+							"GPT-4.1 - latest GPT, strong at code review",
+							"GPT-4.1 mini - faster and cheaper GPT-4.1"
+						],
+						"default": "o4-mini",
+						"description": "Codex/OpenAI model to use when easyReview.provider is 'codex'."
+					},
+					"easyReview.ollamaModel": {
+						"type": "string",
+						"enum": [
+							"gemma3:4b",
+							"gemma3:12b",
+							"gemma3:27b",
+							"qwen2.5-coder:7b",
+							"qwen2.5-coder:14b",
+							"deepseek-r1:8b",
+							"deepseek-r1:14b",
+							"llama3.1:8b",
+							"llama3.2:3b",
+							"mistral:7b",
+							"phi4:14b",
+							"codellama:13b",
+							"starcoder2:7b"
+						],
+						"enumDescriptions": [
+							"Gemma 3 4B - fast, good instruction following (~3GB)",
+							"Gemma 3 12B - balanced quality/speed, recommended (~8GB)",
+							"Gemma 3 27B - best Gemma quality (~18GB RAM)",
+							"Qwen 2.5 Coder 7B - code-specialized, strong at diffs (~5GB)",
+							"Qwen 2.5 Coder 14B - larger code model, better reasoning (~9GB)",
+							"DeepSeek R1 8B - reasoning model, good at analysis (~5GB)",
+							"DeepSeek R1 14B - stronger reasoning (~9GB)",
+							"Llama 3.1 8B - general purpose, well-rounded (~5GB)",
+							"Llama 3.2 3B - very fast, lightweight (~2GB)",
+							"Mistral 7B - fast general model (~4GB)",
+							"Phi-4 14B - Microsoft model, strong at code tasks (~9GB)",
+							"Code Llama 13B - Meta code-specialized model (~8GB)",
+							"StarCoder2 7B - HuggingFace code model (~4GB)"
+						],
+						"default": "gemma3:12b",
+						"description": "Ollama model to use when easyReview.provider is 'ollama'. Run 'ollama list' to see installed models, 'ollama pull <model>' to install."
 					},
 					"easyReview.agentModels": {
 						"type": "object",
 						"default": {},
-						"description": "Per-agent model overrides. Each agent can use a different model. Leave a field unset to use easyReview.defaultModel.",
+						"description": "Per-agent model overrides in 'provider:model' format (e.g. 'claude:claude-opus-4-6'). Leave a field unset to use the default provider and model.",
 						"properties": {
 							"prSummarizer": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for PR Summary agent. Unset = use easyReview.defaultModel."
+								"description": "Override for PR Summary agent."
 							},
 							"bugRisk": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for Bug & Risk Analysis agent. Unset = use easyReview.defaultModel."
+								"description": "Override for Bug & Risk Analysis agent."
 							},
 							"architectureChange": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for Architecture Changes agent. Unset = use easyReview.defaultModel."
+								"description": "Override for Architecture Changes agent."
 							},
 							"testCoverage": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for Test Coverage agent. Unset = use easyReview.defaultModel."
+								"description": "Override for Test Coverage agent."
 							},
 							"documentation": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for Documentation agent. Unset = use easyReview.defaultModel."
+								"description": "Override for Documentation agent."
 							},
 							"diagram": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for Visual Diagram agent. Unset = use easyReview.defaultModel."
+								"description": "Override for Visual Diagram agent."
 							},
 							"businessImpact": {
 								"type": "string",
 								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
-								"description": "Model for Business Impact agent. Unset = use easyReview.defaultModel."
+								"description": "Override for Business Impact agent."
 							}
 						},
 						"additionalProperties": false

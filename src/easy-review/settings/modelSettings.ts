@@ -63,21 +63,41 @@ export function resolveAgentSpec(opts: {
 
 /**
  * Read model config from VS Code workspace configuration.
- * Handles legacy migration: bare "claude"/"codex"/"ollama" values are upgraded.
+ *
+ * Primary path: reads easyReview.provider + easyReview.{provider}Model
+ * and composes into a "provider:modelId" spec.
+ *
+ * Legacy fallback: easyReview.defaultModel (combined spec) and
+ * easyReview.activeModel (bare provider name) are still accepted.
  */
 export function readModelConfig(config: {
   get<T>(key: string, defaultValue?: T): T;
 }): ModelConfig {
-  // Support legacy settings: activeModel / defaultModel (bare provider name)
-  const rawDefault =
-    config.get<string>('defaultModel') ||
-    config.get<string>('activeModel') ||
-    'claude:claude-sonnet-4-6';
+  const provider = config.get<string>('provider', '') as AIProvider;
+  const validProviders: AIProvider[] = ['claude', 'codex', 'ollama'];
+
+  let defaultSpec: ModelSpec;
+
+  if (validProviders.includes(provider)) {
+    // New path: provider + per-provider model setting
+    const modelMap: Record<AIProvider, string> = {
+      claude: config.get<string>('claudeModel', 'claude-sonnet-4-6'),
+      codex: config.get<string>('codexModel', 'o4-mini'),
+      ollama: config.get<string>('ollamaModel', 'gemma3:12b'),
+    };
+    defaultSpec = `${provider}:${modelMap[provider]}`;
+  } else {
+    // Legacy fallback: easyReview.defaultModel or easyReview.activeModel
+    defaultSpec =
+      config.get<string>('defaultModel', '') ||
+      config.get<string>('activeModel', '') ||
+      'claude:claude-sonnet-4-6';
+  }
 
   const agentSpecs = config.get<Partial<Record<AgentKey, ModelSpec>>>('agentModels', {} as Partial<Record<AgentKey, ModelSpec>>);
 
   return {
-    defaultSpec: rawDefault,
+    defaultSpec,
     agentSpecs: agentSpecs ?? {},
   };
 }
