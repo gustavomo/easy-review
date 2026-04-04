@@ -38,7 +38,11 @@ export function parseReview(rawText: string): ReviewSection[] {
 
 function buildSection(title: string, content: string): ReviewSection {
   const normalizedTitle = title.toLowerCase();
-  if (normalizedTitle === 'findings' || normalizedTitle.includes('finding')) {
+  const isFindingsSection =
+    normalizedTitle === 'findings' ||
+    normalizedTitle.includes('finding') ||
+    normalizedTitle.includes('bug');
+  if (isFindingsSection) {
     return { title, content, findings: parseFindingsSection(content) };
   }
   return { title, content };
