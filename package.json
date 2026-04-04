@@ -113,7 +113,11 @@
 					},
 					"easyReview.defaultModel": {
 						"type": "string",
-						"enum": ["claude", "codex", "ollama"],
+						"enum": [
+							"claude",
+							"codex",
+							"ollama"
+						],
 						"default": "claude",
 						"description": "Default model for all review agents. Can be overridden per-agent with easyReview.agentModels."
 					},
@@ -123,7 +127,11 @@
 						"description": "Per-agent model overrides. Each key is an agent name (prSummarizer, bugRisk, architectureChange, testCoverage, documentation, diagram, businessImpact) and the value is 'claude', 'codex', or 'ollama'. Agents not listed here use easyReview.defaultModel.",
 						"additionalProperties": {
 							"type": "string",
-							"enum": ["claude", "codex", "ollama"]
+							"enum": [
+								"claude",
+								"codex",
+								"ollama"
+							]
 						}
 					}
 				}
@@ -4409,6 +4417,7 @@
 		"webpack-cli": "4.2.0"
 	},
 	"dependencies": {
+		"@anthropic-ai/claude-agent-sdk": "^0.2.92",
 		"@joaomoreno/unique-names-generator": "^5.2.0",
 		"@octokit/rest": "22.0.0",
 		"@octokit/types": "14.1.0",
