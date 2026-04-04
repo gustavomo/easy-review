@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-Replace the single `runReview()` call in `ReviewPanel.ts` with a 7-agent parallel orchestrator. Each agent runs concurrently, owns one review section, and receives only the PR diff + file list by default. Project context and commit history are loaded lazily based on a `## CONTEXT_REQUEST` header in each agent's prompt template. The Diagram agent's Mermaid output is validated by the orchestrator with up to 2 self-correction retries. A new `ModelAdapter` abstraction supports Claude (CLI), Codex (CLI), and Ollama/gemma4 (HTTP), with per-agent model selection via VS Code settings.
+Replace the single `runReview()` call in `ReviewPanel.ts` with a 7-agent parallel pipeline orchestrated by ADK (Anthropic Agent SDK / `claude_agent_sdk`). ADK manages all 7 agents as sub-agents — handling parallel dispatch, context propagation, and retry logic. The underlying model execution layer remains CLI subprocesses (claude/codex) or Ollama HTTP; ADK orchestrates but does not call the Anthropic API directly. Each agent owns one review section, receives only the PR diff + file list by default, and can declare additional context needs via a `## CONTEXT_REQUEST` header in its prompt template. The Diagram agent's Mermaid output is validated by the orchestrator with up to 2 self-correction retries. Per-agent model selection is configured via VS Code settings.
 
 Out of scope: Privanote integration, GitHub comment posting, new GitHub data fetches beyond what Phase 5 established.
 
@@ -26,51 +26,53 @@ Out of scope: Privanote integration, GitHub comment posting, new GitHub data fet
 - **D-04:** Progressive rendering — sections appear in the webview as each agent completes. Still-running sections show a spinner placeholder. The user can read finished sections while others are still generating. No wait for all 7.
 - **D-05:** The webview state model changes from a single streaming buffer to a 7-slot section map (`Record<AgentKey, SectionState>`), where `SectionState` is `pending | generating | complete | error`.
 
-### ModelAdapter Interface
+### ADK Orchestration Layer
 
-- **D-06:** Introduce a new `ModelAdapter` interface that replaces `CLIAdapter` as the common abstraction for all AI backends:
-  ```ts
-  interface ModelAdapter {
-    run(prompt: string, opts: ModelRunOpts): Promise<string>;
-    // hides CLI subprocess vs HTTP difference
-  }
-  ```
-  `ClaudeAdapter` and `CodexAdapter` are refactored to implement `ModelAdapter` (backward compatible — streaming via `onChunk` callback in `ModelRunOpts`).
-- **D-07:** `OllamaAdapter` implements `ModelAdapter` via HTTP POST to `http://localhost:11434/api/generate` with `stream: true`. Response is newline-delimited JSON; extract `response` field from each chunk.
-- **D-08:** The existing `runReview()` function in `ReviewRunner.ts` is replaced by an agent runner that accepts a `ModelAdapter` instance (not a `cliPath` + `CLIAdapter` pair).
+- **D-06:** ADK (`claude_agent_sdk` / Anthropic Agent SDK) is the single orchestration framework for all 7 agents. ADK replaces the custom parallel dispatch loop that would otherwise live in `ReviewPanel.ts`. ADK manages: concurrent agent dispatch, context propagation, per-agent retry logic, and cancellation.
+- **D-07:** ADK orchestrates but does NOT call the Anthropic API directly. It dispatches to the CLI execution layer — each sub-agent runs a Claude CLI subprocess, Codex CLI subprocess, or Ollama HTTP call depending on per-agent model config (D-15). No API key management in the extension.
+- **D-08:** Each of the 7 review agents is modeled as an ADK sub-agent. The ADK orchestrator agent receives the PR data, dispatches all 7 sub-agents concurrently, collects results, and posts section updates to the webview as each sub-agent completes.
+- **D-09:** Research required: exact ADK integration path in a VS Code extension host (CommonJS, Electron Node 20). Specifically: whether `claude_agent_sdk` supports a custom model provider that wraps CLI subprocess execution, and which ADK primitives (`subagents`, `tools`, `workflows`) best model the 7-agent fan-out pattern.
+
+### Model Execution Layer (under ADK)
+
+- **D-10:** Below ADK, the existing `CLIAdapter` + `ReviewRunner` execution pattern is preserved for Claude and Codex: spawn subprocess, write prompt to stdin, stream stdout via `readline`. ADK calls into this layer when dispatching Claude or Codex agents.
+- **D-11:** Introduce `OllamaAdapter` for Ollama/gemma4 execution: HTTP POST to `http://localhost:11434/api/generate` with `stream: true`, ndjson response, extract `response` field per chunk. ADK calls this adapter when dispatching Ollama agents.
+- **D-12:** A common `ModelAdapter` interface wraps both the CLI path and the Ollama HTTP path, so ADK sub-agents have a uniform execution interface regardless of model type.
 
 ### Per-Agent Prompt Templates & Lazy Context Loading
 
-- **D-09:** Each of the 7 agents has its own prompt template. Templates live in a new `src/easy-review/agents/` directory, one file per agent (e.g., `BugRiskAgent.ts`, `DiagramAgent.ts`).
-- **D-10:** Each agent prompt template starts with a `## CONTEXT_REQUEST` header block:
+- **D-13:** Each of the 7 agents has its own prompt template. Templates live in a new `src/easy-review/agents/` directory, one file per agent (e.g., `BugRiskAgent.ts`, `DiagramAgent.ts`).
+- **D-14:** Each agent prompt template starts with a `## CONTEXT_REQUEST` header block:
   ```
   ## CONTEXT_REQUEST
   project_analysis: true
   commit_history: false
   ---
   ```
-  The orchestrator parses this header, fetches the declared context (project analysis from SQLite, commit history from GitHub), strips the header, and injects the context into the prompt before dispatching to the model.
-- **D-11:** Agents that don't need extra context simply omit the `## CONTEXT_REQUEST` block or set both to `false`.
+  The ADK orchestrator parses this header before dispatching the sub-agent, fetches the declared context (project analysis from SQLite, commit history from GitHub), strips the header, and injects the context into the prompt.
+- **D-15:** Agents that don't need extra context simply omit the `## CONTEXT_REQUEST` block or set both to `false`.
 
 ### Diagram Agent Self-Correction
 
-- **D-12:** After the Diagram agent completes, the orchestrator extracts the Mermaid code block from the output and validates it using the `mermaid.parse()` API (already available in the extension host via the webview bundle — or use a lightweight parse check server-side).
-- **D-13:** On validation failure: re-run the Diagram agent with a correction prompt that includes the invalid output and the parse error message. Retry up to 2 times.
-- **D-14:** After 2 failed retries, render the Visual Overview section with the raw Mermaid code block plus an error banner: "⚠️ Diagram failed to render — raw output shown below."
+- **D-16:** After the Diagram sub-agent completes, the ADK orchestrator extracts the Mermaid code block from the output and validates it using the `mermaid.parse()` API (already available in the extension host — or use a lightweight parse check).
+- **D-17:** On validation failure: the ADK orchestrator re-runs the Diagram sub-agent with a correction prompt that includes the invalid output and the parse error message. Retry up to 2 times.
+- **D-18:** After 2 failed retries, render the Visual Overview section with the raw Mermaid code block plus an error banner: "⚠️ Diagram failed to render — raw output shown below."
 
 ### VS Code Settings for Model Selection
 
-- **D-15:** Two settings:
+- **D-19:** Two settings:
   - `easyReview.defaultModel: "claude" | "codex" | "ollama"` — used for any agent not explicitly overridden
   - `easyReview.agentModels: Record<AgentKey, "claude" | "codex" | "ollama">` — per-agent overrides; unspecified agents inherit `defaultModel`
-- **D-16:** `AgentKey` values: `prSummarizer`, `bugRisk`, `architectureChange`, `testCoverage`, `documentation`, `diagram`, `businessImpact`.
-- **D-17:** The `easyReview.activeModel` setting from Phase 2 (D-05 in 02-CONTEXT.md) is deprecated in favor of `easyReview.defaultModel`. Migration: existing `activeModel` value is read as `defaultModel` if `defaultModel` is unset.
+- **D-20:** `AgentKey` values: `prSummarizer`, `bugRisk`, `architectureChange`, `testCoverage`, `documentation`, `diagram`, `businessImpact`.
+- **D-21:** The `easyReview.activeModel` setting from Phase 2 (D-05 in 02-CONTEXT.md) is deprecated in favor of `easyReview.defaultModel`. Migration: existing `activeModel` value is read as `defaultModel` if `defaultModel` is unset.
 
 ### Claude's Discretion
 
+- Exact ADK primitives used (`subagents`, `tools`, `workflows`) — researcher determines the right ADK API after studying D-09 requirements
+- Whether ADK's custom model provider supports CLI subprocess execution natively or needs a thin wrapper
 - Exact Mermaid validation approach on the extension host side (inline parse function vs lightweight dependency)
 - Whether agent prompt templates export a class or a plain function
-- Error handling granularity when an individual agent fails (show error in that section's slot vs abort the entire review)
+- Error handling granularity when an individual sub-agent fails (show error in that section's slot vs abort the entire review)
 - Whether `OllamaAdapter` uses Node built-in `fetch` or a lightweight wrapper
 - Exact shape of `ModelRunOpts` (streaming callback, cancellation token, timeout)
 
@@ -79,7 +81,7 @@ Out of scope: Privanote integration, GitHub comment posting, new GitHub data fet
 <specifics>
 ## Specific Ideas
 
-- The user specified that the Diagram agent should validate its own output before declaring the result final — implemented as orchestrator-side validation with up to 2 self-correction retries (D-12 through D-14).
+- The user specified that the Diagram agent should validate its own output before declaring the result final — implemented as ADK orchestrator-side validation with up to 2 self-correction retries (D-16 through D-18).
 - "Show raw + error banner" is the fallback on persistent Mermaid failure — do not silently omit the section.
 - Per-agent model assignment should be ergonomic: default covers most agents, object overrides only what differs (e.g., route the Diagram agent to Claude for quality, everything else to Codex for speed).
 
@@ -92,8 +94,8 @@ Out of scope: Privanote integration, GitHub comment posting, new GitHub data fet
 
 ### Core files being replaced / heavily modified
 - `src/easy-review/cli/ReviewRunner.ts` — Current single-agent runner; Phase 6 refactors this into a multi-agent orchestrator. Read to understand the existing streaming/cancellation/settle pattern.
-- `src/easy-review/cli/ClaudeAdapter.ts` — `CLIAdapter` interface definition (line 17–20) + `ClaudeAdapter`; Phase 6 introduces `ModelAdapter` as a superset. Read for the interface shape before defining `ModelAdapter`.
-- `src/easy-review/cli/CodexAdapter.ts` — Read alongside `ClaudeAdapter.ts`; both are refactored to implement `ModelAdapter`.
+- `src/easy-review/cli/ClaudeAdapter.ts` — `CLIAdapter` interface definition (line 17–20) + `ClaudeAdapter`; Phase 6 introduces `ModelAdapter` as a common execution interface. Read for the existing subprocess pattern before designing the ADK integration.
+- `src/easy-review/cli/CodexAdapter.ts` — Read alongside `ClaudeAdapter.ts`; both are preserved as execution-layer adapters under ADK.
 - `src/easy-review/cli/PromptBuilder.ts` — Current single 240-line prompt; Phase 6 splits into 7 per-agent prompt templates. Read to understand the `BuildPromptOptions` interface and SYNTHESIS_INSTRUCTION structure before authoring per-agent prompts.
 - `src/easy-review/panel/ReviewPanel.ts` — Current orchestrator (singleton, calls `runReview` once); Phase 6 refactors the review generation path heavily. Read to understand the webview state machine and postMessage protocol before redesigning.
 - `src/easy-review/cli/ReviewParser.ts` — Section heading matching logic; updated for 7 new section names. Read `buildSection()` and `parseFindingsSection()`.
@@ -106,6 +108,9 @@ Out of scope: Privanote integration, GitHub comment posting, new GitHub data fet
 ### Webview state and rendering
 - `src/easy-review/panel/ReviewPanel.ts` — Webview postMessage protocol (see `ExtensionMessage` / `WebviewMessage` types in `src/shared/types.ts`); Phase 6 adds new message types for per-section updates.
 - `src/shared/types.ts` — `ReviewSection`, `ParsedReview`, `WebviewState` types; Phase 6 updates these for the 7-section contract and progressive state model.
+
+### ADK integration (research required)
+- `claude_agent_sdk` / `@anthropic-ai/sdk` — researcher must determine: (a) which package provides the right ADK primitives for multi-agent fan-out, (b) how to configure a custom model provider that dispatches to CLI subprocesses instead of the Anthropic API, (c) whether ADK works in CommonJS Electron Node 20 context. This is D-09.
 
 ### Ollama HTTP API
 - No external docs needed — Ollama's generate endpoint is `POST http://localhost:11434/api/generate` with `{ model, prompt, stream: true }`. Response is ndjson with `{ response, done }` fields per chunk. Planner should verify against current Ollama docs at implementation time.
@@ -122,13 +127,13 @@ Out of scope: Privanote integration, GitHub comment posting, new GitHub data fet
 - Phase 02.3 webview section components (`FindingsSection`, `MermaidSection`, etc.) — some can be repurposed with new names; others need new variants for the 7 new section types.
 
 ### Established Patterns
-- `CLIAdapter` interface pattern (buildArgs + extractText) — superseded by `ModelAdapter` in Phase 6, but the subprocess lifecycle in `ReviewRunner` is reused.
+- `CLIAdapter` interface pattern (buildArgs + extractText) — preserved as the subprocess execution layer under ADK (D-10/D-12). Not superseded, just wrapped.
 - Webview state machine (`idle → generating → complete | error`) — extended to a per-section state map in Phase 6 (D-05).
 - `postMessage` protocol: extension host → webview for state updates. Phase 6 adds `sectionUpdate` message type alongside existing `streamChunk` / `reviewComplete`.
-- `getStore()` / `getProvider()` module-level exports in `activation.ts` — orchestrator accesses storage and credentials through these, same as `ReviewPanel.ts` today.
+- `getStore()` / `getProvider()` module-level exports in `activation.ts` — ADK orchestrator accesses storage and credentials through these, same as `ReviewPanel.ts` today.
 
 ### Integration Points
-- `ReviewPanel.ts` → new multi-agent orchestrator replaces the `fetchPRDiff → buildPrompt → runReview` chain with a parallel dispatch loop
+- `ReviewPanel.ts` → integrates ADK orchestrator; the `fetchPRDiff → buildPrompt → runReview` chain is replaced by an ADK fan-out that dispatches 7 sub-agents
 - `activation.ts` → no structural change; `easyReview.generateReview` command still routes to `ReviewPanel`
 - `package.json` `contributes.configuration` → new `easyReview.defaultModel` and `easyReview.agentModels` settings entries replace `easyReview.activeModel`
 - Webview React app → `ReviewDocument` updated: replace 6-section layout with 7-slot progressive layout; add `AgentStatusBar` showing per-agent completion state
