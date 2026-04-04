@@ -13,25 +13,28 @@ import type { CLIAdapter } from './ClaudeAdapter';
  */
 export class CodexAdapter implements CLIAdapter {
   buildArgs(_prompt: string): string[] {
-    // Prompt is written to stdin by ReviewRunner — NOT passed as a positional arg.
-    // TODO: Update flags after empirical spike (run `codex --help` to confirm).
-    return ['--quiet'];
+    // Prompt is written to stdin by ReviewRunner.
+    // `codex exec --json` runs non-interactively and emits JSONL events to stdout.
+    return ['exec', '--json'];
   }
 
   extractText(line: string): string | null {
     const trimmed = line.trim();
     if (!trimmed) { return null; }
-
-    // First attempt: try JSON parsing (in case codex uses JSON events like Claude)
     try {
       const event = JSON.parse(trimmed);
-      const text = event?.delta?.text ?? event?.text ?? event?.content ?? null;
-      if (typeof text === 'string') { return text; }
+      // Text arrives in a single item.completed event:
+      //   {"type":"item.completed","item":{"type":"agent_message","text":"..."}}
+      if (
+        event?.type === 'item.completed' &&
+        event?.item?.type === 'agent_message' &&
+        typeof event?.item?.text === 'string'
+      ) {
+        return event.item.text;
+      }
     } catch {
-      // Not JSON — treat as plain text
+      // Non-JSON line — ignore
     }
-
-    // Plain text fallback
-    return trimmed;
+    return null;
   }
 }

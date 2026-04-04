@@ -30,6 +30,9 @@ export async function runReview(
 ): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const args = adapter.buildArgs(opts.prompt);
+    const ch = getOutputChannel();
+    ch.appendLine(`[ReviewRunner] spawn: ${cliPath} ${args.join(' ')}`);
+    ch.appendLine(`[ReviewRunner] prompt length: ${opts.prompt.length} chars`);
     const proc = cp.spawn(cliPath, args, { stdio: ['pipe', 'pipe', 'pipe'] });
 
     let fullOutput = '';
@@ -74,6 +77,7 @@ export async function runReview(
     });
 
     proc.on('close', (code) => {
+      ch.appendLine(`[ReviewRunner] process closed with code ${code}`);
       if (code === 0) {
         settle(() => resolve(fullOutput));
       } else {
