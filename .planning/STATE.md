@@ -134,6 +134,8 @@ Recent decisions affecting current work:
 
 - Phase 02.1 inserted after Phase 2: In-Editor PR Navigation (INSERTED) — replace browser-open stub with VS Code diff editor view (file tree + diff editor per file)
 - Phase 02.2 inserted after Phase 2: Sidebar UI Enhancements (INSERTED) — PR-level view review button, plugin-level project analysis / PR history analysis / settings buttons
+- Phase 02.3 inserted after Phase 02.2: Review Panel Rich Rendering (INSERTED) — code blocks with syntax highlighting, Mermaid diagram rendering
+- Phase 5 added: Upgrade review prompt to generate deep, insight-rich PR analysis
 
 ### Pending Todos
 

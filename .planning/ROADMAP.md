@@ -66,6 +66,16 @@ Plans:
 - [ ] 02-09-PLAN.md — Human verification in Extension Development Host (all 11 requirements)
 **UI hint**: yes
 
+### Phase 02.3: review-panel-rich-rendering (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 02
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 02.3 to break down)
+
 ### Phase 02.1: In-Editor PR Navigation (INSERTED)
 
 **Goal**: Clicking a PR in the sidebar opens it in-editor like the GitHub Pull Requests plugin — the PR tree item expands to show the list of changed files, and clicking any file opens a diff editor with before/after content fetched from the GitHub API. Replaces the Phase 1 browser-open stub (`vscode.env.openExternal`).
@@ -135,3 +145,13 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 | 2.2. Sidebar UI Enhancements | 0/2 | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
+
+### Phase 5: Upgrade review prompt to generate deep, insight-rich PR analysis
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 4
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 5 to break down)
