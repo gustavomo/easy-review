@@ -62,3 +62,88 @@
   padding: 4px 12px;
   color: var(--vscode-descriptionForeground);
 }
+
+/* ── highlight.js token color overrides ──────────────────────────────────
+   D-04: VS Code CSS vars only — no imported hljs theme, no hardcoded hex.
+   .easy-review-md .hljs targets the <code> element inside <pre> after
+   marked-highlight adds the hljs class. More specific than pre code reset. */
+
+.easy-review-md .hljs {
+  background: var(--vscode-textCodeBlock-background);
+  color: var(--vscode-editor-foreground);
+}
+
+.easy-review-md .hljs-keyword,
+.easy-review-md .hljs-selector-tag {
+  color: var(--vscode-symbolIcon-keywordForeground, #569cd6);
+}
+
+.easy-review-md .hljs-string,
+.easy-review-md .hljs-attr {
+  color: var(--vscode-symbolIcon-stringForeground, #ce9178);
+}
+
+.easy-review-md .hljs-comment {
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+}
+
+.easy-review-md .hljs-number,
+.easy-review-md .hljs-literal {
+  color: var(--vscode-symbolIcon-numberForeground, #b5cea8);
+}
+
+.easy-review-md .hljs-title,
+.easy-review-md .hljs-name,
+.easy-review-md .hljs-class,
+.easy-review-md .hljs-type {
+  color: var(--vscode-charts-purple, var(--vscode-symbolIcon-classForeground, #4ec9b0));
+}
+
+.easy-review-md .hljs-variable,
+.easy-review-md .hljs-params {
+  color: var(--vscode-symbolIcon-variableForeground, #9cdcfe);
+}
+
+.easy-review-md .hljs-built_in {
+  color: var(--vscode-charts-blue, #569cd6);
+}
+
+.easy-review-md .hljs-function {
+  color: var(--vscode-symbolIcon-functionForeground, var(--vscode-charts-blue, #dcdcaa));
+}
+
+/* ── Markdown table styles ────────────────────────────────────────────────
+   D-19/D-20: striped rows + bordered cells using VS Code CSS vars.
+   padding: 8px 12px per UI-SPEC (8px vertical on spacing scale, 12px horizontal).
+   overflow-x auto on table wrapper handles wide tables. */
+
+.easy-review-md table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+  font-size: 13px;
+  overflow-x: auto;
+  display: block;
+}
+
+.easy-review-md th,
+.easy-review-md td {
+  padding: 8px 12px;
+  border: 1px solid var(--vscode-panel-border);
+  text-align: left;
+}
+
+.easy-review-md th {
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  font-weight: 600;
+  color: var(--vscode-editor-foreground);
+}
+
+.easy-review-md tbody tr:nth-child(odd) td {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.easy-review-md tbody tr:nth-child(even) td {
+  background: transparent;
+}
