@@ -163,6 +163,7 @@ export class ReviewPanel {
 
     // Transition webview to generating state
     this.updateState({ status: 'generating', prTitle: pr.title, model: activeModel, elapsedMs: 0 });
+    this.postMessage({ type: 'startReview', prTitle: pr.title, model: activeModel });
 
     // Cancellation support (D-04)
     this.cancellationSource?.dispose();
