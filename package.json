@@ -1997,6 +1997,18 @@
 				"title": "View Last Analysis",
 				"category": "Easy Review",
 				"icon": "$(book)"
+			},
+			{
+				"command": "easy-review.viewReview",
+				"title": "View Review",
+				"category": "Easy Review",
+				"icon": "$(eye)"
+			},
+			{
+				"command": "easy-review.openSettings",
+				"title": "Open Easy Review Settings",
+				"category": "Easy Review",
+				"icon": "$(settings-gear)"
 			}
 		],
 		"viewsWelcome": [
@@ -2954,6 +2966,21 @@
 					"group": "navigation@1"
 				},
 				{
+					"command": "easyReview.viewAnalysis",
+					"when": "view == easy-review.prList",
+					"group": "navigation@1"
+				},
+				{
+					"command": "easyReview.analyzePRHistory",
+					"when": "view == easy-review.prList",
+					"group": "navigation@2"
+				},
+				{
+					"command": "easy-review.openSettings",
+					"when": "view == easy-review.prList",
+					"group": "navigation@3"
+				},
+				{
 					"command": "easy-review.refreshPRList",
 					"when": "view == easy-review.prList",
 					"group": "navigation"
@@ -3231,6 +3258,11 @@
 				{
 					"command": "easy-review.removePR",
 					"when": "viewItem =~ /^pr-/",
+					"group": "inline"
+				},
+				{
+					"command": "easy-review.viewReview",
+					"when": "view == easy-review.prList && viewItem =~ /hasReview/",
 					"group": "inline"
 				},
 				{
