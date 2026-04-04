@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02.3-02-PLAN.md
-last_updated: "2026-04-04T03:39:21.547Z"
+stopped_at: Completed 02.3-03-PLAN.md
+last_updated: "2026-04-04T03:39:34.099Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 8
@@ -77,6 +77,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 05-upgrade-review-prompt-to-generate-deep-insight-rich-pr-analysis P02 | 5 | 2 tasks | 2 files |
 | Phase 02.3-review-panel-rich-rendering P01 | 5 | 2 tasks | 5 files |
 | Phase 02.3-review-panel-rich-rendering P02 | 98 | 2 tasks | 3 files |
+| Phase 02.3-review-panel-rich-rendering P03 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -142,6 +143,9 @@ Recent decisions affecting current work:
 - [Phase 02.3-01]: hasHighBreaking checks both name.includes('breaking') and impact==='high' — prevents false positives from other high-impact dimensions
 - [Phase 02.3]: marked.use(markedHighlight()) at module-level applies globally to all marked() calls without per-call wiring
 - [Phase 02.3]: No hljs theme CSS import — token colors applied via VS Code CSS vars only (D-04); .easy-review-md .hljs selector is additive over pre code reset
+- [Phase 02.3-03]: npm install --legacy-peer-deps required for mermaid due to @opentelemetry/api peer conflict with vitest
+- [Phase 02.3-03]: mermaid.initialize() at module level (not in component) — prevents re-initialization on every render (Pitfall 5)
+- [Phase 02.3-03]: manualChunks consolidates mermaid+dagre into mermaid-bundle — prevents VS Code CSP blocking dynamic import() splits at runtime
 
 ### Roadmap Evolution
 
@@ -169,6 +173,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T03:39:10.343Z
-Stopped at: Completed 02.3-02-PLAN.md
+Last session: 2026-04-04T03:39:34.096Z
+Stopped at: Completed 02.3-03-PLAN.md
 Resume file: None
