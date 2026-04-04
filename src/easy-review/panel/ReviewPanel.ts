@@ -372,7 +372,7 @@ export class ReviewPanel {
 </head>
 <body>
   <div id="app"></div>
-  <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
+  <script type="module" nonce="${nonce}" src="${webviewUri}?v=${nonce}"></script>
 </body>
 </html>`;
   }

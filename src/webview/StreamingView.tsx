@@ -58,14 +58,20 @@ export function StreamingView({ text }: StreamingViewProps) {
       }}
     >
       {text || (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '10px',
-          color: 'var(--vscode-descriptionForeground)',
-          paddingTop: '8px',
-        }}>
-          <span className="codicon codicon-loading codicon-modifier-spin" aria-hidden="true" />
-          <span>{STEPS[dotStep]}</span>
-        </div>
+        <>
+          <style>{`
+            @keyframes er-spin { to { transform: rotate(360deg); } }
+            .er-spinner { animation: er-spin 1s linear infinite; display: inline-block; }
+          `}</style>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            color: 'var(--vscode-descriptionForeground)',
+            paddingTop: '8px',
+          }}>
+            <span className="codicon codicon-loading er-spinner" aria-hidden="true" />
+            <span>{STEPS[dotStep]}</span>
+          </div>
+        </>
       )}
     </div>
   );
