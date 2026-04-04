@@ -32,6 +32,10 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
         case 'stateSync':
           setState(msg.state);
           setHasAnalysis(msg.hasAnalysis ?? false);
+          // Catch up on agent sections if webview loaded after sectionUpdate messages were sent
+          if (msg.state.status === 'generating' && msg.state.agentSections) {
+            setSections(msg.state.agentSections);
+          }
           if (msg.state.status === 'complete') {
             setStreamingText('');
           }

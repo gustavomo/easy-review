@@ -232,8 +232,13 @@ export class ReviewPanel {
         codexPath: config.get<string>('codexPath') || 'codex',
         projectAnalysis,
         token,
-        onSectionUpdate: (agentKey, state) => {
-          this.postMessage({ type: 'sectionUpdate', agentKey, state });
+        onSectionUpdate: (agentKey, sectionState) => {
+          // Keep currentState.agentSections up to date so stateSync (ready handshake)
+          // can catch up the webview if it loads after messages were already sent.
+          if (this.currentState.status === 'generating' && this.currentState.agentSections) {
+            this.currentState.agentSections[agentKey] = sectionState;
+          }
+          this.postMessage({ type: 'sectionUpdate', agentKey, state: sectionState });
         },
       });
 
