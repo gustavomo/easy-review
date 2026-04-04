@@ -345,13 +345,13 @@ export class ReviewPanel {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline' ${this.panel.webview.cspSource}; font-src ${this.panel.webview.cspSource};">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}' ${this.panel.webview.cspSource}; style-src 'unsafe-inline' ${this.panel.webview.cspSource}; font-src ${this.panel.webview.cspSource};">
   <link rel="stylesheet" href="${codiconsUri}" />
   <title>Easy Review</title>
 </head>
 <body>
   <div id="app"></div>
-  <script nonce="${nonce}" src="${webviewUri}"></script>
+  <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
 </body>
 </html>`;
   }
