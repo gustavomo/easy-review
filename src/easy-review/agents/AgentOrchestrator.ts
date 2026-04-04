@@ -109,6 +109,24 @@ export async function runAllAgents(opts: OrchestratorOpts): Promise<Orchestrator
   ch.appendLine(`[AgentOrchestrator] Starting 7-agent concurrent dispatch`);
   ch.appendLine(`[AgentOrchestrator] defaultSpec=${opts.modelConfig.defaultSpec}`);
 
+  // Pre-flight: validate Ollama setup once before dispatching any agents
+  const defaultParsed = parseModelSpec(opts.modelConfig.defaultSpec);
+  const anyOllama =
+    defaultParsed.provider === 'ollama' ||
+    Object.values(opts.modelConfig.agentSpecs).some(s => s && parseModelSpec(s).provider === 'ollama');
+
+  if (anyOllama) {
+    // Use the modelId from the first ollama spec we find
+    const ollamaModelId = defaultParsed.provider === 'ollama'
+      ? defaultParsed.modelId
+      : (() => {
+        const overrideSpec = Object.values(opts.modelConfig.agentSpecs).find(s => s && parseModelSpec(s).provider === 'ollama');
+        return overrideSpec ? parseModelSpec(overrideSpec).modelId : defaultParsed.modelId;
+      })();
+    await OllamaAdapter.checkSetup(ollamaModelId);
+    ch.appendLine(`[AgentOrchestrator] Ollama pre-flight passed: model=${ollamaModelId}`);
+  }
+
   // Shared AbortController — all ADK/Ollama agents share this signal
   const controller = new AbortController();
   const cancelDisposable = opts.token.onCancellationRequested(() => {
