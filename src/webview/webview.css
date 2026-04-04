@@ -105,6 +105,10 @@
   color: var(--vscode-symbolIcon-variableForeground, #9cdcfe);
 }
 
+.easy-review-md .hljs-property {
+  color: var(--vscode-symbolIcon-fieldForeground, #9cdcfe);
+}
+
 .easy-review-md .hljs-built_in {
   color: var(--vscode-charts-blue, #569cd6);
 }
