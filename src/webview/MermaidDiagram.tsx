@@ -28,7 +28,8 @@ interface MermaidDiagramProps {
  * that opens a full-screen modal with zoom/pan controls.
  */
 export function MermaidDiagram({ source }: MermaidDiagramProps) {
-  const [svg, setSvg] = React.useState<string | null>(null);
+  const [inlineSvg, setInlineSvg] = React.useState<string | null>(null);
+  const [rawSvg, setRawSvg] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [showPreview, setShowPreview] = React.useState(false);
   const idRef = React.useRef<string>(`mermaid-diagram-${_mermaidCounter++}`);
@@ -40,19 +41,22 @@ export function MermaidDiagram({ source }: MermaidDiagramProps) {
     }
 
     let active = true;
-    setSvg(null);
+    setInlineSvg(null);
+    setRawSvg(null);
     setError(null);
 
     mermaid
       .render(idRef.current, source)
       .then(({ svg: renderedSvg }) => {
-        // Strip fixed width/height from SVG so it scales to fill its container.
-        // Keep viewBox so the SVG aspect ratio is preserved.
+        if (!active) return;
+        // Raw SVG for the modal — keeps original dimensions for correct scale calculation
+        setRawSvg(renderedSvg);
+        // Inline SVG — strip fixed width/height so it fills the inline container
         const scalable = renderedSvg
           .replace(/\s+width="[^"]*"/, '')
           .replace(/\s+height="[^"]*"/, '')
           .replace(/style="[^"]*"/, 'style="width:100%;height:auto"');
-        if (active) setSvg(scalable);
+        setInlineSvg(scalable);
       })
       .catch((err: Error) => {
         if (active) setError(err.message ?? 'Unknown render error');
@@ -80,7 +84,7 @@ export function MermaidDiagram({ source }: MermaidDiagramProps) {
     );
   }
 
-  if (!svg) {
+  if (!inlineSvg) {
     return (
       <div style={{ fontSize: '12px', color: 'var(--vscode-descriptionForeground)' }}>
         Rendering diagram...
@@ -105,7 +109,7 @@ export function MermaidDiagram({ source }: MermaidDiagramProps) {
         onClick={() => setShowPreview(true)}
         title="Click to open diagram preview"
       >
-        <div dangerouslySetInnerHTML={{ __html: svg }} />
+        <div dangerouslySetInnerHTML={{ __html: inlineSvg }} />
         {/* Fade overlay at bottom to hint there's more */}
         <div style={{
           position: 'absolute',
@@ -136,8 +140,8 @@ export function MermaidDiagram({ source }: MermaidDiagramProps) {
         <span style={{ fontSize: '14px' }}>&#x1F50D;</span> Preview Diagram
       </button>
 
-      {showPreview && (
-        <DiagramPreviewModal svg={svg} onClose={() => setShowPreview(false)} />
+      {showPreview && rawSvg && (
+        <DiagramPreviewModal svg={rawSvg} onClose={() => setShowPreview(false)} />
       )}
     </div>
   );
@@ -162,27 +166,35 @@ function DiagramPreviewModal({ svg, onClose }: { svg: string; onClose: () => voi
     const content = contentRef.current;
     if (!viewport || !content) return;
 
-    // Measure the SVG's natural size
     const svgEl = content.querySelector('svg');
     if (!svgEl) return;
 
-    // Get viewBox dimensions or fallback to bounding box
-    const viewBox = svgEl.getAttribute('viewBox');
-    let svgW: number;
-    let svgH: number;
-    if (viewBox) {
-      const parts = viewBox.split(/[\s,]+/).map(Number);
-      svgW = parts[2];
-      svgH = parts[3];
-    } else {
-      const bbox = svgEl.getBBox();
-      svgW = bbox.width || 800;
-      svgH = bbox.height || 600;
+    // Get the SVG's rendered size at scale=1 (from width/height attrs or viewBox)
+    const wAttr = svgEl.getAttribute('width');
+    const hAttr = svgEl.getAttribute('height');
+    let svgW = wAttr ? parseFloat(wAttr) : 0;
+    let svgH = hAttr ? parseFloat(hAttr) : 0;
+
+    // Fallback to viewBox if no width/height
+    if (!svgW || !svgH) {
+      const viewBox = svgEl.getAttribute('viewBox');
+      if (viewBox) {
+        const parts = viewBox.split(/[\s,]+/).map(Number);
+        svgW = svgW || parts[2];
+        svgH = svgH || parts[3];
+      }
     }
 
-    const vw = viewport.clientWidth - 32; // 16px padding each side
+    // Last resort: bounding box
+    if (!svgW || !svgH) {
+      const bbox = svgEl.getBBox();
+      svgW = svgW || bbox.width || 800;
+      svgH = svgH || bbox.height || 600;
+    }
+
+    const vw = viewport.clientWidth - 32;
     const vh = viewport.clientHeight - 32;
-    const fitScale = Math.min(vw / svgW, vh / svgH, 2); // cap at 2x
+    const fitScale = Math.min(vw / svgW, vh / svgH);
 
     setScale(fitScale);
     setTranslate({ x: 0, y: 0 });
