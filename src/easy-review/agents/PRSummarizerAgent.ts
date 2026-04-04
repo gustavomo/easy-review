@@ -35,17 +35,23 @@ Begin your response with "## PR Summary"
 **Section 1: Summary (3-5 sentences)**
 Answer: What problem is solved or feature added? What approach was taken? What is the tangible outcome?
 
-**Section 2: Key Code Changes (markdown table)**
-After the summary paragraph, add:
+**Section 2: Key Code Changes**
+After the summary paragraph, add a "### Key Code Changes" heading.
+For each important change (5-10 most significant), show an annotated before/after code snippet:
 
-### Key Code Changes
+#### \`src/path/file.ts\`
+\`\`\`diff
+- const old = doOldThing();  // removed: no longer needed after X
++ const result = doNewThing(opts);  // added: handles Y with Z strategy
++ validate(result);  // added: prevents null propagation
+\`\`\`
 
-| File | Change | Purpose |
-|------|--------|---------|
-| \`src/path/file.ts\` | Added \`functionName()\` | Handles X when Y occurs |
-| \`src/path/other.ts\` | Removed \`OldComponent\` | Superseded by NewComponent |
-
-List the most important 5-10 file changes. Group trivial changes (renames, imports) into a single row.
+Rules for code snippets:
+- Use diff format (\`\`\`diff) with - for removed lines and + for added lines
+- Add inline comments (// comment) explaining WHY each line was changed
+- Show only the important lines, not entire functions — use ... to skip unchanged lines
+- Group trivial changes (renames, import reorder) into a single entry with a note
+- Each snippet should have the file path as a #### heading above it
 
 Rules:
 - Infer context from file names, component names, and diff content
