@@ -1,4 +1,3 @@
-import React from 'react';
 import type { AgentKey, SectionState } from '@shared/types';
 import { AgentSlot } from './AgentSlot';
 

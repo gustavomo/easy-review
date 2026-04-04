@@ -1,4 +1,3 @@
-import React from 'react';
 import type { AgentKey, SectionState, SectionStatus } from '@shared/types';
 
 export interface AgentSlotProps {

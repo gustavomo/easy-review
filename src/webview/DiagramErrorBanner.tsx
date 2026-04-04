@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Warning banner shown inside MermaidDiagram on 3rd validation failure (D-18).
