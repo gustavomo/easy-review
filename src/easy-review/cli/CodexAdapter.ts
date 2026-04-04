@@ -15,7 +15,7 @@ export class CodexAdapter implements CLIAdapter {
   buildArgs(_prompt: string): string[] {
     // Prompt is written to stdin by ReviewRunner.
     // `codex exec --json` runs non-interactively and emits JSONL events to stdout.
-    return ['exec', '--json'];
+    return ['exec', '--json', '--skip-git-repo-check'];
   }
 
   extractText(line: string): string | null {
