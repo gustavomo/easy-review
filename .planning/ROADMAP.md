@@ -97,7 +97,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02.2-01-PLAN.md — PRTreeItem hasReview contextValue + EasyReviewPRsProvider store injection + ReviewPanel.loadReview() + unit tests
+- [x] 02.2-01-PLAN.md — PRTreeItem hasReview contextValue + EasyReviewPRsProvider store injection + ReviewPanel.loadReview() + unit tests
 - [ ] 02.2-02-PLAN.md — package.json commands + menu contributions + activation.ts command registration + post-review refresh hook
 
 ### Phase 3: Privanote Integration
