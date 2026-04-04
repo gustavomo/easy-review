@@ -10,6 +10,8 @@ export default defineConfig({
 	plugins: [react()],
 	build: {
 		outDir: 'dist/webview',
+		// mermaid adds ~2-3MB to the bundle after tree-shaking; raise limit to suppress warning
+		chunkSizeWarningLimit: 4000,
 		rollupOptions: {
 			input: {
 				webview: 'src/webview/index.tsx',
@@ -19,6 +21,14 @@ export default defineConfig({
 				entryFileNames: '[name].js',
 				chunkFileNames: '[name].js',
 				assetFileNames: '[name].[ext]',
+				// Pitfall 1 mitigation: consolidate mermaid into a single chunk.
+				// mermaid v11 splits diagram renderers into lazy-loaded chunks by default.
+				// VS Code webview CSP blocks dynamic import() at runtime — consolidation prevents this.
+				manualChunks(id) {
+					if (id.includes('node_modules/mermaid') || id.includes('node_modules/dagre')) {
+						return 'mermaid-bundle';
+					}
+				},
 			},
 		},
 	},
