@@ -149,7 +149,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4 → 5 → 6
 | 2.2. Sidebar UI Enhancements | 2/2 | Complete | 2026-04-03 |
 | 2.3. Review Panel Rich Rendering | 4/4 | Complete | 2026-04-03 |
 | 5. Upgrade review prompt | 4/4 | Complete | 2026-04-03 |
-| 6. Multi-agent PR review pipeline | 0/8 | Planning complete | - |
+| 6. Multi-agent PR review pipeline | 2/8 | In Progress|  |
 | 7. Changes Tree — File Icons and PR Author | 2/2 | Complete   | 2026-04-04 |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
@@ -172,13 +172,13 @@ Plans:
 **Goal:** Replace the single-agent review generator with a 7-agent parallel pipeline (PR Summarizer, Bug Risk, Architecture Change, Test Coverage, Documentation, Diagram, Business Impact). Each agent runs concurrently and receives only the PR diff + file list by default — project context and commit history are loaded lazily only when an agent opts in. The Diagram agent validates Mermaid syntax before marking the review complete. A multi-model strategy supports Claude, Codex, and Ollama (gemma4) with per-agent model selection via VS Code settings.
 **Requirements**: TBD
 **Depends on:** Phase 5
-**Plans:** 8 plans
+**Plans:** 2/8 plans executed
 
 Plans:
 - [ ] 06-01-PLAN.md — Wave 0: TDD scaffolds (AgentOrchestrator.test.ts + OllamaAdapter.test.ts + contextRequest.test.ts + mermaidValidation.test.ts + ReviewParser 7-section tests + modelSettings.test.ts)
 - [x] 06-02-PLAN.md — Wave 1: shared types (AgentKey, SectionState, sectionUpdate message) + ModelAdapter interface + OllamaAdapter
 - [ ] 06-03-PLAN.md — Wave 1: contextRequest.ts + mermaidValidation.ts utilities + 7 per-agent prompt templates
-- [ ] 06-04-PLAN.md — Wave 1: ReviewParser 7-section update (bug keyword) + modelSettings.ts + package.json settings
+- [x] 06-04-PLAN.md — Wave 1: ReviewParser 7-section update (bug keyword) + modelSettings.ts + package.json settings
 - [ ] 06-05-PLAN.md — Wave 2: AgentOrchestrator.ts (Promise.allSettled 7 agents, ADK + Codex + Ollama paths, Mermaid retry) + esbuild ADK bundle
 - [ ] 06-06-PLAN.md — Wave 3: ReviewPanel.ts (extension host) refactor — executeReview delegates to runAllAgents
 - [ ] 06-07-PLAN.md — Wave 4: AgentStatusBar + AgentSlot + SectionPendingPlaceholder + DiagramErrorBanner + CollapsibleSection/PanelHeader updates

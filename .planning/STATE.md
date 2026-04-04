@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-04-04T17:35:44.839Z"
+stopped_at: Completed 06-04-PLAN.md
+last_updated: "2026-04-04T17:37:37.570Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 10
   completed_phases: 7
   total_plans: 41
-  completed_plans: 34
+  completed_plans: 35
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 ## Current Position
 
 Phase: 06 (multi-agent-pr-review-pipeline-with-model-selection) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 Status: Ready to execute
 Last activity: 2026-04-04
 
@@ -82,6 +82,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 07-changes-tree-file-icons-and-pr-author P01 | 5 | 2 tasks | 3 files |
 | Phase 07-changes-tree-file-icons-and-pr-author P02 | 5 | 2 tasks | 2 files |
 | Phase 06 P02 | 5 | 2 tasks | 3 files |
+| Phase 06 P04 | 150 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -159,6 +160,8 @@ Recent decisions affecting current work:
 - [Phase 07]: STATE_ICON map retained as fallback — not dead code despite avatar path being primary in PRTreeItem
 - [Phase 06-02]: agentSections made optional in WebviewState generating variant — ReviewPanel.ts constructs generating state without agentSections; optional avoids breaking existing usage
 - [Phase 06-02]: ModelAdapter interface: uniform run(opts) for all model types (claude/codex/ollama) — OllamaAdapter uses Node built-in fetch per CLAUDE.md constraint
+- [Phase 06]: resolveAgentModel pure function with per-agent override taking precedence over defaultModel
+- [Phase 06]: migrateActiveModel implements D-21: defaultModel wins if set, activeModel as fallback, 'claude' as hardcoded default
 
 ### Roadmap Evolution
 
@@ -189,6 +192,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T17:35:44.834Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-04-04T17:37:37.566Z
+Stopped at: Completed 06-04-PLAN.md
 Resume file: None
