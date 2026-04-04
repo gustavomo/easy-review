@@ -68,13 +68,16 @@ Plans:
 
 ### Phase 02.3: review-panel-rich-rendering (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Upgrade the review webview panel to rich visual rendering — syntax highlighting for all code blocks, live Mermaid SVG diagram rendering, dedicated visual components for Categorized Changes (category chips + bullet lists) and Impact Analysis (dimension blocks + impact badges + breaking changes warning), and markdown table CSS styles.
+**Requirements**: POL-01, D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, D-16, D-17, D-18, D-19, D-20
 **Depends on:** Phase 02
-**Plans:** 0 plans
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 02.3 to break down)
+- [ ] 02.3-01-PLAN.md — Wave 0: vitest config + parseCategorizedChanges.ts + parseImpactAnalysis.ts + unit tests
+- [ ] 02.3-02-PLAN.md — highlight.js + marked-highlight install; global marked config; hljs CSS token overrides + markdown table styles
+- [ ] 02.3-03-PLAN.md — MermaidDiagram.tsx component + ReviewPanel.ts CSP unsafe-eval + vite.webview.config.ts chunk consolidation
+- [ ] 02.3-04-PLAN.md — CategorizedChangesSection.tsx + ImpactAnalysisSection.tsx + ReviewDocument.tsx routing update
 
 ### Phase 02.1: In-Editor PR Navigation (INSERTED)
 
@@ -143,6 +146,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 | 2. AI Review Generation | 9/9 | Complete | 2026-04-03 |
 | 2.1. In-Editor PR Navigation | 3/4 | In Progress|  |
 | 2.2. Sidebar UI Enhancements | 0/2 | Not started | - |
+| 2.3. Review Panel Rich Rendering | 0/4 | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
 
