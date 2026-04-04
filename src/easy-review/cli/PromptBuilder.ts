@@ -1,5 +1,5 @@
-import type { StoredProjectAnalysis } from '../storage/types';
 import type { ReviewComment } from '../github/DiffFetcher';
+import type { StoredProjectAnalysis } from '../storage/types';
 
 export type { ReviewComment };
 

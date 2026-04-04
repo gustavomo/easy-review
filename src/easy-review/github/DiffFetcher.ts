@@ -102,6 +102,6 @@ export async function fetchPRCommits(
     per_page: 100,
   });
   // Extract subject line only (first line of commit message) — Pitfall 6
-  // eslint-disable-next-line rulesdir/no-cast-to-any
+   
   return response.data.map((c: any) => c.commit.message.split('\n')[0]);
 }
