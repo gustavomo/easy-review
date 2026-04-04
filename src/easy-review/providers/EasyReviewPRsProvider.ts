@@ -9,6 +9,7 @@ import { PRTreeItem } from './PRTreeItem';
 import { AuthProvider } from '../../common/authentication';
 import { CredentialStore } from '../../github/credentials';
 import { fetchPRFiles } from '../github/PRFileFetcher';
+import type { StorageAdapter } from '../storage/StorageAdapter';
 import type { StoredPR } from '../storage/types';
 import { buildDirectoryTree } from '../utils/directoryTree';
 
@@ -28,9 +29,11 @@ export class EasyReviewPRsProvider implements vscode.TreeDataProvider<EasyReview
 
   private prs: PRTreeItem[] = [];
   private credentialStore: CredentialStore | undefined;
+  private store: StorageAdapter | undefined;
 
-  constructor(credentialStore?: CredentialStore) {
+  constructor(credentialStore?: CredentialStore, store?: StorageAdapter) {
     this.credentialStore = credentialStore;
+    this.store = store;
   }
 
   /**
@@ -128,7 +131,12 @@ export class EasyReviewPRsProvider implements vscode.TreeDataProvider<EasyReview
    * New PRTreeItem instances start with children === undefined (fresh state).
    */
   refresh(prs: StoredPR[]): void {
-    this.prs = prs.map(pr => new PRTreeItem(pr));
+    this.prs = prs.map(pr => {
+      const hasReview = this.store
+        ? this.store.getReviews(pr.repoId, pr.prNumber).length > 0
+        : false;
+      return new PRTreeItem(pr, hasReview);
+    });
     this._onDidChangeTreeData.fire(undefined);
   }
 
@@ -141,9 +149,27 @@ export class EasyReviewPRsProvider implements vscode.TreeDataProvider<EasyReview
       item => item.pr.repoId === pr.repoId && item.pr.prNumber === pr.prNumber
     );
     if (!exists) {
-      this.prs.unshift(new PRTreeItem(pr));
+      const hasReview = this.store
+        ? this.store.getReviews(pr.repoId, pr.prNumber).length > 0
+        : false;
+      this.prs.unshift(new PRTreeItem(pr, hasReview));
       this._onDidChangeTreeData.fire(undefined);
     }
+  }
+
+  /**
+   * Update contextValue for a single PR tree item after a review is saved (UI-01 Pitfall 2).
+   * Called by activation.ts after store.saveReview() completes.
+   * Fires a targeted onDidChangeTreeData(item) — NOT undefined — to avoid full tree refresh.
+   */
+  refreshPRContextValue(repoId: string, prNumber: number): void {
+    const item = this.prs.find(
+      p => p.pr.repoId === repoId && p.pr.prNumber === prNumber
+    );
+    if (!item || !this.store) { return; }
+    const hasReview = this.store.getReviews(repoId, prNumber).length > 0;
+    item.contextValue = hasReview ? `pr-${item.pr.state}-hasReview` : `pr-${item.pr.state}`;
+    this._onDidChangeTreeData.fire(item);
   }
 
   /**

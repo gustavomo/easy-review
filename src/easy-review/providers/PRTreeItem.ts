@@ -15,7 +15,7 @@ export class PRTreeItem extends vscode.TreeItem {
 	/** Tracks async file-loading state for this PR's children (D-05, D-07, D-13) */
 	public children: EasyReviewTreeNode[] | 'loading' | 'error' | undefined = undefined;
 
-	constructor(public readonly pr: StoredPR) {
+	constructor(public readonly pr: StoredPR, hasReview: boolean = false) {
 		super(
 			`#${pr.prNumber} ${pr.title}`,
 			vscode.TreeItemCollapsibleState.Collapsed,
@@ -25,7 +25,7 @@ export class PRTreeItem extends vscode.TreeItem {
 		this.iconPath = new vscode.ThemeIcon(icon.id, icon.color);
 		this.description = `@${pr.author}`;
 		this.tooltip = `${pr.state.toUpperCase()} — ${pr.url}`;
-		this.contextValue = `pr-${pr.state}`;
+		this.contextValue = hasReview ? `pr-${pr.state}-hasReview` : `pr-${pr.state}`;
 
 		// Clicking the PR label opens the PR Overview panel (D-13)
 		this.command = {

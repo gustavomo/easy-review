@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EasyReviewPRsProvider } from './EasyReviewPRsProvider';
 import {
   DirectoryNode,
@@ -206,5 +206,115 @@ describe('EasyReviewPRsProvider.getChildren routing — NAV-01', () => {
 
     // After failing (no credentialStore), children should be 'error'
     expect(prItem.children).toBe('error');
+  });
+});
+
+// --- Phase 2.2 UI-01: contextValue with hasReview suffix ---
+
+describe('PRTreeItem — contextValue with hasReview (UI-01)', () => {
+  it('hasReview=false produces plain contextValue pr-open', () => {
+    const pr = makePR({ state: 'open' });
+    const item = new PRTreeItem(pr, false);
+    expect(item.contextValue).toBe('pr-open');
+  });
+
+  it('hasReview=true produces pr-open-hasReview for open PRs', () => {
+    const pr = makePR({ state: 'open' });
+    const item = new PRTreeItem(pr, true);
+    expect(item.contextValue).toBe('pr-open-hasReview');
+  });
+
+  it('hasReview=true produces pr-closed-hasReview for closed PRs', () => {
+    const pr = makePR({ state: 'closed' });
+    const item = new PRTreeItem(pr, true);
+    expect(item.contextValue).toBe('pr-closed-hasReview');
+  });
+
+  it('hasReview=true produces pr-merged-hasReview for merged PRs', () => {
+    const pr = makePR({ state: 'merged' });
+    const item = new PRTreeItem(pr, true);
+    expect(item.contextValue).toBe('pr-merged-hasReview');
+  });
+
+  it('no second argument defaults to plain contextValue (backward compatibility)', () => {
+    const pr = makePR({ state: 'open' });
+    const item = new PRTreeItem(pr);
+    expect(item.contextValue).toBe('pr-open');
+  });
+});
+
+describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () => {
+  function makeStore(reviewCounts: Record<string, number> = {}) {
+    return {
+      getReviews: (repoId: string, prNumber: number) => {
+        const key = `${repoId}/${prNumber}`;
+        const count = reviewCounts[key] ?? 0;
+        return Array.from({ length: count }, (_, i) => ({ id: i + 1 } as any));
+      },
+    };
+  }
+
+  it('refresh() with store returning 1 review sets -hasReview suffix', () => {
+    const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
+    const store = makeStore({ 'owner/repo/42': 1 });
+    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    provider.refresh([pr]);
+    const items = provider.getChildren(undefined) as PRTreeItem[];
+    expect(items[0].contextValue).toBe('pr-open-hasReview');
+  });
+
+  it('refresh() with store returning 0 reviews does NOT set -hasReview suffix', () => {
+    const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
+    const store = makeStore({ 'owner/repo/42': 0 });
+    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    provider.refresh([pr]);
+    const items = provider.getChildren(undefined) as PRTreeItem[];
+    expect(items[0].contextValue).toBe('pr-open');
+  });
+
+  it('refresh() with no store defaults to plain contextValue', () => {
+    const pr = makePR({ state: 'open' });
+    const provider = new EasyReviewPRsProvider();
+    provider.refresh([pr]);
+    const items = provider.getChildren(undefined) as PRTreeItem[];
+    expect(items[0].contextValue).toBe('pr-open');
+  });
+
+  it('addPR() with store returning 1 review sets -hasReview suffix', () => {
+    const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
+    const store = makeStore({ 'owner/repo/42': 1 });
+    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    provider.addPR(pr);
+    const items = provider.getChildren(undefined) as PRTreeItem[];
+    expect(items[0].contextValue).toBe('pr-open-hasReview');
+  });
+
+  it('refreshPRContextValue() updates contextValue to -hasReview when reviews now exist', () => {
+    const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
+    // Start with 0 reviews
+    const reviewCounts: Record<string, number> = { 'owner/repo/42': 0 };
+    const store = makeStore(reviewCounts);
+    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    provider.refresh([pr]);
+
+    const items = provider.getChildren(undefined) as PRTreeItem[];
+    expect(items[0].contextValue).toBe('pr-open');
+
+    // Simulate review being saved — bump count, then call refreshPRContextValue
+    reviewCounts['owner/repo/42'] = 1;
+    const fired: any[] = [];
+    provider.onDidChangeTreeData(e => fired.push(e));
+
+    provider.refreshPRContextValue('owner/repo', 42);
+
+    expect(items[0].contextValue).toBe('pr-open-hasReview');
+    expect(fired.length).toBe(1);
+    expect(fired[0]).toBe(items[0]); // targeted refresh, NOT undefined
+  });
+
+  it('refreshPRContextValue() with non-existent PR is a no-op', () => {
+    const provider = new EasyReviewPRsProvider();
+    // Should not throw
+    expect(() => provider.refreshPRContextValue('no/such', 999)).not.toThrow();
   });
 });

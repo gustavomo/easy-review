@@ -15,6 +15,9 @@ export default defineConfig({
     // No watch mode — single run only
     watch: false,
   },
+  // Treat .gql files as static assets (returns empty string) — upstream imports GQL files
+  // as text; without this handler Vite's import-analysis plugin rejects them (D-01 decision).
+  assetsInclude: ['**/*.gql', '**/*.svg'],
   resolve: {
     alias: {
       vscode: path.resolve(__dirname, 'src/test/__mocks__/vscode.ts'),
