@@ -37,39 +37,51 @@ Use a Mermaid diagram to make the changes visually understandable.
 
 The diagram MUST show the BEFORE and AFTER state so the reviewer can see what changed at a glance.
 
-Preferred approach — use a **flowchart** with two labeled subgraphs:
+LAYOUT RULE: Use \`flowchart TD\` (top-down). Place "Before" subgraph on top and "After" subgraph below it so they stack vertically. This keeps the diagram readable at any width. NEVER use \`flowchart LR\` with Before/After subgraphs — they get cramped side by side.
+
+If the PR has MULTIPLE independent changes (e.g. 3 different files/features changed), produce SEPARATE Before/After pairs stacked vertically — one pair per logical change. Do NOT cram everything into one giant subgraph.
+
+Example for a single change:
 \`\`\`mermaid
 flowchart TD
     subgraph Before
-        A[OldModule] --> B[OldHandler]
+        A[ReviewPanel] --> B[runReview]
+        B --> C[SingleAgent]
     end
     subgraph After
-        C[NewModule] --> D[NewHandler]
-        C --> E[AddedService]
+        D[ReviewPanel] --> E[AgentOrchestrator]
+        E --> F[PRSummarizerAgent]
+        E --> G[BugRiskAgent]
+        E --> H[DiagramAgent]
     end
 \`\`\`
 
-Alternative approaches when before/after subgraphs don't fit:
-- **sequenceDiagram**: show old flow vs new flow with a note divider
-- **stateDiagram-v2**: show removed states (strikethrough label) and added states
-- **classDiagram**: show old vs new class relationships
+Example for multiple independent changes:
+\`\`\`mermaid
+flowchart TD
+    subgraph Before: Settings
+        A1[defaultModel string]
+    end
+    subgraph After: Settings
+        A2[provider enum] --> A3[claudeModel]
+        A2 --> A4[ollamaModel]
+    end
+    subgraph Before: Rendering
+        B1[SingleSection] --> B2[StreamingView]
+    end
+    subgraph After: Rendering
+        B3[7-SlotLayout] --> B4[AgentStatusBar]
+        B3 --> B5[SectionPendingPlaceholder]
+    end
+\`\`\`
 
 CRITICAL REQUIREMENTS:
 1. Produce a syntactically valid Mermaid diagram.
-2. Start the diagram with a recognized type keyword: graph, flowchart, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, journey, gantt, pie, gitGraph, mindmap, timeline, xychart-beta, block-beta, or quadrantChart.
-3. Wrap the diagram in triple-backtick mermaid fences exactly like this:
-   \`\`\`mermaid
-   flowchart TD
-       subgraph Before
-           A[Module] --> B[Handler]
-       end
-       subgraph After
-           C[Module] --> D[NewHandler]
-       end
-   \`\`\`
-4. Label ALL nodes with real names from the code (function names, class names, module paths) — not generic placeholders like "Module A".
-5. Make the diagram ELABORATE and specific to this PR — not generic.
-6. OUTPUT ONLY the heading and the code block — no explanatory text, no "Key Changes" section, no commentary before or after the fences. The closing \`\`\` must be the very last character of your response.
+2. Always use \`flowchart TD\` for Before/After diagrams — top-down stacking.
+3. Wrap the diagram in triple-backtick mermaid fences.
+4. Label ALL nodes with real names from the code (function names, class names, module paths) — not generic placeholders.
+5. Make the diagram specific to this PR — not generic.
+6. OUTPUT ONLY the heading and the code block — no explanatory text, no commentary before or after the fences. The closing \`\`\` must be the very last character of your response.
 
 Skip diagram only for single-line typo fixes or pure config changes with no logic impact.
 In that case, write: "No diagram needed — this PR contains only trivial changes."
