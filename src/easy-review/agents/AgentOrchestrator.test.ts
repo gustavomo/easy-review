@@ -23,7 +23,7 @@ vi.mock('./AgentOrchestrator', () => ({
 }));
 
 // Establishing the import contract (Plan 06-05 will create the real module)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, import/extensions, import/no-unresolved
 import { runAllAgents } from './AgentOrchestrator';
 
 // Type contract — kept here so future implementors know the expected shapes.
@@ -37,6 +37,7 @@ type AgentKey =
   | 'diagram'
   | 'businessImpact';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SectionState =
   | { status: 'pending' }
   | { status: 'generating' }
