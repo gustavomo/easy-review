@@ -20,6 +20,7 @@ Generate deep, context-aware AI reviews of any GitHub PR (open, closed, or merge
 - [x] One-time project analysis: README + key files + past PRs as persistent context — Validated in Phase 2: AI Review Generation (ProjectAnalysisService, collectProjectContext, fetchPRHistory)
 - [x] Webview panel displaying the full structured AI review and analysis — Validated in Phase 2: AI Review Generation (ReviewPanel, 6-section ReviewDocument, FindingsSection with severity colors)
 - [x] Sidebar action buttons: inline "View Review" per PR, title bar buttons for history/settings — Validated in Phase 2.2: Sidebar UI Enhancements (PRTreeItem contextValue, EasyReviewPRsProvider store injection, package.json menu contributions)
+- [x] Deep, insight-rich AI review via full SYNTHESIS_INSTRUCTION — Validated in Phase 5: Upgrade prompt (240-line instruction, fetchReviewComments, fetchPRCommits, Promise.all in ReviewPanel, prUrl wiring)
 
 ### Active
 
