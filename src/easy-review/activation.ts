@@ -208,14 +208,27 @@ export async function activateEasyReview(
 		}),
 
 		// View stored review for a PR (UI-01, D-04)
-		vscode.commands.registerCommand('easy-review.viewReview', (item) => {
+		vscode.commands.registerCommand('easy-review.viewReview', async (item) => {
 			const currentStore = getStore();
 			if (!currentStore || !item?.pr) { return; }
 			const reviews = currentStore.getReviews(item.pr.repoId, item.pr.prNumber);
 			if (reviews.length === 0) { return; } // defensive: button hidden by when clause
-			const latest = reviews.sort((a, b) => b.createdAt - a.createdAt)[0];
+			const sorted = reviews.sort((a, b) => b.createdAt - a.createdAt);
+			let chosen = sorted[0];
+			if (sorted.length > 1) {
+				const pick = await vscode.window.showQuickPick(
+					sorted.map(r => ({
+						label: new Date(r.createdAt).toLocaleString(),
+						description: `Model: ${r.modelUsed}`,
+						review: r,
+					})),
+					{ placeHolder: `Select a review for PR #${item.pr.prNumber}` }
+				);
+				if (!pick) { return; } // user cancelled
+				chosen = pick.review;
+			}
 			const panel = ReviewPanel.getOrCreate(context, currentStore);
-			panel.loadReview(latest);
+			panel.loadReview(chosen);
 		}),
 
 		// Open VS Code settings filtered to easyReview.* namespace (UI-04, D-06)
