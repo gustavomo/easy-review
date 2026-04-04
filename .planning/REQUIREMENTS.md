@@ -18,9 +18,9 @@
 ### Sidebar UI (Phase 2.2)
 
 - [x] **UI-01**: Each PR tree item has an inline "View Review" button that opens the ReviewPanel for that PR's stored review
-- [ ] **UI-02**: The sidebar title bar has a "View Project Analysis" button that opens the stored project analysis
-- [ ] **UI-03**: The sidebar title bar has a "View PR History Analysis" button that opens the stored PR history analysis
-- [ ] **UI-04**: The sidebar title bar has a "Settings" button that opens VS Code settings filtered to the `easyReview.*` namespace
+- [x] **UI-02**: The sidebar title bar has a "View Project Analysis" button that opens the stored project analysis
+- [x] **UI-03**: The sidebar title bar has a "View PR History Analysis" button that opens the stored PR history analysis
+- [x] **UI-04**: The sidebar title bar has a "Settings" button that opens VS Code settings filtered to the `easyReview.*` namespace
 
 ### Project Analysis
 
@@ -102,9 +102,9 @@
 | NAV-01 | Phase 2.1 | Complete |
 | NAV-02 | Phase 2.1 | Complete |
 | UI-01 | Phase 2.2 | Complete |
-| UI-02 | Phase 2.2 | Pending |
-| UI-03 | Phase 2.2 | Pending |
-| UI-04 | Phase 2.2 | Pending |
+| UI-02 | Phase 2.2 | Complete |
+| UI-03 | Phase 2.2 | Complete |
+| UI-04 | Phase 2.2 | Complete |
 | DB-01 | Phase 1 | Complete |
 | DB-02 | Phase 1 | Complete |
 | CFG-01 | Phase 1 | Complete |

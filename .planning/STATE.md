@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02.2-01-PLAN.md
-last_updated: "2026-04-04T00:58:54.838Z"
+status: verifying
+stopped_at: Completed 02.2-02-PLAN.md
+last_updated: "2026-04-04T01:03:11.293Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 23
-  completed_plans: 22
+  completed_plans: 23
   percent: 17
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-03)
 
 Phase: 02.2 (sidebar-ui-enhancements) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-04
 
 Progress: [█░░░░░░░░░] 17%
@@ -71,6 +71,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 02.1-in-editor-pr-navigation P02 | 4 | 2 tasks | 5 files |
 | Phase 02.1-in-editor-pr-navigation P04 | 14 | 3 tasks | 8 files |
 | Phase 02.2-sidebar-ui-enhancements P01 | 8 | 2 tasks | 7 files |
+| Phase 02.2 P02 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,8 @@ Recent decisions affecting current work:
 - [Phase 02.1-in-editor-pr-navigation]: PROverviewPanel is NOT a singleton — each openPROverview call creates a fresh panel in ViewColumn.Two
 - [Phase 02.2-sidebar-ui-enhancements]: PRTreeItem contextValue uses hasReview boolean suffix pr-${state}-hasReview — queried from StorageAdapter.getReviews() at tree construction/refresh time
 - [Phase 02.2-sidebar-ui-enhancements]: vscode mock extended with Disposable, l10n, ViewColumn, createWebviewPanel, Uri.joinPath, Uri.file().with() + vitest assetsInclude for .gql/.svg — fixes pre-existing test infrastructure gap from Phase 02.1 common/uri.ts import chain
+- [Phase 02.2]: navigation@1/2/3 used for title bar button ordering: book(analysis), history(PR history), settings-gear(settings) — settings rightmost as least intrusive
+- [Phase 02.2]: viewItem =~ /hasReview/ regex matches all three state variants for inline View Review button
 
 ### Roadmap Evolution
 
@@ -151,6 +154,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T00:58:54.835Z
-Stopped at: Completed 02.2-01-PLAN.md
+Last session: 2026-04-04T01:03:11.289Z
+Stopped at: Completed 02.2-02-PLAN.md
 Resume file: None

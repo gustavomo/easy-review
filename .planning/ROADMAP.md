@@ -98,7 +98,7 @@ Plans:
 
 Plans:
 - [x] 02.2-01-PLAN.md — PRTreeItem hasReview contextValue + EasyReviewPRsProvider store injection + ReviewPanel.loadReview() + unit tests
-- [ ] 02.2-02-PLAN.md — package.json commands + menu contributions + activation.ts command registration + post-review refresh hook
+- [x] 02.2-02-PLAN.md — package.json commands + menu contributions + activation.ts command registration + post-review refresh hook
 
 ### Phase 3: Privanote Integration
 **Goal**: Reviews are enriched with relevant Privanote notes context before generation, completed reviews can be pushed to Privanote as searchable notes, and the Privanote API token is stored securely — all without ever blocking review generation if Privanote is unavailable
