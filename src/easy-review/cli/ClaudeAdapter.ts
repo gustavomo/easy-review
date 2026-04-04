@@ -19,13 +19,14 @@ export interface CLIAdapter {
 }
 
 export class ClaudeAdapter implements CLIAdapter {
-  buildArgs(prompt: string): string[] {
+  buildArgs(_prompt: string): string[] {
+    // Prompt is written to stdin by ReviewRunner — NOT passed as a positional arg.
+    // Claude CLI reads the prompt from stdin when --print is used without a positional argument.
     return [
       '--print',
       '--verbose',
       '--output-format', 'stream-json',
       '--include-partial-messages',
-      prompt,
     ];
   }
 

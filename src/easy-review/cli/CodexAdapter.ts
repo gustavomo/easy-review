@@ -12,13 +12,10 @@ import type { CLIAdapter } from './ClaudeAdapter';
  * Update buildArgs after running: codex --help
  */
 export class CodexAdapter implements CLIAdapter {
-  buildArgs(prompt: string): string[] {
-    // TODO: Update flags after empirical spike.
-    // Candidates based on typical Codex CLI patterns:
-    //   codex --quiet "{prompt}"      (suppress progress output)
-    //   codex "{prompt}"              (basic invocation)
-    // Run `codex --help` to confirm available flags.
-    return ['--quiet', prompt];
+  buildArgs(_prompt: string): string[] {
+    // Prompt is written to stdin by ReviewRunner — NOT passed as a positional arg.
+    // TODO: Update flags after empirical spike (run `codex --help` to confirm).
+    return ['--quiet'];
   }
 
   extractText(line: string): string | null {

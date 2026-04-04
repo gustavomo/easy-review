@@ -2,6 +2,7 @@ import * as cp from 'child_process';
 import * as readline from 'readline';
 import type * as vscode from 'vscode';
 import type { CLIAdapter } from './ClaudeAdapter';
+import { getOutputChannel } from './OutputChannelReporter';
 
 export interface ReviewRunOptions {
   prompt: string;
@@ -29,7 +30,7 @@ export async function runReview(
 ): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const args = adapter.buildArgs(opts.prompt);
-    const proc = cp.spawn(cliPath, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    const proc = cp.spawn(cliPath, args, { stdio: ['pipe', 'pipe', 'pipe'] });
 
     let fullOutput = '';
     let buffer = '';
@@ -64,7 +65,13 @@ export async function runReview(
       }
     });
 
-    proc.stderr?.on('data', () => { /* stderr captured for logging only — not surfaced */ });
+    // Write prompt to stdin (Claude CLI reads prompt from stdin in --print mode)
+    proc.stdin!.write(opts.prompt);
+    proc.stdin!.end();
+
+    proc.stderr?.on('data', (chunk: Buffer) => {
+      getOutputChannel().appendLine(`[stderr] ${chunk.toString().trim()}`);
+    });
 
     proc.on('close', (code) => {
       if (code === 0) {
