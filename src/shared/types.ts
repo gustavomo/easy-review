@@ -12,7 +12,8 @@ export type ExtensionMessage =
   | { type: 'reviewComplete'; review: ParsedReview }
   | { type: 'reviewError'; message: string }
   | { type: 'stateSync'; state: WebviewState; hasAnalysis: boolean; analysisDate?: number }
-  | { type: 'loadReviewResult'; review: ParsedReview };
+  | { type: 'loadReviewResult'; review: ParsedReview }
+  | { type: 'sectionUpdate'; agentKey: AgentKey; state: SectionState };
 
 /** Messages sent from webview → extension host */
 export type WebviewMessage =
@@ -51,6 +52,30 @@ export interface Finding {
 /** Four-state machine: idle → generating → complete | error (D-16) */
 export type WebviewState =
   | { status: 'idle' }
-  | { status: 'generating'; prTitle: string; model: string; elapsedMs: number }
+  | { status: 'generating'; prTitle: string; model: string; elapsedMs: number; agentSections?: Record<AgentKey, SectionState> }
   | { status: 'complete'; review: ParsedReview }
   | { status: 'error'; message: string };
+
+// --- Phase 6: Multi-agent pipeline types ---
+
+/** Per D-20: 7 agent keys corresponding to the 7 review sections */
+export type AgentKey =
+  | 'prSummarizer'
+  | 'bugRisk'
+  | 'architectureChange'
+  | 'testCoverage'
+  | 'documentation'
+  | 'diagram'
+  | 'businessImpact';
+
+/** Per D-05: status for each of the 7 agent slots */
+export type SectionStatus = 'pending' | 'generating' | 'complete' | 'error';
+
+export interface SectionState {
+  status: SectionStatus;
+  content?: string;  // populated when status === 'complete'
+  error?: string;    // populated when status === 'error'
+}
+
+/** Model name for per-agent selection (D-19) */
+export type ModelName = 'claude' | 'codex' | 'ollama';
