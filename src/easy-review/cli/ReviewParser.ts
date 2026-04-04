@@ -64,8 +64,9 @@ export function parseFindingsSection(content: string): Finding[] {
         body: trimmed.slice(match[0].length).trim(),
       });
     } else if (findings.length > 0) {
-      // Continuation line — append to previous finding body
-      findings[findings.length - 1].body += ' ' + trimmed;
+      // Continuation line — preserve original line (with indentation) so code
+      // blocks and markdown tables survive when the body is later passed to marked()
+      findings[findings.length - 1].body += '\n' + line;
     }
   }
 

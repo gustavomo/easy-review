@@ -1,4 +1,5 @@
 import type { Finding } from '@shared/types';
+import { marked } from 'marked';
 
 
 interface FindingCardProps {
@@ -29,9 +30,11 @@ export function FindingCard({ finding }: FindingCardProps) {
       <span style={{ fontSize: '11px', fontWeight: 600, color, textTransform: 'uppercase' }}>
         {finding.severity}
       </span>
-      <p style={{ margin: '4px 0 0 0', fontSize: '13px', fontWeight: 400, lineHeight: '18px', color: 'var(--vscode-editor-foreground)' }}>
-        {finding.body}
-      </p>
+      <div
+        className="easy-review-md"
+        style={{ margin: '4px 0 0 0', fontSize: '13px', fontWeight: 400, lineHeight: '18px' }}
+        dangerouslySetInnerHTML={{ __html: marked(finding.body) as string }}
+      />
     </div>
   );
 }
