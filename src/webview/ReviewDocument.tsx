@@ -1,8 +1,27 @@
 import type { ParsedReview } from '@shared/types';
 import { marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import hljs from 'highlight.js';
 
 import { CollapsibleSection } from './CollapsibleSection';
 import { FindingsSection } from './FindingsSection';
+
+// D-01/D-02: Configure syntax highlighting globally for all marked() calls
+// D-03: Auto-detect language when no tag present (hljs.highlightAuto)
+// D-04: Colors applied via CSS vars in webview.css — no theme import
+// Pitfall 2 mitigation: use marked-highlight (synchronous path), NOT marked.setOptions({highlight: 3args})
+marked.use(
+  markedHighlight({
+    emptyLangClass: 'hljs',
+    langPrefix: 'hljs language-',
+    highlight(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return hljs.highlightAuto(code).value;
+    },
+  })
+);
 
 interface ReviewDocumentProps {
   review: ParsedReview;
