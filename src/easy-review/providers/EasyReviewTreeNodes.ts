@@ -15,17 +15,6 @@ export interface PRFileChange {
 /** Three-level tree hierarchy node union for Phase 02.1 (NAV-01) */
 export type EasyReviewTreeNode = PRTreeItem | DirectoryNode | FileNode | LoadingNode | ErrorNode;
 
-// Icon map for file statuses — matches upstream fileChangeNode icons
-const FILE_STATUS_ICON: Record<PRFileChange['status'], string> = {
-  added: 'diff-added',
-  removed: 'diff-removed',
-  renamed: 'diff-renamed',
-  modified: 'diff-modified',
-  copied: 'diff-modified',
-  changed: 'diff-modified',
-  unchanged: 'diff-modified',
-};
-
 // Map GitHub API status to GitChangeType for resourceUri coloring (git decorations)
 const STATUS_TO_GIT_CHANGE_TYPE: Record<PRFileChange['status'], GitChangeType> = {
   added: GitChangeType.ADD,
@@ -69,7 +58,7 @@ export class FileNode extends vscode.TreeItem {
     this.description = file.status === 'renamed' && file.previous_filename
       ? `${file.previous_filename} → ${file.filename}`
       : file.filename;
-    this.iconPath = new vscode.ThemeIcon(FILE_STATUS_ICON[file.status] ?? 'diff-modified');
+    this.iconPath = vscode.ThemeIcon.File;
     // resourceUri triggers VS Code git decoration colors on the label
     // (green=added, red=removed, orange=modified/renamed) — same mechanism as upstream
     const gitChangeType = STATUS_TO_GIT_CHANGE_TYPE[file.status] ?? GitChangeType.MODIFY;
