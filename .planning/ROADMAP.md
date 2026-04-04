@@ -148,10 +148,13 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 
 ### Phase 5: Upgrade review prompt to generate deep, insight-rich PR analysis
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 4
-**Plans:** 0 plans
+**Goal:** Replace the thin instructions block in PromptBuilder.ts with a production-quality SYNTHESIS_INSTRUCTION, fetch GitHub review comments and commit messages, and wire all new data into the review generation pipeline — transforming output from structured checklist to insight-rich PR analysis
+**Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12
+**Depends on:** Phase 2 (uses PromptBuilder, ReviewParser, ReviewPanel, DiffFetcher)
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 5 to break down)
+- [ ] 05-01-PLAN.md — Wave 0: github-fetchers.test.ts scaffold (fetchReviewComments + fetchPRCommits tests)
+- [ ] 05-02-PLAN.md — DiffFetcher.ts new fetchers + BuildPromptOptions extension (reviewComments, prUrl)
+- [ ] 05-03-PLAN.md — PromptBuilder.ts SYNTHESIS_INSTRUCTION rewrite + ReviewParser.ts heading rename + test fixture updates
+- [ ] 05-04-PLAN.md — ReviewPanel.ts wiring: Promise.all, commitMessages, reviewComments, prUrl
