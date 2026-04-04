@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseReview, parseFindingsSection } from './ReviewParser';
+import { describe, expect, it } from 'vitest';
+import { parseFindingsSection, parseReview } from './ReviewParser';
 
 describe('parseReview', () => {
   it('returns single fallback section when no ## headings found', () => {

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { resolveAgentModel, migrateActiveModel } from './modelSettings';
+import { describe, expect, it } from 'vitest';
+import { migrateActiveModel, resolveAgentModel } from './modelSettings';
 
 describe('resolveAgentModel', () => {
   it('returns per-agent override when present', () => {

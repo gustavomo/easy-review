@@ -1,0 +1,60 @@
+/**
+ * ArchitectureChangeAgent.ts
+ *
+ * Agent prompt template for the Architecture Changes section.
+ * Analyzes structural changes: new modules, dependency changes, interface contracts,
+ * and patterns that diverge from or extend the existing architecture.
+ *
+ * CONTEXT_REQUEST: project_analysis: true — needs project context to identify
+ * architectural patterns and compare against existing structure.
+ * Section heading: ## Architecture Changes (per D-01 in 06-CONTEXT.md)
+ */
+
+import type { AgentTemplateOpts } from './agentTypes';
+
+export function getSystemPrompt(): string {
+  return `You are a specialized code reviewer focused on architectural analysis.
+Your task is to identify structural changes in this PR: new modules introduced, changes to interfaces or contracts, dependency additions, layer violations, and patterns that extend or diverge from the existing architecture.
+Explain the architectural significance of each change — not just what changed, but why it matters structurally.
+Reference specific file paths, interface names, and class names from the diff as evidence.`;
+}
+
+export function getTemplate(opts: AgentTemplateOpts): string {
+  const contextBlock = opts.projectAnalysis
+    ? `\n\n## Project Context\n${opts.projectAnalysis}`
+    : '';
+
+  return `## CONTEXT_REQUEST
+project_analysis: true
+commit_history: false
+---
+
+## Changed Files
+${opts.fileList}
+
+## Diff
+\`\`\`diff
+${opts.diff}
+\`\`\`${contextBlock}
+
+---
+You are a senior software architect reviewing this PR for structural impact.
+Identify all architectural changes, additions, and potential concerns.
+
+Focus on:
+- New modules, services, or layers introduced
+- Interface or contract changes (public APIs, exported types, function signatures)
+- Dependency additions or removals and their architectural implications
+- Layer violations (e.g., UI importing from storage, business logic in adapters)
+- Patterns that are consistent with or diverge from the existing architecture
+- Breaking changes that affect callers outside this PR
+
+Rules:
+- Avoid vague hedging ("could potentially", "might possibly")
+- Quote specific interface names, module paths, and function signatures from the diff
+- Cite concrete evidence from the diff, not general statements
+- If no significant architectural changes are present, state that explicitly
+
+Begin your response with "## Architecture Changes"
+`;
+}

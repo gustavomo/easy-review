@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { validateMermaidSyntax, extractMermaidBlock, MERMAID_DIAGRAM_TYPES } from './mermaidValidation';
+import { describe, expect, it } from 'vitest';
+import { extractMermaidBlock, MERMAID_DIAGRAM_TYPES, validateMermaidSyntax } from './mermaidValidation';
 
 describe('MERMAID_DIAGRAM_TYPES', () => {
   it('contains the required diagram type keywords', () => {
