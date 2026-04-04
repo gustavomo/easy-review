@@ -142,9 +142,45 @@ body.vscode-dark .easy-review-md .hljs-selector-pseudo { color: #D7BA7D; }
 /* doctag */
 body.vscode-dark .easy-review-md .hljs-doctag { color: #608B4E; }
 
-/* diff */
-body.vscode-dark .easy-review-md .hljs-addition { background-color: #144212; display: inline-block; width: 100%; }
-body.vscode-dark .easy-review-md .hljs-deletion { background-color: #600; display: inline-block; width: 100%; }
+/* diff — VS Code Dark Modern diff editor colors */
+body.vscode-dark .easy-review-md .hljs-addition {
+  background-color: rgba(46, 160, 67, 0.20);
+  color: #3fb950;
+  display: inline-block;
+  width: 100%;
+}
+body.vscode-dark .easy-review-md .hljs-deletion {
+  background-color: rgba(248, 81, 73, 0.20);
+  color: #f85149;
+  display: inline-block;
+  width: 100%;
+}
+body.vscode-high-contrast .easy-review-md .hljs-addition {
+  background-color: rgba(46, 160, 67, 0.30);
+  color: #3fb950;
+  display: inline-block;
+  width: 100%;
+}
+body.vscode-high-contrast .easy-review-md .hljs-deletion {
+  background-color: rgba(248, 81, 73, 0.30);
+  color: #f85149;
+  display: inline-block;
+  width: 100%;
+}
+
+/* diff — VS Code Light diff editor colors */
+body.vscode-light .easy-review-md .hljs-addition {
+  background-color: rgba(46, 160, 67, 0.15);
+  color: #1a7f37;
+  display: inline-block;
+  width: 100%;
+}
+body.vscode-light .easy-review-md .hljs-deletion {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: #cf222e;
+  display: inline-block;
+  width: 100%;
+}
 
 /* ── Light theme (VS Code Light / Visual Studio) ──────────────── */
 body.vscode-light .easy-review-md .hljs {
@@ -174,7 +210,6 @@ body.vscode-light .easy-review-md .hljs-type { color: #a31515; }
 body.vscode-light .easy-review-md .hljs-attr { color: #f00; }
 
 body.vscode-light .easy-review-md .hljs-meta,
-body.vscode-light .easy-review-md .hljs-deletion,
 body.vscode-light .easy-review-md .hljs-selector-attr,
 body.vscode-light .easy-review-md .hljs-selector-pseudo { color: #2b91af; }
 
