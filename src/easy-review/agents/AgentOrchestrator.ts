@@ -19,28 +19,27 @@
  */
 
 import * as vscode from 'vscode';
-import type { AgentKey, SectionState } from '../../shared/types';
-import type { ModelConfig } from '../settings/modelSettings';
-import { resolveAgentModel } from '../settings/modelSettings';
+import type { AgentTemplateOpts } from './agentTypes';
+import * as ArchitectureChangeAgent from './ArchitectureChangeAgent';
+import * as BugRiskAgent from './BugRiskAgent';
+import * as BusinessImpactAgent from './BusinessImpactAgent';
 import { parseContextRequest } from './contextRequest';
-import { validateMermaidSyntax, extractMermaidBlock } from './mermaidValidation';
-import { runReview } from '../cli/ReviewRunner';
+import * as DiagramAgent from './DiagramAgent';
+import * as DocumentationAgent from './DocumentationAgent';
+import { extractMermaidBlock, validateMermaidSyntax } from './mermaidValidation';
+import * as PRSummarizerAgent from './PRSummarizerAgent';
+import * as TestCoverageAgent from './TestCoverageAgent';
+import type { AgentKey, SectionState } from '../../shared/types';
 import { CodexAdapter } from '../cli/CodexAdapter';
 import { OllamaAdapter } from '../cli/OllamaAdapter';
 import { getOutputChannel } from '../cli/OutputChannelReporter';
-import type { AgentTemplateOpts } from './agentTypes';
+import { runReview } from '../cli/ReviewRunner';
+import { type ModelConfig, resolveAgentModel } from '../settings/modelSettings';
 
 // Per-agent template module imports
-import * as PRSummarizerAgent from './PRSummarizerAgent';
-import * as BugRiskAgent from './BugRiskAgent';
-import * as ArchitectureChangeAgent from './ArchitectureChangeAgent';
-import * as TestCoverageAgent from './TestCoverageAgent';
-import * as DocumentationAgent from './DocumentationAgent';
-import * as DiagramAgent from './DiagramAgent';
-import * as BusinessImpactAgent from './BusinessImpactAgent';
 
 // ADK: require() to avoid ERR_REQUIRE_ESM — esbuild bundles this into CJS at build time
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+ 
 const { query } = require('@anthropic-ai/claude-agent-sdk') as typeof import('@anthropic-ai/claude-agent-sdk');
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -267,8 +266,9 @@ async function runClaudeAgent(
       abortController: controller,
     },
   })) {
-    if ('result' in message) {
-      result = (message as { result?: string }).result ?? '';
+    const maybeResult = (message as { result?: string }).result;
+    if (maybeResult !== undefined) {
+      result = maybeResult;
     }
   }
 
