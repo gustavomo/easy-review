@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-04-04T17:31:20.284Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-04-04T17:34:18.519Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 10
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 41
-  completed_plans: 32
+  completed_plans: 33
   percent: 17
 ---
 
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-03)
 
 **Core value:** Generate deep, context-aware AI reviews of any GitHub PR (open, closed, or merged) directly inside VS Code, with everything persisted locally and shareable to Privanote.
-**Current focus:** Phase 07 — changes-tree-file-icons-and-pr-author
+**Current focus:** Phase 06 — multi-agent-pr-review-pipeline-with-model-selection
 
 ## Current Position
 
-Phase: 07 (changes-tree-file-icons-and-pr-author) — EXECUTING
-Plan: 2 of 2
+Phase: 06 (multi-agent-pr-review-pipeline-with-model-selection) — EXECUTING
+Plan: 2 of 8
 Status: Ready to execute
 Last activity: 2026-04-04
 
@@ -80,6 +80,7 @@ Progress: [█░░░░░░░░░] 17%
 | Phase 02.3-review-panel-rich-rendering P03 | 5 | 2 tasks | 4 files |
 | Phase 02.3-review-panel-rich-rendering P04 | 3 | 2 tasks | 3 files |
 | Phase 07-changes-tree-file-icons-and-pr-author P01 | 5 | 2 tasks | 3 files |
+| Phase 07-changes-tree-file-icons-and-pr-author P02 | 5 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -152,6 +153,9 @@ Recent decisions affecting current work:
 - [Phase 02.3-04]: isCategorizedSection + isImpactSection predicates placed after isFindingsSection and isMermaidSection for specificity order in ReviewDocument
 - [Phase 07]: ThemeIcon.File replaces status-specific ThemeIcons: VS Code derives file-type icon from resourceUri.path extension using active icon theme
 - [Phase 07]: vscode mock uses post-declaration assignment pattern for ThemeIcon static properties (class expression hoisting)
+- [Phase 07]: getAvatarUrl() uses try/catch around JSON.parse — invalid raw field returns undefined without throwing (D-06)
+- [Phase 07]: PRTreeItem description format is '{state} · @{author}' using U+00B7 middle dot as separator per UI-SPEC copywriting contract
+- [Phase 07]: STATE_ICON map retained as fallback — not dead code despite avatar path being primary in PRTreeItem
 
 ### Roadmap Evolution
 
@@ -182,6 +186,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04T17:31:20.279Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-04-04T17:34:18.514Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None

@@ -150,7 +150,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4 → 5 → 6
 | 2.3. Review Panel Rich Rendering | 4/4 | Complete | 2026-04-03 |
 | 5. Upgrade review prompt | 4/4 | Complete | 2026-04-03 |
 | 6. Multi-agent PR review pipeline | 0/8 | Planning complete | - |
-| 7. Changes Tree — File Icons and PR Author | 0/2 | Planning complete | - |
+| 7. Changes Tree — File Icons and PR Author | 2/2 | Complete   | 2026-04-04 |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
 
@@ -189,8 +189,8 @@ Plans:
 **Goal:** Improve the sidebar changes tree with two visual upgrades: (1) show the VS Code file-type icon next to each changed file using the active icon theme (`vscode.ThemeIcon.File` + `resourceUri`), and (2) display the PR creator's GitHub avatar on each PR tree item with state text in the description field.
 **Requirements**: TREE-01, TREE-02, TREE-03
 **Depends on:** Phase 2.1 (EasyReviewPRsProvider tree)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 07-01-PLAN.md — vscode mock ThemeIcon.File + FileNode iconPath change + file-type icon tests
-- [ ] 07-02-PLAN.md — PRTreeItem avatar iconPath + combined state+author description + tests
+- [x] 07-02-PLAN.md — PRTreeItem avatar iconPath + combined state+author description + tests
