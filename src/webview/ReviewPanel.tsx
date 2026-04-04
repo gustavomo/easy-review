@@ -1,9 +1,10 @@
-import type { ExtensionMessage, WebviewMessage, WebviewState } from '@shared/types';
-import { useEffect, useState } from 'react';
+import type { AgentKey, ExtensionMessage, SectionState, WebviewMessage, WebviewState } from '@shared/types';
+import * as React from 'react';
+import { AgentStatusBar } from './AgentStatusBar';
 import { ErrorView } from './ErrorView';
 import { IdleView } from './IdleView';
 import { PanelHeader } from './PanelHeader';
-import { ReviewDocument } from './ReviewDocument';
+import { convertParsedReviewToSections, ReviewDocument } from './ReviewDocument';
 import { StreamingView } from './StreamingView';
 
 
@@ -15,14 +16,16 @@ interface ReviewPanelProps {
  * Root component. Owns the 4-state machine: idle | generating | complete | error.
  * State transitions driven by messages from extension host (D-16).
  * Ready handshake: sends 'ready' on mount to trigger stateSync from host (RESEARCH.md Pattern 3).
+ * sectionUpdate messages progressively fill the 7-slot sections map during generation.
  */
 export function ReviewPanel({ vscode }: ReviewPanelProps) {
-  const [state, setState] = useState<WebviewState>({ status: 'idle' });
-  const [streamingText, setStreamingText] = useState('');
-  const [historyItems] = useState<Array<{ id: number; label: string }>>([]);
-  const [hasAnalysis, setHasAnalysis] = useState(false);
+  const [state, setState] = React.useState<WebviewState>({ status: 'idle' });
+  const [streamingText, setStreamingText] = React.useState('');
+  const [historyItems] = React.useState<Array<{ id: number; label: string }>>([]);
+  const [hasAnalysis, setHasAnalysis] = React.useState(false);
+  const [sections, setSections] = React.useState<Partial<Record<AgentKey, SectionState>>>({});
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handler = (event: MessageEvent<ExtensionMessage>) => {
       const msg = event.data;
       switch (msg.type) {
@@ -36,9 +39,13 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
         case 'startReview':
           setState({ status: 'generating', prTitle: msg.prTitle, model: msg.model, elapsedMs: 0 });
           setStreamingText('');
+          setSections({});
           break;
         case 'streamChunk':
           setStreamingText(prev => prev + msg.text);
+          break;
+        case 'sectionUpdate':
+          setSections(prev => ({ ...prev, [msg.agentKey]: msg.state }));
           break;
         case 'reviewComplete':
           setState({ status: 'complete', review: msg.review });
@@ -68,6 +75,20 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
     : state.status === 'complete' ? state.review.model
     : undefined;
 
+  // AgentSummary: progress copy shown beside elapsed counter during generation
+  const completedCount = Object.values(sections).filter(s => s?.status === 'complete').length;
+  const totalCount = 7;
+  const allComplete = completedCount === totalCount;
+  const agentSummary = state.status === 'generating'
+    ? (allComplete ? 'Review complete' : `${completedCount} of ${totalCount} agents complete`)
+    : undefined;
+
+  // For the complete state: use sections map if we have progressive data,
+  // otherwise convert the stored ParsedReview to sections format
+  const reviewSections = state.status === 'complete'
+    ? (Object.keys(sections).length > 0 ? sections : convertParsedReviewToSections(state.review))
+    : sections;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--vscode-editor-background)' }}>
       <PanelHeader
@@ -77,7 +98,11 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
         historyItems={historyItems}
         onCancel={() => vscode.postMessage({ type: 'cancelReview' })}
         onLoadHistory={(id) => vscode.postMessage({ type: 'loadReview', reviewId: id })}
+        agentSummary={agentSummary}
       />
+      {state.status === 'generating' && (
+        <AgentStatusBar sections={sections} />
+      )}
       <div style={{ flex: 1, overflow: 'auto', padding: '16px 32px' }}>
         {state.status === 'idle' && (
           <IdleView
@@ -86,11 +111,14 @@ export function ReviewPanel({ vscode }: ReviewPanelProps) {
             onViewAnalysis={() => vscode.postMessage({ type: 'viewAnalysis' })}
           />
         )}
-        {state.status === 'generating' && (
+        {state.status === 'generating' && Object.keys(sections).length > 0 && (
+          <ReviewDocument sections={sections} />
+        )}
+        {state.status === 'generating' && Object.keys(sections).length === 0 && (
           <StreamingView text={streamingText} />
         )}
         {state.status === 'complete' && (
-          <ReviewDocument review={state.review} />
+          <ReviewDocument sections={reviewSections} />
         )}
         {state.status === 'error' && (
           <ErrorView message={state.message} onRetry={() => vscode.postMessage({ type: 'retryReview' })} />
