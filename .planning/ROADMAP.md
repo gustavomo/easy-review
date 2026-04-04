@@ -139,7 +139,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
+Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -149,6 +149,8 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 | 2.2. Sidebar UI Enhancements | 2/2 | Complete | 2026-04-03 |
 | 2.3. Review Panel Rich Rendering | 4/4 | Complete | 2026-04-03 |
 | 5. Upgrade review prompt | 4/4 | Complete | 2026-04-03 |
+| 6. Multi-agent PR review pipeline | 0/? | Not started | - |
+| 7. Changes Tree — File Icons and PR Author | 0/2 | Planning complete | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
 
@@ -164,3 +166,24 @@ Plans:
 - [x] 05-02-PLAN.md — DiffFetcher.ts new fetchers + BuildPromptOptions extension (reviewComments, prUrl)
 - [x] 05-03-PLAN.md — PromptBuilder.ts SYNTHESIS_INSTRUCTION rewrite + ReviewParser.ts heading rename + test fixture updates
 - [x] 05-04-PLAN.md — ReviewPanel.ts wiring: Promise.all, commitMessages, reviewComments, prUrl
+
+### Phase 6: Multi-agent PR review pipeline with model selection
+
+**Goal:** Replace the single-agent review generator with a 7-agent parallel pipeline (PR Summarizer, Bug Risk, Architecture Change, Test Coverage, Documentation, Diagram, Business Impact). Each agent runs concurrently and receives only the PR diff + file list by default — project context and commit history are loaded lazily only when an agent opts in. The Diagram agent validates Mermaid syntax before marking the review complete. A multi-model strategy supports Claude, Codex, and Ollama (gemma4) with per-agent model selection via VS Code settings.
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 6 to break down)
+
+### Phase 7: Changes Tree Enhancements — File Icons and PR Author
+
+**Goal:** Improve the sidebar changes tree with two visual upgrades: (1) show the VS Code file-type icon next to each changed file using the active icon theme (`vscode.ThemeIcon.File` + `resourceUri`), and (2) display the PR creator's GitHub avatar on each PR tree item with state text in the description field.
+**Requirements**: TREE-01, TREE-02, TREE-03
+**Depends on:** Phase 2.1 (EasyReviewPRsProvider tree)
+**Plans:** 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — vscode mock ThemeIcon.File + FileNode iconPath change + file-type icon tests
+- [ ] 07-02-PLAN.md — PRTreeItem avatar iconPath + combined state+author description + tests
