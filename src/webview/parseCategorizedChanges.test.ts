@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseCategorizedChanges, Category } from './parseCategorizedChanges';
+import { describe, expect, it } from 'vitest';
+import { Category, parseCategorizedChanges } from './parseCategorizedChanges';
 
 describe('parseCategorizedChanges', () => {
   it('Test 1 (parse success): parses ### headings and bullet items into Category[]', () => {

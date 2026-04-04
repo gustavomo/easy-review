@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseImpactAnalysis, Dimension, ParsedImpactAnalysis } from './parseImpactAnalysis';
+import { describe, expect, it } from 'vitest';
+import { Dimension, ParsedImpactAnalysis, parseImpactAnalysis } from './parseImpactAnalysis';
 
 describe('parseImpactAnalysis', () => {
   it('Test 1 (parse success): parses ### heading with High impact keyword and bullet', () => {
