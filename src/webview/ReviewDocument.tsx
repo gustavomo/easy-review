@@ -1,7 +1,7 @@
 import type { ParsedReview } from '@shared/types';
+import hljs from 'highlight.js';
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
-import hljs from 'highlight.js';
 
 import { CollapsibleSection } from './CollapsibleSection';
 import { FindingsSection } from './FindingsSection';
@@ -27,8 +27,6 @@ interface ReviewDocumentProps {
   review: ParsedReview;
 }
 
-const MERMAID_NOTE = 'Mermaid diagram (visual rendering coming in a future version)';
-
 /** Strip leading/trailing code fences (```mermaid ... ``` or ``` ... ```) from content. */
 function stripCodeFences(content: string): string {
   return content.replace(/^```[a-z]*\r?\n?/i, '').replace(/\r?\n?```\s*$/i, '').trim();
@@ -45,27 +43,19 @@ export function ReviewDocument({ review }: ReviewDocumentProps) {
       {review.sections.map((section) => {
         const isFindingsSection = section.title.toLowerCase().includes('finding');
         const isMermaidSection = section.title.toLowerCase().includes('mermaid');
+        const isCategorizedSection = section.title.toLowerCase().includes('categorized'); // D-10
+        const isImpactSection = section.title.toLowerCase().includes('impact');            // D-14
 
         return (
           <CollapsibleSection key={section.title} title={section.title} defaultExpanded={true}>
             {isFindingsSection ? (
               <FindingsSection findings={section.findings ?? []} />
             ) : isMermaidSection ? (
-              <div>
-                <pre style={{
-                  background: 'var(--vscode-panel-background)',
-                  padding: '16px', borderRadius: '4px',
-                  fontFamily: 'var(--vscode-editor-font-family, monospace)',
-                  fontSize: '12px', lineHeight: '18px',
-                  whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-                  color: 'var(--vscode-editor-foreground)',
-                }}>
-                  {stripCodeFences(section.content ?? '')}
-                </pre>
-                <p style={{ fontSize: '11px', color: 'var(--vscode-descriptionForeground)', margin: '8px 0 0 0' }}>
-                  {MERMAID_NOTE}
-                </p>
-              </div>
+              <MermaidDiagram source={stripCodeFences(section.content ?? '')} />
+            ) : isCategorizedSection ? (
+              <CategorizedChangesSection content={section.content ?? ''} />
+            ) : isImpactSection ? (
+              <ImpactAnalysisSection content={section.content ?? ''} />
             ) : (
               <div
                 className="easy-review-md"
