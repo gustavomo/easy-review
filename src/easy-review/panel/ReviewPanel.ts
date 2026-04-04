@@ -12,7 +12,7 @@ import { CodexAdapter } from '../cli/CodexAdapter';
 import { buildPrompt } from '../cli/PromptBuilder';
 import { parseReview } from '../cli/ReviewParser';
 import { runReview } from '../cli/ReviewRunner';
-import { fetchPRDiff } from '../github/DiffFetcher';
+import { fetchPRCommits, fetchPRDiff, fetchReviewComments } from '../github/DiffFetcher';
 import type { StorageAdapter } from '../storage/StorageAdapter';
 import type { StoredPR, StoredReview } from '../storage/types';
 
@@ -191,21 +191,30 @@ export class ReviewPanel {
 
       // Parse owner/repo from repoId "{owner}/{repo}"
       const [owner, repo] = pr.repoId.split('/');
-      const diff = await fetchPRDiff(octokit, owner, repo, pr.prNumber);
 
-      // 2. Build prompt (D-07, D-08, D-09)
+      // 1. Fetch all GitHub data in parallel (D-08, D-09 — replaces sequential await)
+      const [diff, reviewComments, commitMessages] = await Promise.all([
+        fetchPRDiff(octokit, owner, repo, pr.prNumber),
+        fetchReviewComments(octokit, owner, repo, pr.prNumber),
+        fetchPRCommits(octokit, owner, repo, pr.prNumber),
+      ]);
+
+      // 2. Build prompt (D-01, D-03, D-04, D-07, D-09)
       const projectAnalysis = this.store.getProjectAnalysis();
       const rawPR = JSON.parse(pr.raw ?? '{}');
+      const prUrl = `https://github.com/${owner}/${repo}/pull/${pr.prNumber}`;
       const prompt = buildPrompt({
         pr: {
           prNumber: pr.prNumber,
           prTitle: pr.title,
           author: pr.author,
           description: rawPR.body ?? '',
-          commitMessages: [],
+          commitMessages,           // D-09: fetched commit subject lines (was [])
         },
         diff,
         projectAnalysis,
+        reviewComments,             // D-07: fetched review comments (was missing)
+        prUrl,                      // D-04: constructed GitHub URL (was missing)
       });
 
       // 3. Run CLI with streaming (REV-03)
