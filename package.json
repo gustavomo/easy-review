@@ -109,7 +109,22 @@
 							"codex"
 						],
 						"default": "claude",
-						"description": "Which AI CLI to use for review generation: 'claude' (Anthropic Claude) or 'codex' (OpenAI Codex)."
+						"description": "Deprecated: use easyReview.defaultModel instead. Model to use for AI review generation (claude or codex)."
+					},
+					"easyReview.defaultModel": {
+						"type": "string",
+						"enum": ["claude", "codex", "ollama"],
+						"default": "claude",
+						"description": "Default model for all review agents. Can be overridden per-agent with easyReview.agentModels."
+					},
+					"easyReview.agentModels": {
+						"type": "object",
+						"default": {},
+						"description": "Per-agent model overrides. Each key is an agent name (prSummarizer, bugRisk, architectureChange, testCoverage, documentation, diagram, businessImpact) and the value is 'claude', 'codex', or 'ollama'. Agents not listed here use easyReview.defaultModel.",
+						"additionalProperties": {
+							"type": "string",
+							"enum": ["claude", "codex", "ollama"]
+						}
 					}
 				}
 			},
