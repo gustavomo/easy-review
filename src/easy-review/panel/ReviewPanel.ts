@@ -2,17 +2,16 @@ import * as vscode from 'vscode';
 import { AuthProvider } from '../../common/authentication';
 import type { CredentialStore } from '../../github/credentials';
 import type {
+  AgentKey,
   ExtensionMessage,
   ParsedReview,
   WebviewMessage,
   WebviewState,
 } from '../../shared/types';
-import { ClaudeAdapter } from '../cli/ClaudeAdapter';
-import { CodexAdapter } from '../cli/CodexAdapter';
-import { buildPrompt } from '../cli/PromptBuilder';
+import { runAllAgents } from '../agents/AgentOrchestrator';
 import { parseReview } from '../cli/ReviewParser';
-import { runReview } from '../cli/ReviewRunner';
 import { fetchPRCommits, fetchPRDiff, fetchReviewComments } from '../github/DiffFetcher';
+import { readModelConfig } from '../settings/modelSettings';
 import type { StorageAdapter } from '../storage/StorageAdapter';
 import type { StoredPR, StoredReview } from '../storage/types';
 
@@ -24,9 +23,9 @@ import type { StoredPR, StoredReview } from '../storage/types';
  *   - Opens in vscode.ViewColumn.Two.
  *   - Persists across restarts via state-sync handshake on ready message.
  *
- * Integration chain:
- *   right-click → startReview() → DiffFetcher → PromptBuilder → ReviewRunner
- *     → 200ms batch → postMessage(streamChunk) → parseReview → saveReview → postMessage(reviewComplete)
+ * Integration chain (Phase 6):
+ *   right-click → startReview() → DiffFetcher → runAllAgents() (7 concurrent agents)
+ *     → onSectionUpdate → postMessage(sectionUpdate) → saveReview → postMessage(reviewComplete)
  */
 export class ReviewPanel {
   private static instance: ReviewPanel | undefined;
@@ -150,37 +149,50 @@ export class ReviewPanel {
   }
 
   private async executeReview(pr: StoredPR, credentialStore: CredentialStore): Promise<void> {
-    // Determine active model (D-05)
+    // Read model config with D-21 migration (defaultModel wins, activeModel fallback)
     const config = vscode.workspace.getConfiguration('easyReview');
-    const activeModel: string = config.get('activeModel', 'claude');
-    const adapter = activeModel === 'codex' ? new CodexAdapter() : new ClaudeAdapter();
-    const cliPath =
-      activeModel === 'codex'
-        ? (config.get<string>('codexPath') || 'codex')
-        : (config.get<string>('claudePath') ||
-           this.context.globalState.get<string>('easyReview.claudePath.resolved') ||
-           'claude');
+    const { defaultModel, agentModels } = readModelConfig(config);
+    const claudePath =
+      config.get<string>('claudePath') ||
+      this.context.globalState.get<string>('easyReview.claudePath.resolved') ||
+      'claude';
 
-    // Transition webview to generating state
-    this.updateState({ status: 'generating', prTitle: pr.title, model: activeModel, elapsedMs: 0 });
-    this.postMessage({ type: 'startReview', prTitle: pr.title, model: activeModel });
+    // Transition webview to generating state with all 7 slots as pending
+    const AGENT_ORDER: AgentKey[] = [
+      'prSummarizer',
+      'bugRisk',
+      'architectureChange',
+      'testCoverage',
+      'documentation',
+      'diagram',
+      'businessImpact',
+    ];
+
+    const initialAgentSections = Object.fromEntries(
+      AGENT_ORDER.map(key => [key, { status: 'pending' as const }]),
+    ) as Record<AgentKey, { status: 'pending' }>;
+
+    this.updateState({
+      status: 'generating',
+      prTitle: pr.title,
+      model: defaultModel,
+      elapsedMs: 0,
+      agentSections: initialAgentSections,
+    });
+    this.postMessage({ type: 'startReview', prNumber: pr.prNumber, prTitle: pr.title, model: defaultModel });
+
+    // Send all 7 slots as pending to webview
+    for (const agentKey of AGENT_ORDER) {
+      this.postMessage({ type: 'sectionUpdate', agentKey, state: { status: 'pending' } });
+    }
 
     // Cancellation support (D-04)
     this.cancellationSource?.dispose();
     this.cancellationSource = new vscode.CancellationTokenSource();
     const token = this.cancellationSource.token;
 
-    // 200ms batch timer for streaming chunks (D-13, Pitfall 7)
-    let buffer = '';
-    const flushInterval = setInterval(() => {
-      if (buffer.length > 0) {
-        this.postMessage({ type: 'streamChunk', text: buffer });
-        buffer = '';
-      }
-    }, 200);
-
     try {
-      // 1. Fetch diff (D-11)
+      // 1. Fetch GitHub data (diff, review comments, commit messages)
       const hub = credentialStore.getHub(AuthProvider.github);
       if (!hub) {
         throw new Error(
@@ -192,59 +204,63 @@ export class ReviewPanel {
       // Parse owner/repo from repoId "{owner}/{repo}"
       const [owner, repo] = pr.repoId.split('/');
 
-      // 1. Fetch all GitHub data in parallel (D-08, D-09 — replaces sequential await)
-      const [diff, reviewComments, commitMessages] = await Promise.all([
+      // Fetch all GitHub data in parallel (D-08, D-09)
+      const [diff, , ] = await Promise.all([
         fetchPRDiff(octokit, owner, repo, pr.prNumber),
         fetchReviewComments(octokit, owner, repo, pr.prNumber),
         fetchPRCommits(octokit, owner, repo, pr.prNumber),
       ]);
 
-      // 2. Build prompt (D-01, D-03, D-04, D-07, D-09)
-      const projectAnalysis = this.store.getProjectAnalysis();
-      const rawPR = JSON.parse(pr.raw ?? '{}');
-      const prUrl = `https://github.com/${owner}/${repo}/pull/${pr.prNumber}`;
-      const prompt = buildPrompt({
-        pr: {
-          prNumber: pr.prNumber,
-          prTitle: pr.title,
-          author: pr.author,
-          description: rawPR.body ?? '',
-          commitMessages,           // D-09: fetched commit subject lines (was [])
-        },
+      // 2. Build file list from diff header lines
+      const fileList = diff
+        .split('\n')
+        .filter(l => l.startsWith('+++ b/'))
+        .map(l => l.slice(6))
+        .join('\n');
+
+      // 3. Get project analysis from store (lazy context loading)
+      const storedAnalysis = this.store.getProjectAnalysis?.();
+      const projectAnalysis = storedAnalysis?.contextText ?? undefined;
+
+      // 4. Run all 7 agents concurrently via AgentOrchestrator
+      const result = await runAllAgents({
         diff,
+        fileList,
+        modelConfig: { defaultModel, agentModels },
+        claudePath,
+        codexPath: config.get<string>('codexPath') || 'codex',
         projectAnalysis,
-        reviewComments,             // D-07: fetched review comments (was missing)
-        prUrl,                      // D-04: constructed GitHub URL (was missing)
-      });
-
-      // 3. Run CLI with streaming (REV-03)
-      const rawOutput = await runReview(cliPath, adapter, {
-        prompt,
         token,
-        onChunk: (text) => {
-          buffer += text;
+        onSectionUpdate: (agentKey, state) => {
+          this.postMessage({ type: 'sectionUpdate', agentKey, state });
         },
       });
 
-      // 4. Parse output (REV-02)
-      const sections = parseReview(rawOutput);
-      const createdAt = Date.now();
+      // 5. Assemble ParsedReview from completed sections
+      const sections = AGENT_ORDER
+        .filter(key => result.sections[key].status === 'complete')
+        .map(key => {
+          const state = result.sections[key];
+          const parsed = parseReview(state.content ?? '');
+          return parsed[0] ?? { title: key, content: state.content ?? '' };
+        });
 
-      // 5. Persist review (REV-04)
-      const id = this.store.saveReview({
+      // 6. Persist review (REV-04)
+      const createdAt = Date.now();
+      const savedId = this.store.saveReview({
         repoId: pr.repoId,
         prNumber: pr.prNumber,
-        modelUsed: activeModel,
+        modelUsed: defaultModel,
         createdAt,
-        reviewText: rawOutput,
+        reviewText: sections.map(s => s.content).join('\n'),
         parsedJson: JSON.stringify(sections),
       });
 
       const parsedReview: ParsedReview = {
-        id,
+        id: savedId,
         prNumber: pr.prNumber,
         repoId: pr.repoId,
-        model: activeModel,
+        model: defaultModel,
         createdAt,
         sections,
       };
@@ -261,11 +277,6 @@ export class ReviewPanel {
         this.postMessage({ type: 'reviewError', message: msg });
       }
     } finally {
-      // CRITICAL: clear interval and flush remaining buffer (Pitfall 7)
-      clearInterval(flushInterval);
-      if (buffer.length > 0) {
-        this.postMessage({ type: 'streamChunk', text: buffer });
-      }
       this.cancellationSource?.dispose();
       this.cancellationSource = undefined;
     }
