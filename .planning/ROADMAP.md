@@ -94,10 +94,11 @@ Plans:
   2. The sidebar title bar shows a "View Project Analysis" button that opens the stored project analysis document
   3. The sidebar title bar shows a "View PR History Analysis" button that opens the stored PR history analysis document
   4. The sidebar title bar shows a "Settings" button that opens VS Code settings filtered to the `easyReview.*` namespace
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 02.2 to break down)
+- [ ] 02.2-01-PLAN.md — PRTreeItem hasReview contextValue + EasyReviewPRsProvider store injection + ReviewPanel.loadReview() + unit tests
+- [ ] 02.2-02-PLAN.md — package.json commands + menu contributions + activation.ts command registration + post-review refresh hook
 
 ### Phase 3: Privanote Integration
 **Goal**: Reviews are enriched with relevant Privanote notes context before generation, completed reviews can be pushed to Privanote as searchable notes, and the Privanote API token is stored securely — all without ever blocking review generation if Privanote is unavailable
@@ -131,6 +132,6 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 | 1. Foundation | 8/8 | Complete | 2026-04-03 |
 | 2. AI Review Generation | 9/9 | Complete | 2026-04-03 |
 | 2.1. In-Editor PR Navigation | 3/4 | In Progress|  |
-| 2.2. Sidebar UI Enhancements | 0/? | Not started | - |
+| 2.2. Sidebar UI Enhancements | 0/2 | Not started | - |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
