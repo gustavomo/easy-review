@@ -56,16 +56,15 @@ Infer context from file names, component names, and diff content.
 Never just restate the diff — explain the intent and outcome.
 
 ## Categorized Changes
-Group changed files by type with a short description of WHAT each file's
-change accomplishes (not just "modified"):
-- **Features**: New functionality
-- **Fixes**: Bug fixes
-- **Refactors / Cleanup**: Removals, restructuring, dead code elimination
-- **Tests**: Test additions or modifications
-- **Config / Infra**: Build, CI, environment changes
+Output a markdown table listing every changed file. Use these category values
+only: Feature, Bug Fix, Refactor/Cleanup, Tests, Config/Infra.
+One row per file (or group of files with identical change). Include full
+GitHub PR file links in the Files Changed cell where available.
 
-For each file, one line: \`path/to/file\` — what this specific change does.
-Include full GitHub PR file links where available.
+| Category | Files Changed | Description |
+|---|---|---|
+| Bug Fix | \`path/to/file.ts\` | What this change does |
+| Tests | \`path/to/file.spec.ts\` | What this test covers |
 
 ## Key Code Changes
 
@@ -115,14 +114,22 @@ Rules:
 - If no diff data is provided for a file, skip that file.
 
 ## Code Review Findings
-Findings from review comments (if any). Group by severity: critical, warning,
-suggestion. If no review comments exist, write: "No review comments on this PR."
+Output a flat list where each item is prefixed with a bold severity tag.
+Severity values: critical, warning, suggestion.
+If no review comments exist, write exactly: "No review comments on this PR."
 Do NOT invent findings — only include what is in the data.
 
+**[critical]** \`file.ts:line\` — description
+**[warning]** \`file.ts:line\` — description
+**[suggestion]** \`file.ts\` — description
+
 ## Impact Analysis
-- **Risk**: low / medium / high — justify in one sentence
-- **Areas affected**: which features, layers, or user flows are impacted
-- **Side effects**: anything downstream that depends on the changed code
+Output a markdown table. Each impacted area gets its own row.
+Risk column uses only: Low, Low-positive, Medium, High, Positive.
+
+| Area | Risk | Notes |
+|---|---|---|
+| Area name | Low/Medium/High/Positive | One sentence note |
 
 ## Visual Overview
 
