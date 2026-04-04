@@ -290,6 +290,75 @@ describe('FileNode — file-type icons (TREE-01, D-01/D-02/D-03)', () => {
   });
 });
 
+describe('PRTreeItem — avatar icon and combined description (TREE-02, TREE-03)', () => {
+  const AVATAR_URL = 'https://avatars.githubusercontent.com/u/12345?v=4';
+  const RAW_WITH_AVATAR = JSON.stringify({ user: { login: 'alice', avatar_url: AVATAR_URL } });
+
+  it('iconPath is a Uri (not ThemeIcon) when raw has valid avatar_url (D-04)', () => {
+    const pr = makePR({ raw: RAW_WITH_AVATAR });
+    const item = new PRTreeItem(pr);
+    // vscode.Uri.parse returns an object; ThemeIcon has an `id` property
+    expect(item.iconPath).toBeDefined();
+    expect((item.iconPath as any).id).toBeUndefined(); // Uri has no `id` prop
+  });
+
+  it('avatar Uri includes ?s=40 size parameter for efficiency', () => {
+    const pr = makePR({ raw: RAW_WITH_AVATAR });
+    const item = new PRTreeItem(pr);
+    const uri = item.iconPath as vscode.Uri;
+    expect(uri.toString()).toContain('s=40');
+  });
+
+  it('iconPath falls back to ThemeIcon when raw is empty object (D-06)', () => {
+    const pr = makePR({ raw: '{}' });
+    const item = new PRTreeItem(pr);
+    expect((item.iconPath as any).id).toBe('git-pull-request');
+  });
+
+  it('iconPath falls back to ThemeIcon when raw is invalid JSON (D-06)', () => {
+    const pr = makePR({ raw: 'not-json' });
+    const item = new PRTreeItem(pr);
+    expect((item.iconPath as any).id).toBe('git-pull-request');
+  });
+
+  it('iconPath falls back to ThemeIcon when avatar_url is empty string (D-06)', () => {
+    const raw = JSON.stringify({ user: { avatar_url: '' } });
+    const pr = makePR({ raw });
+    const item = new PRTreeItem(pr);
+    expect((item.iconPath as any).id).toBe('git-pull-request');
+  });
+
+  it('iconPath falls back to merged ThemeIcon for merged PRs without avatar', () => {
+    const pr = makePR({ state: 'merged', raw: '{}' });
+    const item = new PRTreeItem(pr);
+    expect((item.iconPath as any).id).toBe('git-merge');
+  });
+
+  it('description format is "{state} · @{author}" (D-07, D-08)', () => {
+    const pr = makePR({ state: 'open', author: 'gustavo' });
+    const item = new PRTreeItem(pr);
+    expect(item.description).toBe('open \u00b7 @gustavo');
+  });
+
+  it('description for merged PR: "merged · @{author}"', () => {
+    const pr = makePR({ state: 'merged', author: 'alice' });
+    const item = new PRTreeItem(pr);
+    expect(item.description).toBe('merged \u00b7 @alice');
+  });
+
+  it('description for closed PR: "closed · @{author}"', () => {
+    const pr = makePR({ state: 'closed', author: 'bob' });
+    const item = new PRTreeItem(pr);
+    expect(item.description).toBe('closed \u00b7 @bob');
+  });
+
+  it('contextValue unchanged with avatar (regression)', () => {
+    const pr = makePR({ state: 'open', raw: RAW_WITH_AVATAR });
+    const item = new PRTreeItem(pr, true);
+    expect(item.contextValue).toBe('pr-open-hasReview');
+  });
+});
+
 describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () => {
   function makeStore(reviewCounts: Record<string, number> = {}) {
     return {
