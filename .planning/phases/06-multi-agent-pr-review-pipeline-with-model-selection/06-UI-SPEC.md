@@ -45,7 +45,7 @@ Declared values (must be multiples of 4). Source: measured from existing compone
 | 3xl | 64px | Not currently used; available for page-level spacing |
 
 Exceptions:
-- Agent status badge pill padding: `1px 8px` (1px vertical is intentional for compact inline badges — matches existing impact badge pattern in `ImpactAnalysisSection.tsx`)
+- Agent status badge pill padding: `4px 8px` (standard minimum vertical for compact inline badges — uses `xs` token; note that the existing impact badge pattern in `ImpactAnalysisSection.tsx` uses a non-grid `1px` vertical value which should be reconciled to `4px` during Phase 6 implementation)
 - Section title row: `padding: '8px 0'` (no horizontal padding on the button itself — inherited from CollapsibleSection)
 - PanelHeader sticky bar height: ~48px total (8px top + 8px bottom padding + 13px font + line height)
 
@@ -88,6 +88,9 @@ Accent reserved for:
 - Model name badge chip in PanelHeader (existing)
 - "Generating" state badge background for an in-progress agent slot in AgentStatusBar
 - No other elements use accent
+
+**Visual hierarchy — primary focal point:**
+Primary visual anchor: `AgentStatusBar` during generation (shows live pipeline state); transitions to the first completed section (`PR Summary`) as sections resolve. The `AgentStatusBar` achieves prominence through tinted slot backgrounds and the spinning `codicon-loading` icon — no additional elevation or shadow needed.
 
 **Semantic colors (additional — inherited from existing palette):**
 
@@ -165,11 +168,11 @@ Phase 6 retires the 6-section contract and establishes this 7-section routing ta
 - Sections render in display order (PR Summary first, Business Impact last) regardless of agent completion order.
 - A section that has not yet completed renders `SectionPendingPlaceholder` inside an expanded `CollapsibleSection`.
 - When an agent completes, its `SectionState` transitions to `complete` and the placeholder is replaced with the real renderer — no page scroll jump (use stable section heights or minimum height on placeholder to reduce reflow).
-- If an agent errors, its slot shows `SectionErrorPlaceholder` with the error message and a "Retry" button.
+- If an agent errors, its slot shows `SectionErrorPlaceholder` with the error message and a "Retry Agent" button.
 
 ### AgentStatusBar Interaction
 
-- The bar is read-only during generation — no interactive elements except for individual "Retry" buttons on errored slots (if retry is in scope for Phase 6 — planner confirms).
+- The bar is read-only during generation — no interactive elements except for individual "Retry Agent" buttons on errored slots (if retry is in scope for Phase 6 — planner confirms).
 - Each `AgentSlot` chip has `title` attribute with agent name and current state for hover tooltip (no custom tooltip component needed).
 - On all-agents-complete, the bar transitions from mixed states to all-green and the PanelHeader elapsed counter stops.
 
@@ -203,6 +206,7 @@ Phase 6 retires the 6-section contract and establishes this 7-section routing ta
 | SectionPendingPlaceholder — Diagram retry | "Validating diagram..." |
 | SectionErrorPlaceholder heading | "Agent failed" |
 | SectionErrorPlaceholder body | "This section could not be generated. {error message}." |
+| SectionErrorPlaceholder CTA button | "Retry Agent" |
 | DiagramErrorBanner | "Diagram failed to render — raw output shown below." |
 | Cancel Generation button | "Cancel Generation" (existing — no change) |
 | Agent slot — pending label | "Pending" |
