@@ -1,16 +1,7 @@
 import type { StoredProjectAnalysis } from '../storage/types';
+import type { ReviewComment } from '../github/DiffFetcher';
 
-/**
- * ReviewComment interface — inline definition per D-07.
- * Mirrors the shape exported by DiffFetcher.ts (ReviewComment).
- * Inline here to avoid cross-plan import ordering issues.
- */
-export interface ReviewComment {
-  reviewer: string;
-  file?: string;
-  line?: number;
-  body: string;
-}
+export type { ReviewComment };
 
 export interface PRMetadata {
   prNumber: number;
