@@ -297,9 +297,9 @@ describe('PRTreeItem — avatar icon and combined description (TREE-02, TREE-03)
   it('iconPath is a Uri (not ThemeIcon) when raw has valid avatar_url (D-04)', () => {
     const pr = makePR({ raw: RAW_WITH_AVATAR });
     const item = new PRTreeItem(pr);
-    // vscode.Uri.parse returns an object; ThemeIcon has an `id` property
+    // vscode.Uri.parse returns an object without `id`; ThemeIcon has `id`
     expect(item.iconPath).toBeDefined();
-    expect((item.iconPath as any).id).toBeUndefined(); // Uri has no `id` prop
+    expect((item.iconPath as Record<string, unknown>)['id']).toBeUndefined();
   });
 
   it('avatar Uri includes ?s=40 size parameter for efficiency', () => {
@@ -312,26 +312,26 @@ describe('PRTreeItem — avatar icon and combined description (TREE-02, TREE-03)
   it('iconPath falls back to ThemeIcon when raw is empty object (D-06)', () => {
     const pr = makePR({ raw: '{}' });
     const item = new PRTreeItem(pr);
-    expect((item.iconPath as any).id).toBe('git-pull-request');
+    expect((item.iconPath as vscode.ThemeIcon).id).toBe('git-pull-request');
   });
 
   it('iconPath falls back to ThemeIcon when raw is invalid JSON (D-06)', () => {
     const pr = makePR({ raw: 'not-json' });
     const item = new PRTreeItem(pr);
-    expect((item.iconPath as any).id).toBe('git-pull-request');
+    expect((item.iconPath as vscode.ThemeIcon).id).toBe('git-pull-request');
   });
 
   it('iconPath falls back to ThemeIcon when avatar_url is empty string (D-06)', () => {
     const raw = JSON.stringify({ user: { avatar_url: '' } });
     const pr = makePR({ raw });
     const item = new PRTreeItem(pr);
-    expect((item.iconPath as any).id).toBe('git-pull-request');
+    expect((item.iconPath as vscode.ThemeIcon).id).toBe('git-pull-request');
   });
 
   it('iconPath falls back to merged ThemeIcon for merged PRs without avatar', () => {
     const pr = makePR({ state: 'merged', raw: '{}' });
     const item = new PRTreeItem(pr);
-    expect((item.iconPath as any).id).toBe('git-merge');
+    expect((item.iconPath as vscode.ThemeIcon).id).toBe('git-merge');
   });
 
   it('description format is "{state} · @{author}" (D-07, D-08)', () => {
