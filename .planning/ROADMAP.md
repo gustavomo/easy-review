@@ -14,8 +14,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Fork setup, PR browsing all states, SQLite store, CLI subprocess runner, PATH resolution (completed 2026-04-03)
 - [x] **Phase 2: AI Review Generation** - Full review pipeline, 6-section structured output, project analysis context, webview panel (completed 2026-04-03)
-- [ ] **Phase 2.1: In-Editor PR Navigation** (INSERTED) - Replace browser-open stub with VS Code diff view: expandable file tree per PR, diff editor per file
-- [ ] **Phase 2.2: Sidebar UI Enhancements** (INSERTED) - PR-level view review button, plugin-level buttons for project analysis, PR history analysis, and settings
+- [x] **Phase 2.1: In-Editor PR Navigation** (INSERTED) - Replace browser-open stub with VS Code diff view: expandable file tree per PR, diff editor per file (completed 2026-04-03)
+- [x] **Phase 2.2: Sidebar UI Enhancements** (INSERTED) - PR-level view review button, plugin-level buttons for project analysis, PR history analysis, and settings (completed 2026-04-03)
+- [x] **Phase 02.3: Review Panel Rich Rendering** (INSERTED) - Syntax highlighting, Mermaid SVG diagrams, categorized change chips, impact badges, markdown tables (completed 2026-04-03)
 - [ ] **Phase 3: Privanote Integration** - MCP context injection before reviews, REST API push of completed reviews, SecretStorage token handling
 - [ ] **Phase 4: GitHub Comment Posting and Distribution** - Post reviews to GitHub with user confirmation, per-platform Marketplace packaging
 
@@ -63,7 +64,7 @@ Plans:
 - [x] 02-06-PLAN.md — React webview Part 2: ReviewDocument + CollapsibleSection + FindingsSection + FindingCard + DiffBlock
 - [x] 02-07-PLAN.md — ReviewPanel extension host singleton (orchestration: diff → prompt → CLI → parse → persist → webview)
 - [x] 02-08-PLAN.md — Command wiring (activation.ts: generateReview + analyzeProject + analyzePRHistory) + ProjectAnalysisService + package.json settings
-- [ ] 02-09-PLAN.md — Human verification in Extension Development Host (all 11 requirements)
+- [x] 02-09-PLAN.md — Human verification in Extension Development Host (all 11 requirements)
 **UI hint**: yes
 
 ### Phase 02.3: review-panel-rich-rendering (INSERTED)
@@ -144,9 +145,10 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 8/8 | Complete | 2026-04-03 |
 | 2. AI Review Generation | 9/9 | Complete | 2026-04-03 |
-| 2.1. In-Editor PR Navigation | 3/4 | In Progress|  |
-| 2.2. Sidebar UI Enhancements | 0/2 | Not started | - |
-| 2.3. Review Panel Rich Rendering | 0/4 | Not started | - |
+| 2.1. In-Editor PR Navigation | 4/4 | Complete | 2026-04-03 |
+| 2.2. Sidebar UI Enhancements | 2/2 | Complete | 2026-04-03 |
+| 2.3. Review Panel Rich Rendering | 4/4 | Complete | 2026-04-03 |
+| 5. Upgrade review prompt | 4/4 | Complete | 2026-04-03 |
 | 3. Privanote Integration | 0/? | Not started | - |
 | 4. GitHub Comment Posting and Distribution | 0/? | Not started | - |
 
@@ -155,10 +157,10 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 4
 **Goal:** Replace the thin instructions block in PromptBuilder.ts with a production-quality SYNTHESIS_INSTRUCTION, fetch GitHub review comments and commit messages, and wire all new data into the review generation pipeline — transforming output from structured checklist to insight-rich PR analysis
 **Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12
 **Depends on:** Phase 2 (uses PromptBuilder, ReviewParser, ReviewPanel, DiffFetcher)
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans executed
 
 Plans:
 - [x] 05-01-PLAN.md — Wave 0: github-fetchers.test.ts scaffold (fetchReviewComments + fetchPRCommits tests)
 - [x] 05-02-PLAN.md — DiffFetcher.ts new fetchers + BuildPromptOptions extension (reviewComments, prUrl)
 - [x] 05-03-PLAN.md — PromptBuilder.ts SYNTHESIS_INSTRUCTION rewrite + ReviewParser.ts heading rename + test fixture updates
-- [ ] 05-04-PLAN.md — ReviewPanel.ts wiring: Promise.all, commitMessages, reviewComments, prUrl
+- [x] 05-04-PLAN.md — ReviewPanel.ts wiring: Promise.all, commitMessages, reviewComments, prUrl
