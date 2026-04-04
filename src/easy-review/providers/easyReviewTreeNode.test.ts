@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { EasyReviewPRsProvider } from './EasyReviewPRsProvider';
 import {
   DirectoryNode,
@@ -9,7 +9,8 @@ import {
   PRFileChange,
 } from './EasyReviewTreeNodes';
 import { PRTreeItem } from './PRTreeItem';
-import type { StoredPR } from '../storage/types';
+import type { StoredPR, StoredReview } from '../storage/types';
+import type { StorageAdapter } from '../storage/StorageAdapter';
 
 // Helper: create a minimal StoredPR
 function makePR(overrides?: Partial<StoredPR>): StoredPR {
@@ -249,7 +250,7 @@ describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () =
       getReviews: (repoId: string, prNumber: number) => {
         const key = `${repoId}/${prNumber}`;
         const count = reviewCounts[key] ?? 0;
-        return Array.from({ length: count }, (_, i) => ({ id: i + 1 } as any));
+        return Array.from({ length: count }, (_, i) => ({ id: i + 1 } as unknown as StoredReview));
       },
     };
   }
@@ -257,7 +258,7 @@ describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () =
   it('refresh() with store returning 1 review sets -hasReview suffix', () => {
     const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
     const store = makeStore({ 'owner/repo/42': 1 });
-    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    const provider = new EasyReviewPRsProvider(undefined, store as unknown as StorageAdapter);
     provider.refresh([pr]);
     const items = provider.getChildren(undefined) as PRTreeItem[];
     expect(items[0].contextValue).toBe('pr-open-hasReview');
@@ -266,7 +267,7 @@ describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () =
   it('refresh() with store returning 0 reviews does NOT set -hasReview suffix', () => {
     const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
     const store = makeStore({ 'owner/repo/42': 0 });
-    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    const provider = new EasyReviewPRsProvider(undefined, store as unknown as StorageAdapter);
     provider.refresh([pr]);
     const items = provider.getChildren(undefined) as PRTreeItem[];
     expect(items[0].contextValue).toBe('pr-open');
@@ -283,7 +284,7 @@ describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () =
   it('addPR() with store returning 1 review sets -hasReview suffix', () => {
     const pr = makePR({ repoId: 'owner/repo', prNumber: 42 });
     const store = makeStore({ 'owner/repo/42': 1 });
-    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    const provider = new EasyReviewPRsProvider(undefined, store as unknown as StorageAdapter);
     provider.addPR(pr);
     const items = provider.getChildren(undefined) as PRTreeItem[];
     expect(items[0].contextValue).toBe('pr-open-hasReview');
@@ -294,7 +295,7 @@ describe('EasyReviewPRsProvider — store injection and hasReview (UI-01)', () =
     // Start with 0 reviews
     const reviewCounts: Record<string, number> = { 'owner/repo/42': 0 };
     const store = makeStore(reviewCounts);
-    const provider = new EasyReviewPRsProvider(undefined, store as any);
+    const provider = new EasyReviewPRsProvider(undefined, store as unknown as StorageAdapter);
     provider.refresh([pr]);
 
     const items = provider.getChildren(undefined) as PRTreeItem[];

@@ -1,8 +1,32 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { StorageAdapter } from '../storage/StorageAdapter';
+import type * as vscodeTypes from 'vscode';
 
 // ReviewPanel is a singleton with a VS Code WebviewPanel — we test via its public surface
 // using mocked vscode module. The test verifies the correct sequence of calls
 // when loadReview() is invoked.
+
+// Private internals accessed via unknown cast for testing
+interface ReviewPanelInternals {
+  panel: {
+    webview: { postMessage: (msg: unknown) => void };
+    reveal: (column: vscodeTypes.ViewColumn, preserveFocus: boolean) => void;
+  };
+  currentState: {
+    status: string;
+    review?: {
+      id: number;
+      prNumber: number;
+      repoId: string;
+      model: string;
+      createdAt: number;
+      sections: unknown[];
+    };
+  };
+}
+interface ReviewPanelClass {
+  instance: unknown;
+}
 
 describe('ReviewPanel.loadReview() — UI-01', () => {
   it('loadReview calls panel.reveal, updateState with complete status, and posts loadReviewResult', async () => {
@@ -29,10 +53,10 @@ describe('ReviewPanel.loadReview() — UI-01', () => {
       subscriptions: [],
       globalState: { get: vi.fn(), update: vi.fn() },
       globalStorageUri: { fsPath: '/fake/storage' },
-    } as any;
+    } as unknown as vscodeTypes.ExtensionContext;
 
     // getOrCreate creates a new panel instance
-    const panel = ReviewPanel.getOrCreate(mockContext, mockStore as any);
+    const panel = ReviewPanel.getOrCreate(mockContext, mockStore as unknown as StorageAdapter);
 
     const storedReview = {
       id: 7,
@@ -46,24 +70,24 @@ describe('ReviewPanel.loadReview() — UI-01', () => {
 
     // Spy on postMessage (internal) — via vscode mock's webview
     const postMessageSpy = vi.fn();
-    (panel as any).panel.webview.postMessage = postMessageSpy;
+    (panel as unknown as ReviewPanelInternals).panel.webview.postMessage = postMessageSpy;
     const revealSpy = vi.fn();
-    (panel as any).panel.reveal = revealSpy;
+    (panel as unknown as ReviewPanelInternals).panel.reveal = revealSpy;
 
-    panel.loadReview(storedReview as any);
+    panel.loadReview(storedReview);
 
     // reveal called first
     expect(revealSpy).toHaveBeenCalledWith(vscode.ViewColumn.Two, false);
 
     // State set to complete
-    const state = (panel as any).currentState;
+    const state = (panel as unknown as ReviewPanelInternals).currentState;
     expect(state.status).toBe('complete');
-    expect(state.review.id).toBe(7);
-    expect(state.review.prNumber).toBe(42);
-    expect(state.review.repoId).toBe('owner/repo');
-    expect(state.review.model).toBe('claude');
-    expect(state.review.createdAt).toBe(1234567890);
-    expect(state.review.sections).toEqual([{ title: 'Executive Summary', content: 'Good PR.' }]);
+    expect(state.review?.id).toBe(7);
+    expect(state.review?.prNumber).toBe(42);
+    expect(state.review?.repoId).toBe('owner/repo');
+    expect(state.review?.model).toBe('claude');
+    expect(state.review?.createdAt).toBe(1234567890);
+    expect(state.review?.sections).toEqual([{ title: 'Executive Summary', content: 'Good PR.' }]);
 
     // postMessage called with loadReviewResult
     expect(postMessageSpy).toHaveBeenCalledWith(
@@ -71,6 +95,6 @@ describe('ReviewPanel.loadReview() — UI-01', () => {
     );
 
     // Cleanup singleton
-    (ReviewPanel as any).instance = undefined;
+    (ReviewPanel as unknown as ReviewPanelClass).instance = undefined;
   });
 });
