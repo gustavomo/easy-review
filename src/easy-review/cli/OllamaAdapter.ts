@@ -10,13 +10,17 @@ import { getOutputChannel } from './OutputChannelReporter';
 export class OllamaAdapter implements ModelAdapter {
   async run(opts: ModelRunOpts): Promise<string> {
     const ch = getOutputChannel();
-    ch.appendLine(`[OllamaAdapter] model=${opts.model} agent=${opts.agentKey} prompt.length=${opts.prompt.length}`);
+    ch.appendLine(`[OllamaAdapter] modelId=${opts.modelId} agent=${opts.agentKey} prompt.length=${opts.prompt.length}`);
+
+    if (!opts.modelId) {
+      throw new Error('OllamaAdapter: no model specified. Set easyReview.ollamaModel in VS Code settings (e.g. "gemma3:4b").');
+    }
 
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: opts.model,
+        model: opts.modelId,
         prompt: opts.systemPrompt ? `${opts.systemPrompt}\n\n${opts.prompt}` : opts.prompt,
         stream: true,
       }),

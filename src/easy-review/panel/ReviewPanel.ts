@@ -149,9 +149,9 @@ export class ReviewPanel {
   }
 
   private async executeReview(pr: StoredPR, credentialStore: CredentialStore): Promise<void> {
-    // Read model config with D-21 migration (defaultModel wins, activeModel fallback)
+    // Read model config with D-21 migration (defaultProvider wins, activeModel fallback)
     const config = vscode.workspace.getConfiguration('easyReview');
-    const { defaultModel, agentModels } = readModelConfig(config);
+    const { defaultProvider, agentModels, ollamaModel } = readModelConfig(config);
     const claudePath =
       config.get<string>('claudePath') ||
       this.context.globalState.get<string>('easyReview.claudePath.resolved') ||
@@ -175,11 +175,11 @@ export class ReviewPanel {
     this.updateState({
       status: 'generating',
       prTitle: pr.title,
-      model: defaultModel,
+      model: defaultProvider,
       elapsedMs: 0,
       agentSections: initialAgentSections,
     });
-    this.postMessage({ type: 'startReview', prNumber: pr.prNumber, prTitle: pr.title, model: defaultModel });
+    this.postMessage({ type: 'startReview', prNumber: pr.prNumber, prTitle: pr.title, model: defaultProvider });
 
     // Send all 7 slots as pending to webview
     for (const agentKey of AGENT_ORDER) {
@@ -226,7 +226,7 @@ export class ReviewPanel {
       const result = await runAllAgents({
         diff,
         fileList,
-        modelConfig: { defaultModel, agentModels },
+        modelConfig: { defaultProvider, agentModels, ollamaModel },
         claudePath,
         codexPath: config.get<string>('codexPath') || 'codex',
         projectAnalysis,
@@ -250,7 +250,7 @@ export class ReviewPanel {
       const savedId = this.store.saveReview({
         repoId: pr.repoId,
         prNumber: pr.prNumber,
-        modelUsed: defaultModel,
+        modelUsed: defaultProvider,
         createdAt,
         reviewText: sections.map(s => s.content).join('\n'),
         parsedJson: JSON.stringify(sections),
@@ -260,7 +260,7 @@ export class ReviewPanel {
         id: savedId,
         prNumber: pr.prNumber,
         repoId: pr.repoId,
-        model: defaultModel,
+        model: defaultProvider,
         createdAt,
         sections,
       };

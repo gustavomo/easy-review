@@ -29,12 +29,12 @@ import * as DocumentationAgent from './DocumentationAgent';
 import { extractMermaidBlock, validateMermaidSyntax } from './mermaidValidation';
 import * as PRSummarizerAgent from './PRSummarizerAgent';
 import * as TestCoverageAgent from './TestCoverageAgent';
-import type { AgentKey, SectionState } from '../../shared/types';
+import type { AgentKey, AIProvider, SectionState } from '../../shared/types';
 import { CodexAdapter } from '../cli/CodexAdapter';
 import { OllamaAdapter } from '../cli/OllamaAdapter';
 import { getOutputChannel } from '../cli/OutputChannelReporter';
 import { runReview } from '../cli/ReviewRunner';
-import { type ModelConfig, resolveAgentModel } from '../settings/modelSettings';
+import { type ModelConfig, resolveAgentProvider } from '../settings/modelSettings';
 
 // Per-agent template module imports
 
@@ -107,7 +107,7 @@ export interface OrchestratorResult {
 export async function runAllAgents(opts: OrchestratorOpts): Promise<OrchestratorResult> {
   const ch = getOutputChannel();
   ch.appendLine(`[AgentOrchestrator] Starting 7-agent concurrent dispatch`);
-  ch.appendLine(`[AgentOrchestrator] defaultModel=${opts.modelConfig.defaultModel}`);
+  ch.appendLine(`[AgentOrchestrator] defaultProvider=${opts.modelConfig.defaultProvider} ollamaModel=${opts.modelConfig.ollamaModel}`);
 
   // Shared AbortController — all ADK/Ollama agents share this signal
   const controller = new AbortController();
@@ -164,13 +164,13 @@ async function runSingleAgent(
   ch: vscode.OutputChannel,
 ): Promise<void> {
   const agentModule = AGENT_MAP[agentKey];
-  const modelName = resolveAgentModel({
+  const provider = resolveAgentProvider({
     agentKey,
     agentModels: opts.modelConfig.agentModels,
-    defaultModel: opts.modelConfig.defaultModel,
+    defaultProvider: opts.modelConfig.defaultProvider,
   });
 
-  ch.appendLine(`[AgentOrchestrator] Dispatching agent=${agentKey} model=${modelName}`);
+  ch.appendLine(`[AgentOrchestrator] Dispatching agent=${agentKey} provider=${provider}`);
 
   // Signal generating state
   sections[agentKey] = { status: 'generating' };
@@ -205,13 +205,12 @@ async function runSingleAgent(
 
     let result: string;
 
-    if (modelName === 'claude') {
+    if (provider === 'claude') {
       result = await runClaudeAgent(agentKey, prompt, systemPrompt, opts.claudePath, abortSignal, ch);
-    } else if (modelName === 'codex') {
+    } else if (provider === 'codex') {
       result = await runCodexAgent(agentKey, prompt, systemPrompt, opts.codexPath, opts.token, ch);
     } else {
-      // ollama
-      result = await runOllamaAgent(agentKey, prompt, systemPrompt, abortSignal, opts.token, ch);
+      result = await runOllamaAgent(agentKey, prompt, systemPrompt, opts.modelConfig.ollamaModel, abortSignal, opts.token, ch);
     }
 
     // For diagram agent: validate Mermaid syntax with up to 2 correction retries
@@ -220,7 +219,7 @@ async function runSingleAgent(
         result,
         prompt,
         systemPrompt,
-        modelName,
+        provider,
         opts,
         abortSignal,
         ch,
@@ -296,16 +295,18 @@ async function runOllamaAgent(
   agentKey: AgentKey,
   prompt: string,
   systemPrompt: string,
+  ollamaModel: string,
   abortSignal: AbortSignal,
   token: vscode.CancellationToken,
   ch: vscode.OutputChannel,
 ): Promise<string> {
-  ch.appendLine(`[AgentOrchestrator] OllamaAdapter: agent=${agentKey}`);
+  ch.appendLine(`[AgentOrchestrator] OllamaAdapter: agent=${agentKey} model=${ollamaModel}`);
   return new OllamaAdapter().run({
     agentKey,
     prompt,
     systemPrompt,
-    model: 'ollama',
+    provider: 'ollama',
+    modelId: ollamaModel,
     onChunk: () => {},
     abortSignal,
     token,
@@ -320,7 +321,7 @@ async function runDiagramWithRetry(
   initialResult: string,
   originalPrompt: string,
   systemPrompt: string,
-  modelName: string,
+  provider: AIProvider,
   opts: OrchestratorOpts,
   abortSignal: AbortSignal,
   ch: vscode.OutputChannel,
@@ -348,12 +349,12 @@ async function runDiagramWithRetry(
       '\n\nPlease produce valid Mermaid syntax starting with a recognized type keyword.';
 
     try {
-      if (modelName === 'claude') {
+      if (provider === 'claude') {
         result = await runClaudeAgent('diagram', correctionPrompt, systemPrompt, opts.claudePath, abortSignal, ch);
-      } else if (modelName === 'codex') {
+      } else if (provider === 'codex') {
         result = await runCodexAgent('diagram', correctionPrompt, systemPrompt, opts.codexPath, opts.token, ch);
       } else {
-        result = await runOllamaAgent('diagram', correctionPrompt, systemPrompt, abortSignal, opts.token, ch);
+        result = await runOllamaAgent('diagram', correctionPrompt, systemPrompt, opts.modelConfig.ollamaModel, abortSignal, opts.token, ch);
       }
     } catch (err) {
       ch.appendLine(`[AgentOrchestrator] Diagram correction attempt ${attempt + 1} failed: ${err}`);

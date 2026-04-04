@@ -119,7 +119,12 @@
 							"ollama"
 						],
 						"default": "claude",
-						"description": "Default model for all review agents. Can be overridden per-agent with easyReview.agentModels."
+						"description": "Default AI provider for all review agents (claude, codex, or ollama). Can be overridden per-agent with easyReview.agentModels."
+					},
+					"easyReview.ollamaModel": {
+						"type": "string",
+						"default": "gemma3:4b",
+						"description": "Ollama model name to use when easyReview.defaultModel is 'ollama' (e.g. 'gemma3:4b', 'llama3.2', 'mistral', 'qwen2.5-coder'). Run 'ollama list' to see available models."
 					},
 					"easyReview.agentModels": {
 						"type": "object",

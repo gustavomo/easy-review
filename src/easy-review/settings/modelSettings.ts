@@ -1,23 +1,35 @@
-import type { AgentKey, ModelName } from '../../shared/types';
+import type { AgentKey, AIProvider } from '../../shared/types';
 
 export interface ModelConfig {
-  defaultModel: ModelName;
-  agentModels?: Partial<Record<AgentKey, ModelName>>;
-  /** @deprecated use defaultModel instead (D-21 migration) */
+  /** Which AI provider to use by default ('claude' | 'codex' | 'ollama') */
+  defaultProvider: AIProvider;
+  /** Per-agent provider overrides */
+  agentModels?: Partial<Record<AgentKey, AIProvider>>;
+  /** Actual Ollama model name (e.g. 'gemma3:4b', 'llama3.2', 'mistral') */
+  ollamaModel: string;
+  /** @deprecated use defaultProvider instead (D-21 migration) */
   activeModel?: string;
 }
 
 /**
- * Resolve the model to use for a specific agent.
- * Per-agent override (agentModels[agentKey]) wins over defaultModel.
- * D-19/D-20: agentModels keys are AgentKey values.
+ * Resolve the provider to use for a specific agent.
+ * Per-agent override (agentModels[agentKey]) wins over defaultProvider.
  */
+export function resolveAgentProvider(opts: {
+  agentKey: AgentKey;
+  agentModels?: Partial<Record<AgentKey, AIProvider>>;
+  defaultProvider: AIProvider;
+}): AIProvider {
+  return opts.agentModels?.[opts.agentKey] ?? opts.defaultProvider;
+}
+
+/** @deprecated Use resolveAgentProvider */
 export function resolveAgentModel(opts: {
   agentKey: AgentKey;
-  agentModels?: Partial<Record<AgentKey, ModelName>>;
-  defaultModel: ModelName;
-}): ModelName {
-  return opts.agentModels?.[opts.agentKey] ?? opts.defaultModel;
+  agentModels?: Partial<Record<AgentKey, AIProvider>>;
+  defaultModel: AIProvider;
+}): AIProvider {
+  return resolveAgentProvider({ ...opts, defaultProvider: opts.defaultModel });
 }
 
 /**
@@ -28,13 +40,13 @@ export function resolveAgentModel(opts: {
 export function migrateActiveModel(opts: {
   activeModel?: string;
   defaultModel?: string;
-}): ModelName {
-  const valid: ModelName[] = ['claude', 'codex', 'ollama'];
-  if (opts.defaultModel && valid.includes(opts.defaultModel as ModelName)) {
-    return opts.defaultModel as ModelName;
+}): AIProvider {
+  const valid: AIProvider[] = ['claude', 'codex', 'ollama'];
+  if (opts.defaultModel && valid.includes(opts.defaultModel as AIProvider)) {
+    return opts.defaultModel as AIProvider;
   }
-  if (opts.activeModel && valid.includes(opts.activeModel as ModelName)) {
-    return opts.activeModel as ModelName;
+  if (opts.activeModel && valid.includes(opts.activeModel as AIProvider)) {
+    return opts.activeModel as AIProvider;
   }
   return 'claude';
 }
@@ -46,10 +58,11 @@ export function migrateActiveModel(opts: {
 export function readModelConfig(config: {
   get<T>(key: string, defaultValue?: T): T;
 }): ModelConfig {
-  const defaultModel = migrateActiveModel({
+  const defaultProvider = migrateActiveModel({
     activeModel: config.get<string>('activeModel'),
     defaultModel: config.get<string>('defaultModel'),
   });
-  const agentModels = config.get<Partial<Record<AgentKey, ModelName>>>('agentModels', {} as Partial<Record<AgentKey, ModelName>>);
-  return { defaultModel, agentModels };
+  const agentModels = config.get<Partial<Record<AgentKey, AIProvider>>>('agentModels', {} as Partial<Record<AgentKey, AIProvider>>);
+  const ollamaModel = config.get<string>('ollamaModel', 'gemma3:4b');
+  return { defaultProvider, agentModels, ollamaModel };
 }
