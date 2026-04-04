@@ -360,6 +360,9 @@ export class ReviewPanel {
     const webviewUri = this.panel.webview.asWebviewUri(
       vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview', 'webview.js'),
     );
+    const webviewCssUri = this.panel.webview.asWebviewUri(
+      vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview', 'webview.css'),
+    );
     const codiconsUri = this.panel.webview.asWebviewUri(
       vscode.Uri.joinPath(
         this.context.extensionUri,
@@ -378,6 +381,7 @@ export class ReviewPanel {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}' ${this.panel.webview.cspSource} 'unsafe-eval'; style-src 'unsafe-inline' ${this.panel.webview.cspSource}; font-src ${this.panel.webview.cspSource};">
   <link rel="stylesheet" href="${codiconsUri}" />
+  <link rel="stylesheet" href="${webviewCssUri}" />
   <title>Easy Review</title>
 </head>
 <body>

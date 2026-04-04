@@ -45,7 +45,11 @@ export function ReviewDocument({ review }: ReviewDocumentProps) {
     <div style={{ fontFamily: 'var(--vscode-font-family)' }}>
       {review.sections.map((section) => {
         const isFindingsSection = section.title.toLowerCase().includes('finding');
-        const isMermaidSection = section.title.toLowerCase().includes('mermaid');
+        // Detect mermaid by title OR by content starting with a mermaid fence —
+        // the AI often titles this section "Visual Overview" or "Architecture Diagram"
+        const isMermaidSection =
+          section.title.toLowerCase().includes('mermaid') ||
+          (section.content ?? '').trimStart().startsWith('```mermaid');
         const isCategorizedSection = section.title.toLowerCase().includes('categorized'); // D-10
         const isImpactSection = section.title.toLowerCase().includes('impact');            // D-14
 
