@@ -157,6 +157,9 @@
 					"easyReview.ollamaModel": {
 						"type": "string",
 						"enum": [
+							"gemma4:4b",
+							"gemma4:12b",
+							"gemma4:27b",
 							"gemma3:4b",
 							"gemma3:12b",
 							"gemma3:27b",
@@ -172,6 +175,9 @@
 							"starcoder2:7b"
 						],
 						"enumDescriptions": [
+							"Gemma 4 4B - fast Gemma 4 generation, good instruction following (~3GB)",
+							"Gemma 4 12B - balanced Gemma 4 quality/speed (~8GB)",
+							"Gemma 4 27B - best Gemma 4 quality (~18GB RAM)",
 							"Gemma 3 4B - fast, good instruction following (~3GB)",
 							"Gemma 3 12B - balanced quality/speed, recommended (~8GB)",
 							"Gemma 3 27B - best Gemma quality (~18GB RAM)",
@@ -186,7 +192,7 @@
 							"Code Llama 13B - Meta code-specialized model (~8GB)",
 							"StarCoder2 7B - HuggingFace code model (~4GB)"
 						],
-						"default": "gemma3:12b",
+						"default": "gemma4:4b",
 						"description": "Ollama model to use when easyReview.provider is 'ollama'. Run 'ollama list' to see installed models, 'ollama pull <model>' to install."
 					},
 					"easyReview.agentModels": {
@@ -196,37 +202,37 @@
 						"properties": {
 							"prSummarizer": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for PR Summary agent."
 							},
 							"bugRisk": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for Bug & Risk Analysis agent."
 							},
 							"architectureChange": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for Architecture Changes agent."
 							},
 							"testCoverage": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for Test Coverage agent."
 							},
 							"documentation": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for Documentation agent."
 							},
 							"diagram": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for Visual Diagram agent."
 							},
 							"businessImpact": {
 								"type": "string",
-								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
+								"enum": ["claude:claude-sonnet-4-6","claude:claude-opus-4-6","claude:claude-haiku-4-5-20251001","codex:o4-mini","codex:o3","codex:gpt-4.1","codex:gpt-4.1-mini","ollama:gemma4:4b","ollama:gemma4:12b","ollama:gemma4:27b","ollama:gemma3:4b","ollama:gemma3:12b","ollama:gemma3:27b","ollama:qwen2.5-coder:7b","ollama:qwen2.5-coder:14b","ollama:deepseek-r1:8b","ollama:deepseek-r1:14b","ollama:llama3.1:8b","ollama:llama3.2:3b","ollama:mistral:7b","ollama:phi4:14b","ollama:codellama:13b","ollama:starcoder2:7b"],
 								"description": "Override for Business Impact agent."
 							}
 						},

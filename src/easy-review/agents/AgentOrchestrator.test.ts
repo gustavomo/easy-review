@@ -23,7 +23,7 @@ vi.mock('./AgentOrchestrator', () => ({
 }));
 
 // Establishing the import contract (Plan 06-05 will create the real module)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, import/extensions, import/no-unresolved
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { runAllAgents } from './AgentOrchestrator';
 
 // Type contract — kept here so future implementors know the expected shapes.

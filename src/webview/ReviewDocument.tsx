@@ -3,7 +3,6 @@ import hljs from 'highlight.js';
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 
-import { parseFindingsSection } from '../easy-review/cli/ReviewParser';
 import { CategorizedChangesSection } from './CategorizedChangesSection';
 import { CollapsibleSection } from './CollapsibleSection';
 import { DiagramErrorBanner } from './DiagramErrorBanner';
@@ -11,6 +10,7 @@ import { FindingsSection } from './FindingsSection';
 import { ImpactAnalysisSection } from './ImpactAnalysisSection';
 import { MermaidDiagram } from './MermaidDiagram';
 import { SectionPendingPlaceholder } from './SectionPendingPlaceholder';
+import { parseFindingsSection } from '../easy-review/cli/ReviewParser';
 
 // D-01/D-02: Configure syntax highlighting globally for all marked() calls
 // D-03: Auto-detect language when no tag present (hljs.highlightAuto)

@@ -1,3 +1,6 @@
+/* Shared animation for spinning codicon-loading icon */
+@keyframes er-spin { to { transform: rotate(360deg); } }
+
 /* Markdown content rendered from AI review sections */
 .easy-review-md {
   font-size: 13px;
