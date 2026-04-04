@@ -176,7 +176,7 @@ Plans:
 
 Plans:
 - [ ] 06-01-PLAN.md — Wave 0: TDD scaffolds (AgentOrchestrator.test.ts + OllamaAdapter.test.ts + contextRequest.test.ts + mermaidValidation.test.ts + ReviewParser 7-section tests + modelSettings.test.ts)
-- [ ] 06-02-PLAN.md — Wave 1: shared types (AgentKey, SectionState, sectionUpdate message) + ModelAdapter interface + OllamaAdapter
+- [x] 06-02-PLAN.md — Wave 1: shared types (AgentKey, SectionState, sectionUpdate message) + ModelAdapter interface + OllamaAdapter
 - [ ] 06-03-PLAN.md — Wave 1: contextRequest.ts + mermaidValidation.ts utilities + 7 per-agent prompt templates
 - [ ] 06-04-PLAN.md — Wave 1: ReviewParser 7-section update (bug keyword) + modelSettings.ts + package.json settings
 - [ ] 06-05-PLAN.md — Wave 2: AgentOrchestrator.ts (Promise.allSettled 7 agents, ADK + Codex + Ollama paths, Mermaid retry) + esbuild ADK bundle
