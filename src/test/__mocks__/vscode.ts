@@ -51,9 +51,13 @@ export const TreeItem = class {
   constructor(public label: string, public collapsibleState?: number) {}
 };
 export const TreeItemCollapsibleState = { None: 0, Collapsed: 1, Expanded: 2 };
-export const ThemeIcon = class {
+export const ThemeIcon = class ThemeIcon {
+  static File: InstanceType<typeof ThemeIcon>;
+  static Folder: InstanceType<typeof ThemeIcon>;
   constructor(public id: string, public color?: unknown) {}
 };
+ThemeIcon.File = new ThemeIcon('file');
+ThemeIcon.Folder = new ThemeIcon('folder');
 export const ThemeColor = class {
   constructor(public id: string) {}
 };

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import * as vscode from 'vscode';
 import { EasyReviewPRsProvider } from './EasyReviewPRsProvider';
 import {
   DirectoryNode,
@@ -241,6 +242,51 @@ describe('PRTreeItem — contextValue with hasReview (UI-01)', () => {
     const pr = makePR({ state: 'open' });
     const item = new PRTreeItem(pr);
     expect(item.contextValue).toBe('pr-open');
+  });
+});
+
+describe('FileNode — file-type icons (TREE-01, D-01/D-02/D-03)', () => {
+  it('FileNode.iconPath is vscode.ThemeIcon.File for added files', () => {
+    const pr = makePR();
+    const file: PRFileChange = { filename: 'src/foo.ts', status: 'added', sha: 'abc' };
+    const node = new FileNode(file, pr);
+    expect((node.iconPath as { id: string }).id).toBe('file');
+  });
+
+  it('FileNode.iconPath is vscode.ThemeIcon.File for modified files', () => {
+    const pr = makePR();
+    const file: PRFileChange = { filename: 'src/bar.ts', status: 'modified', sha: 'def' };
+    const node = new FileNode(file, pr);
+    expect((node.iconPath as { id: string }).id).toBe('file');
+  });
+
+  it('FileNode.iconPath is vscode.ThemeIcon.File for removed files', () => {
+    const pr = makePR();
+    const file: PRFileChange = { filename: 'src/baz.ts', status: 'removed', sha: 'ghi' };
+    const node = new FileNode(file, pr);
+    expect((node.iconPath as { id: string }).id).toBe('file');
+  });
+
+  it('FileNode.iconPath is vscode.ThemeIcon.File for renamed files', () => {
+    const pr = makePR();
+    const file: PRFileChange = { filename: 'src/new.ts', status: 'renamed', sha: 'jkl', previous_filename: 'src/old.ts' };
+    const node = new FileNode(file, pr);
+    expect((node.iconPath as { id: string }).id).toBe('file');
+  });
+
+  it('FileNode.iconPath is the same object reference as vscode.ThemeIcon.File', () => {
+    const pr = makePR();
+    const file: PRFileChange = { filename: 'src/foo.ts', status: 'added', sha: 'abc' };
+    const node = new FileNode(file, pr);
+    expect(node.iconPath).toBe(vscode.ThemeIcon.File);
+  });
+
+  it('FileNode.resourceUri is set and uses FileChange scheme (not file://)', () => {
+    const pr = makePR();
+    const file: PRFileChange = { filename: 'src/foo.ts', status: 'added', sha: 'abc' };
+    const node = new FileNode(file, pr);
+    expect(node.resourceUri).toBeTruthy();
+    expect((node.resourceUri as { scheme: string }).scheme).not.toBe('file');
   });
 });
 
